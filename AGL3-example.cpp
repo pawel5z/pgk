@@ -180,14 +180,25 @@ void MyWin::MainLoop() {
       glfwPollEvents();
       //glfwWaitEvents();   
 
+      // triangle filling
       if (glfwGetKey(win(), GLFW_KEY_DOWN ) == GLFW_PRESS) {
          glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       } else if (glfwGetKey(win(), GLFW_KEY_UP ) == GLFW_PRESS) {
          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+     // cross moving
       } else if (glfwGetKey(win(), GLFW_KEY_RIGHT ) == GLFW_PRESS) {
          tx += 0.01;
       } else if (glfwGetKey(win(), GLFW_KEY_LEFT ) == GLFW_PRESS) {
          tx -= 0.01;
+     // circle moving
+      } else if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS) {
+         cY += 0.01;
+      } else if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS) {
+         cY -= 0.01;
+      } else if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS) {
+         cX -= 0.01;
+      } else if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS) {
+         cX += 0.01;
       }
    } while( glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(win()) == 0 );
