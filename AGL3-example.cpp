@@ -26,6 +26,8 @@ public:
 
          #version 330 
          out vec4 vcolor;
+         out vec2 pos;
+
          void main(void) {
             const vec2 vertices[3] = vec2[3](vec2( 0.9, -0.9),
                                              vec2(-0.9, -0.9),
@@ -35,17 +37,23 @@ public:
                                              vec4(0.0, 0.0, 1.0, 1.0));
 
             vcolor      = colors[gl_VertexID];
-            gl_Position = vec4(vertices[gl_VertexID], 0.5, 1.0); 
+            pos = vertices[gl_VertexID];
+            gl_Position = vec4(vertices[gl_VertexID], 0.5, 1.0);
          }
 
       )END", R"END(
 
          #version 330 
          in  vec4 vcolor;
+         in vec2 pos;
+
          out vec4 color;
 
          void main(void) {
-            color = vcolor;
+            if (distance(pos, vec2(0.0, 0.0)) <= 0.25)
+                color = vec4(1.0, 1.0, 1.0, 1.0);
+            else
+                color = vcolor;
          } 
 
       )END");
