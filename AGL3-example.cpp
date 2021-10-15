@@ -10,6 +10,7 @@
 
 #include "AGL3Window.hpp"
 #include "AGL3Drawable.hpp"
+#include "CirclePolygon.hpp"
 
 // ==========================================================================
 // Drawable object: no-data only: vertex/fragment programs
@@ -161,8 +162,10 @@ void MyWin::MainLoop() {
 
    MyCross cross;
    MyTri   trian;
+   CirclePolygon circlePoly(64);
 
-   float   tx=0.0, ty=0.5;
+   float tx=0.0, ty=0.5;
+   float cX = -0.5, cY = 0.5;
    do {
       glClear( GL_COLOR_BUFFER_BIT );
    
@@ -170,6 +173,7 @@ void MyWin::MainLoop() {
       // =====================================================        Drawing
       trian.draw();
       cross.draw(tx,ty);
+      circlePoly.draw(cX, cY);
       AGLErrors("main-afterdraw");
 
       glfwSwapBuffers(win()); // =============================   Swap buffers
