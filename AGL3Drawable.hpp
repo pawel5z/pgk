@@ -5,6 +5,9 @@
 // ==========================================================================
 // AGLDrawable
 //===========================================================================
+#ifndef AGL3DRAWABLE_HPP
+#define AGL3DRAWABLE_HPP
+
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -126,3 +129,5 @@ private:
       glShaderSource(sId, 1, &SourcePointer , NULL);
    }
 };
+
+#endif //AGL3DRAWABLE_HPP

@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <AGL3Window.hpp>
-#include <AGL3Drawable.hpp>
+#include "AGL3Window.hpp"
+#include "AGL3Drawable.hpp"
 
 // ==========================================================================
 // Drawable object: no-data only: vertex/fragment programs

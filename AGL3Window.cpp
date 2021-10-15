@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#include <AGL3Window.hpp>
+#include "AGL3Window.hpp"
 
 void AGLErrors(const char *comment) {
    GLenum er;

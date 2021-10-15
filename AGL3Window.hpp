@@ -5,6 +5,9 @@
 // ==========================================================================
 // AGLWindow
 //===========================================================================
+#ifndef AGL3WINDOW_HPP
+#define AGL3WINDOW_HPP
+
 #include <epoxy/gl.h>
 #include <epoxy/glx.h>
 #include <GLFW/glfw3.h>
@@ -65,3 +68,5 @@ private:
    static void CallbackScroll(GLFWwindow* window, double xp, double yp);
    static void CallbackMousePos(GLFWwindow* window, double xp, double yp);
 };
+
+#endif //AGL3WINDOW_HPP
