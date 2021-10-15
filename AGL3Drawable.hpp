@@ -14,6 +14,9 @@
 
 class AGLDrawable {
 public:
+    GLfloat x = 0;
+    GLfloat y = 0;
+
    AGLDrawable(GLuint _pid=0) {
       pId=_pid;
       glGenVertexArrays(1, &vaoId);

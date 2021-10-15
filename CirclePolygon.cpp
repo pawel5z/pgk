@@ -5,7 +5,7 @@
 #include <exception>
 #include <cstdio>
 
-CirclePolygon::CirclePolygon(int n) : AGLDrawable(0) {
+CirclePolygon::CirclePolygon(int n, GLfloat radius) : AGLDrawable(0), radius(radius) {
     if (n <= 2)
         throw std::invalid_argument("circle must be approximated by at least 3 vertices");
     this->n = n;
@@ -64,11 +64,11 @@ void CirclePolygon::setBuffers() {
     );
 }
 
-void CirclePolygon::draw(float tx, float ty) {
+void CirclePolygon::draw() {
     bindProgram();
     bindBuffers();
-    glUniform1f(0, 1.0/16);  // scale  in vertex shader
-    glUniform2f(1, tx, ty);  // center in vertex shader
+    glUniform1f(0, radius);  // scale  in vertex shader
+    glUniform2f(1, x, y);  // center in vertex shader
     glUniform3f(3, circleColor[0], circleColor[1], circleColor[2]);
 
     glDrawArrays(GL_LINE_LOOP, 0, n);

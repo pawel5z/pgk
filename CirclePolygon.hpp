@@ -8,11 +8,14 @@
 
 class CirclePolygon : public AGLDrawable {
 public:
-    CirclePolygon(int n);
+    GLfloat radius;
+
+    CirclePolygon(int n, GLfloat radius);
     void setShaders();
     void setBuffers();
-    void draw(float tx, float ty);
+    void draw();
     void setColor(float r, float g, float b);
+
 private:
     // number of vertices which will approximate circle
     int n;

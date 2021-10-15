@@ -61,14 +61,19 @@ public:
 // ==========================================================================
 class MyCross : public AGLDrawable {
 public:
-   MyCross() : AGLDrawable(0) {
+    GLfloat armLength;
+
+   MyCross(GLfloat armLength) : AGLDrawable(0) {
+       if (armLength <= 0)
+           throw std::invalid_argument("armLength must be non-negative");
+       this->armLength = armLength;
       setShaders();
       setBuffers();
    }
    void setShaders() {
       compileShaders(R"END(
 
-         #version 330 
+         #version 330
          #extension GL_ARB_explicit_uniform_location : require
          #extension GL_ARB_shading_language_420pack : require
          layout(location = 0) in vec2 pos;
@@ -83,14 +88,14 @@ public:
 
       )END", R"END(
 
-         #version 330 
+         #version 330
          #extension GL_ARB_explicit_uniform_location : require
          layout(location = 3) uniform vec3  cross_color;
          out vec4 color;
 
          void main(void) {
             color = vec4(cross_color,1.0);
-         } 
+         }
 
       )END");
    }
@@ -114,11 +119,11 @@ public:
          (void*)0            // array buffer offset
       );
    }
-   void draw(float tx, float ty) {
+   void draw() {
       bindProgram();
       bindBuffers();
-      glUniform1f(0, 1.0/16);  // scale  in vertex shader
-      glUniform2f(1, tx, ty);  // center in vertex shader
+      glUniform1f(0, armLength);  // scale  in vertex shader
+      glUniform2f(1, x, y);  // center in vertex shader
       glUniform3f(3, cross_color[0],cross_color[1],cross_color[2]);
 
       glDrawArrays(GL_LINES, 0, 4);
@@ -160,20 +165,20 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
 void MyWin::MainLoop() {
    ViewportOne(0,0,wd,ht);
 
-   MyCross cross;
+   MyCross cross(1.0/16);
+   cross.x = 0.0; cross.y = 0.5;
    MyTri   trian;
-   CirclePolygon circlePoly(64);
+   CirclePolygon circlePoly(64, 1.0/16);
+   circlePoly.x = -0.5; circlePoly.y = 0.5;
 
-   float tx=0.0, ty=0.5;
-   float cX = -0.5, cY = 0.5;
    do {
       glClear( GL_COLOR_BUFFER_BIT );
    
       AGLErrors("main-loopbegin");
       // =====================================================        Drawing
       trian.draw();
-      cross.draw(tx,ty);
-      circlePoly.draw(cX, cY);
+      cross.draw();
+      circlePoly.draw();
       AGLErrors("main-afterdraw");
 
       glfwSwapBuffers(win()); // =============================   Swap buffers
@@ -187,18 +192,18 @@ void MyWin::MainLoop() {
          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
      // cross moving
       } else if (glfwGetKey(win(), GLFW_KEY_RIGHT ) == GLFW_PRESS) {
-         tx += 0.01;
+         cross.x += 0.01;
       } else if (glfwGetKey(win(), GLFW_KEY_LEFT ) == GLFW_PRESS) {
-         tx -= 0.01;
+         cross.x -= 0.01;
      // circle moving
       } else if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS) {
-         cY += 0.01;
+         circlePoly.y += 0.01;
       } else if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS) {
-         cY -= 0.01;
+         circlePoly.y -= 0.01;
       } else if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS) {
-         cX -= 0.01;
+         circlePoly.x -= 0.01;
       } else if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS) {
-         cX += 0.01;
+         circlePoly.x += 0.01;
       }
    } while( glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(win()) == 0 );
