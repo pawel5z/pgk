@@ -143,4 +143,8 @@ modules.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,clion
 
-.idea
+.idea/**
+
+### Executables ###
+
+lab2
