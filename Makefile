@@ -1,10 +1,10 @@
 CC = g++
 CFLAGS = -O3
 LFLAGS = -lepoxy -lGL -lglfw -lm
-NAME = lab2
+NAME = lab3
 
-OBJS = AGL3-example.o AGL3Window.o CirclePolygon.o
-DEPS = AGL3Drawable.hpp AGL3Window.hpp CirclePolygon.hpp
+OBJS = $(shell ls *.cpp | sed 's/\.cpp/\.o/')
+DEPS = $(shell ls *.hpp)
 
 $(NAME) : $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $(NAME) $(LFLAGS)
