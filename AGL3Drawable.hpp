@@ -17,7 +17,7 @@ public:
     GLfloat x = 0;
     GLfloat y = 0;
 
-   AGLDrawable(GLuint _pid=0) {
+   explicit AGLDrawable(GLuint _pid=0) {
       pId=_pid;
       glGenVertexArrays(1, &vaoId);
       glGenBuffers(     1, &vboId);
@@ -45,7 +45,7 @@ public:
       glUseProgram(p());
       return res;
    }
-   int compileShadersFromFile(const char *vs, const char *fs, const char *gs=NULL) {
+   int compileShadersFromFile(const char *vs, const char *fs, const char *gs=nullptr) {
       GLuint  v = glCreateShader(GL_VERTEX_SHADER);
       GLuint  f = glCreateShader(GL_FRAGMENT_SHADER);
       GLuint  g = 0;
@@ -58,18 +58,18 @@ public:
       glUseProgram(p());
       return res;
    }
-   void bindVAO() {
+   void bindVAO() const {
       glBindVertexArray(vaoId);
    }
-   void bindBuffers() {
+   void bindBuffers() const {
       glBindVertexArray(            vaoId);
       glBindBuffer(GL_ARRAY_BUFFER, vboId);
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId);
    }
-   void bindProgram() {
+   void bindProgram() const {
       glUseProgram(pId);
    }
-   GLuint p() {
+   GLuint p() const {
       return pId;
    }
 
@@ -80,7 +80,7 @@ private:
    int compileShaders(GLuint v, GLuint f, GLuint g=0) {
       GLint Result = GL_FALSE;
       if (g) Result = CompileLink(g, "GS");
-      if ( Result = CompileLink(v, "VS") )
+      if ( (Result = CompileLink(v, "VS")) )
          if ( CompileLink(f, "FS") ) {
             pId = glCreateProgram();
             glAttachShader(pId,v);
@@ -93,7 +93,7 @@ private:
       if (g) glDeleteShader(g);
       return Result;
    }
-   GLint CompileLink(GLuint v, const char *which, int prog=0) {
+   static GLint CompileLink(GLuint v, const char *which, int prog=0) {
       GLint Result = GL_FALSE;
       int InfoLogLength;
       if (prog) {
@@ -108,14 +108,14 @@ private:
       if ( InfoLogLength > 0 && !Result ) {
          std::vector<char> Message(InfoLogLength+1);
          if (prog)
-            glGetProgramInfoLog(v,InfoLogLength,NULL,&Message[0]);
+            glGetProgramInfoLog(v,InfoLogLength,nullptr,&Message[0]);
          else
-            glGetShaderInfoLog(v,InfoLogLength,NULL,&Message[0]);
+            glGetShaderInfoLog(v,InfoLogLength,nullptr,&Message[0]);
          printf("%s: %s\n", which, &Message[0]);
       }
       return Result;
    }
-   void getShaderSource(GLuint sId, const char * file) {
+   static void getShaderSource(GLuint sId, const char * file) {
       std::string sCode;
       std::ifstream sStream(file, std::ios::in);
       if(sStream.is_open()) {
@@ -129,7 +129,7 @@ private:
          return ;
       }
       char const * SourcePointer = sCode.c_str();
-      glShaderSource(sId, 1, &SourcePointer , NULL);
+      glShaderSource(sId, 1, &SourcePointer, nullptr);
    }
 };
 

@@ -17,7 +17,7 @@ using namespace std;
 
 void AGLErrors(const char *comment) {
    GLenum er;
-   while (er=glGetError())
+   while ((er=glGetError()))
       fprintf(stderr, "\nOpenGL ERROR: 0x%04x    =============%s===\n", er, comment);
 }
 
@@ -67,7 +67,7 @@ void AGLWindow::ScrollCB(double xp, double yp){}
 void AGLWindow::MousePosCB(double xp, double yp){}
 
 
-void AGLWindow::MainLoop ( void ) {
+void AGLWindow::MainLoop() {
    while (  glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(window) == 0 ) {
 
@@ -150,35 +150,35 @@ void AGLWindow::Init(int width, int height, const char *name, int fullscr, int v
 
 void AGLWindow::CallbackResize(GLFWwindow* window, int cx, int cy) {
    void *ptr = glfwGetWindowUserPointer( window );
-   if ( AGLWindow *winPtr = static_cast<AGLWindow*>( ptr ) )
+   if ( auto *winPtr = static_cast<AGLWindow*>( ptr ) )
       winPtr->Resize( cx, cy );
 }
 
 void AGLWindow::CallbackKey(GLFWwindow* window, int key, int scancode, int action, int mods) {
    void *ptr = glfwGetWindowUserPointer( window );
-   if ( AGLWindow *winPtr = static_cast<AGLWindow*>( ptr ) )
+   if ( auto *winPtr = static_cast<AGLWindow*>( ptr ) )
       winPtr->KeyCB( key, scancode, action, mods );
 }
 
 void AGLWindow::CallbackMouseButton(GLFWwindow* window, int button, int action, int mods) {
    void *ptr = glfwGetWindowUserPointer( window );
-   if ( AGLWindow *winPtr = static_cast<AGLWindow*>( ptr ) )
+   if ( auto *winPtr = static_cast<AGLWindow*>( ptr ) )
       winPtr->MouseButtonCB( button, action, mods );
 }
 
 void AGLWindow::CallbackScroll(GLFWwindow* window, double xp, double yp) {
    void *ptr = glfwGetWindowUserPointer( window );
-   if ( AGLWindow *winPtr = static_cast<AGLWindow*>( ptr ) )
+   if ( auto *winPtr = static_cast<AGLWindow*>( ptr ) )
       winPtr->ScrollCB( xp, yp );
 }
 
 void AGLWindow::CallbackMousePos(GLFWwindow* window, double xp, double yp) {
    void *ptr = glfwGetWindowUserPointer( window );
-   if ( AGLWindow *winPtr = static_cast<AGLWindow*>( ptr ) )
+   if ( auto *winPtr = static_cast<AGLWindow*>( ptr ) )
       winPtr->MousePosCB( xp, yp );
 }
 
-bool AGLWindow::IsFullScreen( void ) {
+bool AGLWindow::IsFullScreen() {
    return glfwGetWindowMonitor( window ) != nullptr;
 }
 

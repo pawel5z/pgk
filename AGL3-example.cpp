@@ -5,8 +5,8 @@
 // ==========================================================================
 // AGL3 example usage 
 //===========================================================================
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <glm/glm.hpp>
 
 #include "AGL3Window.hpp"
@@ -72,7 +72,7 @@ class MyCross : public AGLDrawable {
 public:
     GLfloat armLength;
 
-   MyCross(GLfloat armLength) : AGLDrawable(0) {
+   explicit MyCross(GLfloat armLength) : AGLDrawable(0) {
        if (armLength <= 0)
            throw std::invalid_argument("armLength must be non-negative");
        this->armLength = armLength;
@@ -150,11 +150,11 @@ public:
 // ==========================================================================
 class MyWin : public AGLWindow {
 public:
-    MyWin() {};
+    MyWin() = default;
     MyWin(int _wd, int _ht, const char *name, int vers, int fullscr=0)
-        : AGLWindow(_wd, _ht, name, vers, fullscr) {};
-    virtual void KeyCB(int key, int scancode, int action, int mods);
-    void MainLoop();
+        : AGLWindow(_wd, _ht, name, fullscr, vers) {};
+    void KeyCB(int key, int scancode, int action, int mods) override;
+    void MainLoop() override;
 };
 
 

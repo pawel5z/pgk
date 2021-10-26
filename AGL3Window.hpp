@@ -18,7 +18,7 @@ void AGLErrors(const char *comment); // Prints  Comment and error
 
 class AGLWindow {
 public:
-   AGLWindow(){};
+   AGLWindow()= default;
    AGLWindow(int _wd, int _ht, const char *name, int fullscr=0, int vers=33)
    {  Init(_wd,_ht,name,fullscr,vers);  };          // fullscr=1/2 vers=33
    void Init(int _wd, int _ht, const char *name, int fullscr=0, int vers=33);
@@ -28,7 +28,7 @@ public:
    int   wd,ht;                                       // Window dimensions
    float aspect;                                      // Window aspect ration
 
-   float Viewport(   int _vtx,int _vty,int _vwd,int _vht);//return aspect ratio
+   static float Viewport(   int _vtx,int _vty,int _vwd,int _vht);//return aspect ratio
    float ViewportOne(int _vtx,int _vty,int _vwd,int _vht);//store vp, return aspect
    void  GetCursorNDC(float *x, float *y);            // mouse position VpOne
 
@@ -39,13 +39,13 @@ public:
    virtual void ScrollCB(double xp, double yp);
    virtual void MousePosCB(double xp, double yp);
 
-   void MainLoop ( void );
+   virtual void MainLoop();
    
    void WaitForFixedFPS(float frame_time=1./60.); // Use before glfwSwapBuffers()
 //===========================================================================
 
 private:
-   bool IsFullScreen(  void );
+   bool IsFullScreen();
    void SetFullScreen( bool fullscreen );
 
    int vtx, vty, vwd, vht; // GtCursorNDC() and ViewportOne()
