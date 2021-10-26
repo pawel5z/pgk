@@ -6,6 +6,8 @@ NAME = lab3
 OBJS = $(shell ls *.cpp | sed 's/\.cpp/\.o/')
 DEPS = $(shell ls *.hpp)
 
+all: $(NAME)
+
 $(NAME) : $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $(NAME) $(LFLAGS)
 
