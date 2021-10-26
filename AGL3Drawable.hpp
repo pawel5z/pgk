@@ -11,11 +11,11 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <glm/glm.hpp>
 
 class AGLDrawable {
 public:
-    GLfloat x = 0;
-    GLfloat y = 0;
+    glm::vec2 pos = glm::vec2(0, 0);
 
    explicit AGLDrawable(GLuint _pid=0) {
       pId=_pid;

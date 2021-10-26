@@ -68,7 +68,7 @@ void CirclePolygon::draw() {
     bindProgram();
     bindBuffers();
     glUniform1f(0, radius);  // scale  in vertex shader
-    glUniform2f(1, x, y);  // center in vertex shader
+    glUniform2f(1, pos.x, pos.y);  // center in vertex shader
     glUniform3f(3, circleColor[0], circleColor[1], circleColor[2]);
 
     glDrawArrays(GL_LINE_LOOP, 0, n);

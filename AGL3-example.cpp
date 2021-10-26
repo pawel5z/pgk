@@ -132,7 +132,7 @@ public:
       bindProgram();
       bindBuffers();
       glUniform1f(0, armLength);  // scale  in vertex shader
-      glUniform2f(1, x, y);  // center in vertex shader
+      glUniform2f(1, pos.x, pos.y);  // center in vertex shader
       glUniform3f(3, cross_color[0],cross_color[1],cross_color[2]);
 
       glDrawArrays(GL_LINES, 0, 4);
@@ -171,31 +171,31 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
 
 // ==========================================================================
 bool isCollision(const MyCross& cross, const CirclePolygon& circle) {
-    GLfloat hx1 = cross.x - cross.armLength, hx2 = cross.x + cross.armLength;
-    GLfloat vy1 = cross.y + cross.armLength, vy2 = cross.y - cross.armLength;
+    GLfloat hx1 = cross.pos.x - cross.armLength, hx2 = cross.pos.x + cross.armLength;
+    GLfloat vy1 = cross.pos.y + cross.armLength, vy2 = cross.pos.y - cross.armLength;
 
     //// check vertical cross bar collision
-    GLfloat vDist = std::abs(cross.y - circle.y);
+    GLfloat vDist = std::abs(cross.pos.y - circle.pos.y);
     // circle center between horizontal ends of the cross
-    if (vDist <= circle.radius && hx1 <= circle.x && circle.x <= hx2)
+    if (vDist <= circle.radius && hx1 <= circle.pos.x && circle.pos.x <= hx2)
         return true;
     // circle center on the left side of the cross
-    if (glm::distance(glm::vec2(hx1, cross.y), glm::vec2(circle.x, circle.y)) <= circle.radius)
+    if (glm::distance(glm::vec2(hx1, cross.pos.y), glm::vec2(circle.pos.x, circle.pos.y)) <= circle.radius)
         return true;
     // circle center on the right side of the cross
-    if (glm::distance(glm::vec2(hx2, cross.y), glm::vec2(circle.x, circle.y)) <= circle.radius)
+    if (glm::distance(glm::vec2(hx2, cross.pos.y), glm::vec2(circle.pos.x, circle.pos.y)) <= circle.radius)
         return true;
 
     //// check horizontal cross bar collision
-    GLfloat hDist = std::abs(cross.x - circle.x);
+    GLfloat hDist = std::abs(cross.pos.x - circle.pos.x);
     // circle center between vertical ends of the cross
-    if (hDist <= circle.radius && vy1 <= circle.y && circle.y <= vy2)
+    if (hDist <= circle.radius && vy1 <= circle.pos.y && circle.pos.y <= vy2)
         return true;
     // circle center above the cross
-    if (glm::distance(glm::vec2(cross.x, vy1), glm::vec2(circle.x, circle.y)) <= circle.radius)
+    if (glm::distance(glm::vec2(cross.pos.x, vy1), glm::vec2(circle.pos.x, circle.pos.y)) <= circle.radius)
         return true;
     // circle center under the cross
-    if (glm::distance(glm::vec2(cross.x, vy2), glm::vec2(circle.x, circle.y)) <= circle.radius)
+    if (glm::distance(glm::vec2(cross.pos.x, vy2), glm::vec2(circle.pos.x, circle.pos.y)) <= circle.radius)
         return true;
 
     return false;
@@ -206,10 +206,10 @@ void MyWin::MainLoop() {
    ViewportOne(0,0,wd,ht);
 
    MyCross cross(1.0/16);
-   cross.x = 0.0; cross.y = 0.5;
+   cross.pos.x = 0.0; cross.pos.y = 0.5;
    MyTri   trian;
    CirclePolygon circlePoly(64, 1.0/16);
-   circlePoly.x = -0.5; circlePoly.y = 0.5;
+   circlePoly.pos.x = -0.5; circlePoly.pos.y = 0.5;
 
    do {
       glClear( GL_COLOR_BUFFER_BIT );
@@ -232,18 +232,18 @@ void MyWin::MainLoop() {
          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
      // cross moving
       } else if (glfwGetKey(win(), GLFW_KEY_RIGHT ) == GLFW_PRESS) {
-         cross.x += 0.01;
+         cross.pos.x += 0.01;
       } else if (glfwGetKey(win(), GLFW_KEY_LEFT ) == GLFW_PRESS) {
-         cross.x -= 0.01;
+         cross.pos.x -= 0.01;
      // circle moving
       } else if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS) {
-         circlePoly.y += 0.01;
+         circlePoly.pos.y += 0.01;
       } else if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS) {
-         circlePoly.y -= 0.01;
+         circlePoly.pos.y -= 0.01;
       } else if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS) {
-         circlePoly.x -= 0.01;
+         circlePoly.pos.x -= 0.01;
       } else if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS) {
-         circlePoly.x += 0.01;
+         circlePoly.pos.x += 0.01;
       }
    } while( glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(win()) == 0 &&
