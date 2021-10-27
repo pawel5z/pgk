@@ -12,10 +12,13 @@
 #include <iostream>
 #include <fstream>
 #include <glm/glm.hpp>
+#include <epoxy/gl.h>
+#include <epoxy/glx.h>
 
 class AGLDrawable {
 public:
     glm::vec2 pos = glm::vec2(0, 0);
+    GLfloat scale = 1.0f;
 
    explicit AGLDrawable(GLuint _pid=0) {
       pId=_pid;
@@ -79,6 +82,8 @@ public:
    GLuint p() const {
       return pId;
    }
+
+   virtual void draw() = 0;
 
 private:
    // VAO, VBO, Prog to clean in destructor

@@ -1,9 +1,6 @@
 #ifndef CIRCLEPOLYGON_HPP
 #define CIRCLEPOLYGON_HPP
 
-#include <epoxy/gl.h>
-#include <epoxy/glx.h>
-
 #include "AGL3Drawable.hpp"
 
 class CirclePolygon : public AGLDrawable {
@@ -13,7 +10,7 @@ public:
     CirclePolygon(int n, GLfloat radius);
     void setShaders();
     void setBuffers();
-    void draw();
+    void draw() override;
     void setColor(float r, float g, float b);
 
 private:

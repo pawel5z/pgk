@@ -24,7 +24,7 @@ public:
    void setShaders() {
       compileShaders(R"END(
 
-         #version 330 
+         #version 330
          out vec4 vcolor;
          out vec2 pos;
 
@@ -58,7 +58,7 @@ public:
 
       )END");
    }
-   void draw() {
+   void draw() override {
       bindProgram();
       glDrawArrays(GL_TRIANGLES, 0, 3);
    }
@@ -128,7 +128,7 @@ public:
          (void*)0            // array buffer offset
       );
    }
-   void draw() {
+   void draw() override {
       bindProgram();
       bindBuffers();
       glUniform1f(0, armLength);  // scale  in vertex shader
