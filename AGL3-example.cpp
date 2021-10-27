@@ -45,6 +45,10 @@ inline glm::vec2 onBoard(int i, int j, int n) {
             -0.9f + (GLfloat)j / (GLfloat)(n-1) * 1.8f};
 }
 
+inline GLfloat randAngle() {
+    return (float)(rand() % 360) * (float)M_PI / 180.0f;
+}
+
 // ==========================================================================
 void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
@@ -54,7 +58,7 @@ void MyWin::MainLoop() {
             new std::vector<std::unique_ptr<TriangleObject>>(0));
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            ts->push_back(std::make_unique<TriangleObject>(onBoard(i, j, n), 0.0f, 1.0f/12.0f));
+            ts->push_back(std::make_unique<TriangleObject>(onBoard(i, j, n), randAngle(), 1.0f/12.0f));
         }
     }
     std::unique_ptr<TriangleObject> &player = ts->at(0);
@@ -96,6 +100,7 @@ void MyWin::MainLoop() {
 }
 
 int main(int argc, char *argv[]) {
+    srand(time(nullptr));
     MyWin win;
     win.Init(800,600,"AGL3 example",0,33);
     win.MainLoop();
