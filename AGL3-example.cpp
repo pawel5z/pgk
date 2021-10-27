@@ -64,7 +64,7 @@ void MyWin::MainLoop() {
     std::unique_ptr<TriangleObject> &player = ts->at(0);
     player->setVertexColor(0, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
     player->setVertexColor(1, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
-    player->setVertexColor(2, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+    player->setVertexColor(2, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
     do {
         glClear( GL_COLOR_BUFFER_BIT );
