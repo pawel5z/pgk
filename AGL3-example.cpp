@@ -8,9 +8,11 @@
 #include <cstdlib>
 #include <cstdio>
 #include <glm/glm.hpp>
+#include <memory>
 
 #include "AGL3Window.hpp"
 #include "AGL3Drawable.hpp"
+#include "TriangleObject.hpp"
 
 // ==========================================================================
 // Window Main Loop Inits ...................................................
@@ -35,16 +37,39 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
     }
 }
 
+/* Interpolate (i, j) from {0..n}x{0..n}
+ * to [-0.9, 0.9]x[-0.9, 0.9]
+ */
+inline glm::vec2 onBoard(int i, int j, int n) {
+    return {-0.9f + (GLfloat)i / (GLfloat)(n-1) * 1.8f,
+            -0.9f + (GLfloat)j / (GLfloat)(n-1) * 1.8f};
+}
+
 // ==========================================================================
 void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
+
+    int n = 10;
+    std::unique_ptr<std::vector<std::unique_ptr<TriangleObject>>> ts(
+            new std::vector<std::unique_ptr<TriangleObject>>(0));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            ts->push_back(std::make_unique<TriangleObject>(onBoard(i, j, n), 0.0f, 1.0f/12.0f));
+        }
+    }
+    std::unique_ptr<TriangleObject> &player = ts->at(0);
+    player->setVertexColor(0, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+    player->setVertexColor(1, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
+    player->setVertexColor(2, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
 
     do {
         glClear( GL_COLOR_BUFFER_BIT );
 
         AGLErrors("main-loopbegin");
         // =====================================================        Drawing
-        // TODO draw scene elements
+        for (auto const &t : *ts) {
+            t->draw();
+        }
         AGLErrors("main-afterdraw");
 
         glfwSwapBuffers(win()); // =============================   Swap buffers
