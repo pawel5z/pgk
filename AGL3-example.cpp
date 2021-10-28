@@ -9,7 +9,6 @@
 #include <cstdio>
 #include <memory>
 #include <sstream>
-#include <getopt.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 
@@ -75,31 +74,22 @@ void MyWin::MainLoop() {
 
 int main(int argc, char *argv[]) {
     srand(time(nullptr));
-    int c;
-    static struct option long_options[] = {
-            {"seed", required_argument, nullptr, 's'},
-            {nullptr, 0, nullptr, 0}
-    };
-    int conv;
     std::stringstream ss;
-    while ((c = getopt_long(argc, argv, "s:n:", long_options, nullptr)) != -1) {
-        ss.clear();
-        switch (c) {
-            case 's':
-                ss << optarg;
-                ss >> conv;
-                if (!ss.fail())
-                    srand(conv);
-                break;
-            case 'n':
-                ss << optarg;
-                ss >> conv;
-                if (!ss.fail() && conv >= 2)
-                    latticeSize = conv;
-                break;
-            default:
-                break;
-        }
+    if (argc > 1) {
+        ss << argv[1];
+        unsigned int seed;
+        ss >> seed;
+        if (!ss.fail())
+            srand(seed);
+        else
+            ss.clear();
+    }
+    if (argc > 2) {
+        ss << argv[2];
+        int newLatticeSize;
+        ss >> newLatticeSize;
+        if (!ss.fail())
+            latticeSize = newLatticeSize;
     }
     MyWin win;
     win.Init(800,600,"AGL3 example",0,33);
