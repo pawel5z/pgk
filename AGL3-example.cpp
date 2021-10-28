@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <memory>
+#include <sstream>
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 
@@ -50,16 +51,17 @@ inline GLfloat randAngle() {
     return (GLfloat)(rand() % 360) * glm::pi<GLfloat>() / 180.0f;
 }
 
+static int latticeSize = 10;
+
 // ==========================================================================
 void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
 
-    int n = 10;
     std::unique_ptr<std::vector<std::unique_ptr<TriangleObject>>> ts(
             new std::vector<std::unique_ptr<TriangleObject>>(0));
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            ts->push_back(std::make_unique<TriangleObject>(onBoard(i, j, n), randAngle(), 1.0f/12.0f));
+    for (int i = 0; i < latticeSize; i++) {
+        for (int j = 0; j < latticeSize; j++) {
+            ts->push_back(std::make_unique<TriangleObject>(onBoard(i, j, latticeSize), randAngle(), 1.0f/12.0f));
         }
     }
     std::unique_ptr<TriangleObject> &player = ts->at(0);
@@ -98,7 +100,20 @@ void MyWin::MainLoop() {
 }
 
 int main(int argc, char *argv[]) {
-    srand(time(nullptr));
+    std::stringstream ss;
+    if (argc > 1)
+        ss << argv[1];
+    unsigned int seed;
+    ss >> seed;
+    srand(!ss.fail() && argc > 1 ? seed : time(nullptr));
+    ss.clear();
+    if (argc > 2) {
+        ss << argv[2];
+        int newLatticeSize;
+        ss >> newLatticeSize;
+        if (!ss.fail())
+            latticeSize = newLatticeSize;
+    }
     MyWin win;
     win.Init(800,600,"AGL3 example",0,33);
     win.MainLoop();
