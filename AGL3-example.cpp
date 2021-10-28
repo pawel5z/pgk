@@ -59,7 +59,7 @@ inline bool sameSide(const glm::vec2 &a, const glm::vec2 &b, const glm::vec2 &p1
                     glm::cross(baDiff, glm::vec3(p2 - a, 0.0f))) >= 0.0f;
 }
 
-bool isCollision(std::unique_ptr<TriangleObject> &t1, std::unique_ptr<TriangleObject> &t2) {
+bool isCollision(std::shared_ptr<TriangleObject> &t1, std::shared_ptr<TriangleObject> &t2) {
     bool flag = true;
     // relative to edges of t1
     for (int i = 0; i < 3; i++) {
@@ -86,14 +86,13 @@ static int latticeSize = 10;
 void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
 
-    std::unique_ptr<std::vector<std::unique_ptr<TriangleObject>>> ts(
-            new std::vector<std::unique_ptr<TriangleObject>>(0));
+    std::vector<std::shared_ptr<TriangleObject>> ts;
     for (int i = 0; i < latticeSize; i++) {
         for (int j = 0; j < latticeSize; j++) {
-            ts->push_back(std::make_unique<TriangleObject>(onBoard(i, j, latticeSize), randAngle(), 1.0f/12.0f));
+            ts.push_back(std::make_shared<TriangleObject>(onBoard(i, j, latticeSize), randAngle(), 1.0f/12.0f));
         }
     }
-    std::unique_ptr<TriangleObject> &player = ts->at(0);
+    std::shared_ptr<TriangleObject> &player = ts.at(0);
     player->setVertexColor(0, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
     player->setVertexColor(1, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
     player->setVertexColor(2, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
@@ -109,7 +108,7 @@ void MyWin::MainLoop() {
         AGLErrors("main-loopbegin");
         // =====================================================        Drawing
         bg.draw(aspect);
-        for (auto const &t : *ts) {
+        for (auto const &t : ts) {
             t->draw(aspect);
         }
         AGLErrors("main-afterdraw");
@@ -117,15 +116,15 @@ void MyWin::MainLoop() {
         WaitForFixedFPS();
         glfwSwapBuffers(win()); // =============================   Swap buffers
 
-        for (int i = 1; i < ts->size() - 1; i++) {
-            if (isCollision(player, ts->at(i))) {
+        for (int i = 1; i < ts.size() - 1; i++) {
+            if (isCollision(player, ts.at(i))) {
                 gameOver = true;
                 printf("You lose.\n");
                 break;
             }
         }
 
-        if (isCollision(player, ts->at(ts->size()-1))) {
+        if (isCollision(player, ts.at(ts.size()-1))) {
             gameOver = true;
             printf("You win.\nTime: %.3lf seconds", glfwGetTime() - startTime);
         }
