@@ -111,6 +111,7 @@ void MyWin::MainLoop() {
         }
         AGLErrors("main-afterdraw");
 
+        WaitForFixedFPS();
         glfwSwapBuffers(win()); // =============================   Swap buffers
 
         for (int i = 1; i < ts->size() - 1; i++) {
