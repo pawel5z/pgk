@@ -1,6 +1,8 @@
 #ifndef TRIANGLEOBJECT_HPP
 #define TRIANGLEOBJECT_HPP
 
+#include <memory>
+
 #include "AGL3Drawable.hpp"
 
 class TriangleObject : public AGLDrawable {
@@ -9,6 +11,11 @@ public:
             0.701f, 0.301f, 0.0f, 1.0f,
             0.701f, 0.301f, 0.0f, 1.0f,
             0.858f, 0.0f, 0.129f, 1.0f
+    };
+    glm::vec2 vertices[3] = {
+            glm::vec2(-0.25f, -1.0f),
+            glm::vec2(0.25f, -1.0f),
+            glm::vec2(0.0f, 1.0f)
     };
 
     TriangleObject();
@@ -19,6 +26,8 @@ public:
     GLfloat getRot() const;
     void setRot(GLfloat rot);
     const glm::mat2 &getRotMat() const;
+    std::shared_ptr<GLfloat[]> getVerticesArray() const;
+    glm::vec2 getVertexWorldCoords(int i);
 
 private:
     GLfloat rot = 0.0f;

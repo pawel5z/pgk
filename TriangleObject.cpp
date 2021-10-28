@@ -28,12 +28,7 @@ void TriangleObject::setShaders() {
 
 void TriangleObject::setBuffers() {
     bindBuffers();
-    GLfloat vert[3][2] = {
-            {-0.25f, -1.0f},
-            {0.25f, -1.0f},
-            {0.0f, 1.0f}
-    };
-    glBufferData(GL_ARRAY_BUFFER, 3 * 2 * sizeof(GLfloat), vert, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 3 * 2 * sizeof(GLfloat), getVerticesArray().get(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(
             0,                  // attribute 0, must match the layout in the shader.
@@ -71,4 +66,19 @@ void TriangleObject::setRot(GLfloat rot) {
 
 const glm::mat2 &TriangleObject::getRotMat() const {
     return rotMat;
+}
+
+std::shared_ptr<GLfloat[]> TriangleObject::getVerticesArray() const {
+    std::shared_ptr<GLfloat[]> verticesArray(new GLfloat[6]);
+    for (int i = 0; i < 3; i++) {
+        verticesArray.get()[2 * i] = vertices[i].x;
+        verticesArray.get()[2 * i + 1] = vertices[i].y;
+    }
+    return verticesArray;
+}
+
+glm::vec2 TriangleObject::getVertexWorldCoords(int i) {
+    if (i < 0 || 2 < i)
+        throw std::invalid_argument("vertex index out of range: " + std::to_string(i));
+    return pos + scale * rotMat * vertices[i];
 }

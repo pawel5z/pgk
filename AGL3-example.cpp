@@ -52,6 +52,33 @@ inline GLfloat randAngle() {
     return (GLfloat)(rand() % 360) * glm::pi<GLfloat>() / 180.0f;
 }
 
+inline bool sameSide(const glm::vec2 &a, const glm::vec2 &b, const glm::vec2 &p1, const glm::vec2 &p2) {
+    glm::vec3 baDiff = glm::vec3(b - a, 0.0f);
+    return glm::dot(glm::cross(baDiff, glm::vec3(p1 - a, 0.0f)),
+                    glm::cross(baDiff, glm::vec3(p2 - a, 0.0f))) >= 0.0f;
+}
+
+bool isCollision(std::unique_ptr<TriangleObject> &t1, std::unique_ptr<TriangleObject> &t2) {
+    bool flag = true;
+    // relative to edges of t1
+    for (int i = 0; i < 3; i++) {
+        int a = i, b = (i + 1) % 3, c = (i + 2) % 3;
+        if (!sameSide(t1->getVertexWorldCoords(a), t1->getVertexWorldCoords(b), t1->getVertexWorldCoords(c), t2->getVertexWorldCoords(0)) &&
+            !sameSide(t1->getVertexWorldCoords(a), t1->getVertexWorldCoords(b), t1->getVertexWorldCoords(c), t2->getVertexWorldCoords(1)) &&
+            !sameSide(t1->getVertexWorldCoords(a), t1->getVertexWorldCoords(b), t1->getVertexWorldCoords(c), t2->getVertexWorldCoords(2)))
+            flag = false;
+    }
+    // relative to edges of t2
+    for (int i = 0; i < 3; i++) {
+        int a = i, b = (i + 1) % 3, c = (i + 2) % 3;
+        if (!sameSide(t2->getVertexWorldCoords(a), t2->getVertexWorldCoords(b), t2->getVertexWorldCoords(c), t1->getVertexWorldCoords(0)) &&
+            !sameSide(t2->getVertexWorldCoords(a), t2->getVertexWorldCoords(b), t2->getVertexWorldCoords(c), t1->getVertexWorldCoords(1)) &&
+            !sameSide(t2->getVertexWorldCoords(a), t2->getVertexWorldCoords(b), t2->getVertexWorldCoords(c), t1->getVertexWorldCoords(2)))
+            flag = false;
+    }
+    return flag;
+}
+
 static int latticeSize = 10;
 
 // ==========================================================================
@@ -72,6 +99,7 @@ void MyWin::MainLoop() {
     GLfloat speed = 0.005;
     GLfloat angSpeed = 0.02;
 
+    bool gameOver = false;
     do {
         glClear( GL_COLOR_BUFFER_BIT );
 
@@ -83,6 +111,20 @@ void MyWin::MainLoop() {
         AGLErrors("main-afterdraw");
 
         glfwSwapBuffers(win()); // =============================   Swap buffers
+
+        for (int i = 1; i < ts->size() - 1; i++) {
+            if (isCollision(player, ts->at(i))) {
+                gameOver = true;
+                printf("You lose.\n");
+                break;
+            }
+        }
+
+        if (isCollision(player, ts->at(ts->size()-1))) {
+            gameOver = true;
+            printf("You win.\n");
+        }
+
         glfwPollEvents();
         //glfwWaitEvents();
 
@@ -97,7 +139,8 @@ void MyWin::MainLoop() {
             player->pos += player->getRotMat() * glm::vec2(0.0f, -speed);
         }
     } while(glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-            glfwWindowShouldClose(win()) == 0);
+            glfwWindowShouldClose(win()) == 0 &&
+            !gameOver);
 }
 
 int main(int argc, char *argv[]) {
