@@ -100,6 +100,7 @@ void MyWin::MainLoop() {
     GLfloat angSpeed = 0.02;
 
     bool gameOver = false;
+    double startTime = glfwGetTime();
     do {
         glClear( GL_COLOR_BUFFER_BIT );
 
@@ -122,7 +123,7 @@ void MyWin::MainLoop() {
 
         if (isCollision(player, ts->at(ts->size()-1))) {
             gameOver = true;
-            printf("You win.\n");
+            printf("You win.\nTime: %.3lf seconds", glfwGetTime() - startTime);
         }
 
         glfwPollEvents();
