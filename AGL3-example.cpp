@@ -7,8 +7,9 @@
 //===========================================================================
 #include <cstdlib>
 #include <cstdio>
-#include <glm/glm.hpp>
 #include <memory>
+#include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 
 #include "AGL3Window.hpp"
 #include "AGL3Drawable.hpp"
@@ -46,7 +47,7 @@ inline glm::vec2 onBoard(int i, int j, int n) {
 }
 
 inline GLfloat randAngle() {
-    return (float)(rand() % 360) * (float)M_PI / 180.0f;
+    return (GLfloat)(rand() % 360) * glm::pi<GLfloat>() / 180.0f;
 }
 
 // ==========================================================================
