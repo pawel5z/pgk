@@ -83,7 +83,7 @@ public:
       return pId;
    }
 
-   virtual void draw() = 0;
+   virtual void draw(GLfloat aspect) = 0;
 
 private:
    // VAO, VBO, Prog to clean in destructor

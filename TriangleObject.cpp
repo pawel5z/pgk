@@ -11,14 +11,14 @@ TriangleObject::TriangleObject(glm::vec2 pos, GLfloat rot, GLfloat scale) : AGLD
     init();
 }
 
-void TriangleObject::draw() {
+void TriangleObject::draw(GLfloat aspect) {
     bindProgram();
     bindBuffers();
-    // TODO pass uniforms
     glUniform2fv(0, 1, glm::value_ptr(pos));
     glUniform1f(1, scale);
     glUniform1f(2, rot);
-    glUniform4fv(3, 3, colors);
+    glUniform1f(3, aspect);
+    glUniform4fv(4, 3, colors);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 

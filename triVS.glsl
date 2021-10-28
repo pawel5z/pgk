@@ -5,7 +5,8 @@
 layout(location = 0) uniform vec2  objCenter;
 layout(location = 1) uniform float scale;
 layout(location = 2) uniform float rot;
-layout(location = 3) uniform vec4[3] vcolors;
+layout(location = 3) uniform float aspect;
+layout(location = 4) uniform vec4[3] vcolors;
 
 layout(location = 0) in vec2 pos;
 
@@ -19,9 +20,16 @@ void rotate(in vec2 pos, out vec2 rotPos) {
     rotPos = rotMat * pos;
 }
 
+void compensateForAspect(inout vec2 v) {
+    v = vec2(float(aspect > 1.0f) * v.x / aspect + float(aspect <= 1.0f) * v.x,
+             float(aspect < 1.0f) * v.y * aspect + float(aspect >= 1.0f) * v.y);
+}
+
 void main(void) {
     vcolor = vcolors[gl_VertexID];
     vec2 rotPos;
     rotate(pos, rotPos);
-    gl_Position = vec4(rotPos * scale + objCenter, 0.0, 1.0);
+    vec2 position = rotPos * scale + objCenter;
+    compensateForAspect(position);
+    gl_Position = vec4(position, 0.0, 1.0);
 }

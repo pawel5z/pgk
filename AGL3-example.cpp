@@ -107,7 +107,7 @@ void MyWin::MainLoop() {
         AGLErrors("main-loopbegin");
         // =====================================================        Drawing
         for (auto const &t : *ts) {
-            t->draw();
+            t->draw(aspect);
         }
         AGLErrors("main-afterdraw");
 
