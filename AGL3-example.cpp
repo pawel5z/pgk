@@ -66,8 +66,8 @@ void MyWin::MainLoop() {
     player->setVertexColor(0, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
     player->setVertexColor(1, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
     player->setVertexColor(2, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-    GLfloat speed = 0.01;
-    GLfloat angSpeed = 0.01;
+    GLfloat speed = 0.005;
+    GLfloat angSpeed = 0.02;
 
     do {
         glClear( GL_COLOR_BUFFER_BIT );
@@ -85,13 +85,13 @@ void MyWin::MainLoop() {
 
         // player moving
         if (glfwGetKey(win(), GLFW_KEY_RIGHT ) == GLFW_PRESS) {
-            player->rot = glm::mod(player->rot - angSpeed, 2.0f * glm::pi<GLfloat>());
+            player->setRot(glm::mod(player->getRot() - angSpeed, 2.0f * glm::pi<GLfloat>()));
         } else if (glfwGetKey(win(), GLFW_KEY_LEFT ) == GLFW_PRESS) {
-            player->rot = glm::mod(player->rot + angSpeed, 2.0f * glm::pi<GLfloat>());
+            player->setRot(glm::mod(player->getRot() + angSpeed, 2.0f * glm::pi<GLfloat>()));
         } else if (glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS) {
-            // TODO
+            player->pos += player->getRotMat() * glm::vec2(0.0f, speed);
         } else if (glfwGetKey(win(), GLFW_KEY_DOWN) == GLFW_PRESS) {
-            // TODO
+            player->pos += player->getRotMat() * glm::vec2(0.0f, -speed);
         }
     } while(glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(win()) == 0);

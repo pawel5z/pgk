@@ -2,15 +2,13 @@
 #include <glm/gtc/type_ptr.hpp>
 
 TriangleObject::TriangleObject() : AGLDrawable(0) {
-    setShaders();
-    setBuffers();
+    init();
 }
 
 TriangleObject::TriangleObject(glm::vec2 pos, GLfloat rot, GLfloat scale) : AGLDrawable(0), rot(rot) {
     this->pos = pos;
     this->scale = scale;
-    setShaders();
-    setBuffers();
+    init();
 }
 
 void TriangleObject::draw() {
@@ -52,4 +50,25 @@ void TriangleObject::setVertexColor(int i, const glm::vec4 &color) {
         throw std::invalid_argument("vertex index out of range: " + std::to_string(i));
     for (int j = 0; j < 4; j++)
         colors[4 * i + j] = color[j];
+}
+
+void TriangleObject::init() {
+    setShaders();
+    setBuffers();
+    // init rotation matrix
+    setRot(rot);
+}
+
+GLfloat TriangleObject::getRot() const {
+    return rot;
+}
+
+void TriangleObject::setRot(GLfloat rot) {
+    this->rot = rot;
+    rotMat[0] = glm::vec2(glm::cos(rot), glm::sin(rot));
+    rotMat[1] = glm::vec2(-glm::sin(rot), glm::cos(rot));
+}
+
+const glm::mat2 &TriangleObject::getRotMat() const {
+    return rotMat;
 }
