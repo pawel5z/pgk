@@ -66,6 +66,8 @@ void MyWin::MainLoop() {
     player->setVertexColor(0, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
     player->setVertexColor(1, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
     player->setVertexColor(2, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    GLfloat speed = 0.01;
+    GLfloat angSpeed = 0.01;
 
     do {
         glClear( GL_COLOR_BUFFER_BIT );
@@ -81,16 +83,11 @@ void MyWin::MainLoop() {
         glfwPollEvents();
         //glfwWaitEvents();
 
-        // polygon filling
-        if (glfwGetKey(win(), GLFW_KEY_DOWN ) == GLFW_PRESS) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        } else if (glfwGetKey(win(), GLFW_KEY_UP ) == GLFW_PRESS) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         // player moving
-        } else if (glfwGetKey(win(), GLFW_KEY_RIGHT ) == GLFW_PRESS) {
-            // TODO
+        if (glfwGetKey(win(), GLFW_KEY_RIGHT ) == GLFW_PRESS) {
+            player->rot = glm::mod(player->rot - angSpeed, 2.0f * glm::pi<GLfloat>());
         } else if (glfwGetKey(win(), GLFW_KEY_LEFT ) == GLFW_PRESS) {
-            // TODO
+            player->rot = glm::mod(player->rot + angSpeed, 2.0f * glm::pi<GLfloat>());
         } else if (glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS) {
             // TODO
         } else if (glfwGetKey(win(), GLFW_KEY_DOWN) == GLFW_PRESS) {
