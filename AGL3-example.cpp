@@ -16,6 +16,7 @@
 #include "AGL3Window.hpp"
 #include "AGL3Drawable.hpp"
 #include "TriangleObject.hpp"
+#include "Background.h"
 
 // ==========================================================================
 // Window Main Loop Inits ...................................................
@@ -98,6 +99,7 @@ void MyWin::MainLoop() {
     player->setVertexColor(2, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
     GLfloat speed = 0.005;
     GLfloat angSpeed = 0.02;
+    Background bg;
 
     bool gameOver = false;
     double startTime = glfwGetTime();
@@ -106,6 +108,7 @@ void MyWin::MainLoop() {
 
         AGLErrors("main-loopbegin");
         // =====================================================        Drawing
+        bg.draw(aspect);
         for (auto const &t : *ts) {
             t->draw(aspect);
         }
