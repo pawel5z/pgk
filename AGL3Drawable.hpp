@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 #include <epoxy/gl.h>
 #include <epoxy/glx.h>
 
