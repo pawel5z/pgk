@@ -7,6 +7,9 @@ layout(location = 1) uniform float scale;
 layout(location = 2) uniform float rot;
 layout(location = 3) uniform float aspect;
 layout(location = 4) uniform vec4[3] vcolors;
+layout(location = 7) uniform float quitProgress;
+layout(location = 8) uniform float quitTime;
+layout(location = 9) uniform bool quitting;
 
 layout(location = 0) in vec2 pos;
 
@@ -31,5 +34,7 @@ void main(void) {
     rotate(pos, rotPos);
     vec2 position = rotPos * scale + objCenter;
     compensateForAspect(position);
+    if (quitting)
+        position -= float(quitting) * position * quitProgress / quitTime;
     gl_Position = vec4(position, 0.0, 1.0);
 }

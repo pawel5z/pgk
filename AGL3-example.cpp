@@ -28,6 +28,7 @@ public:
         : AGLWindow(_wd, _ht, name, fullscr, vers) {};
     void KeyCB(int key, int scancode, int action, int mods) override;
     void MainLoop() override;
+    void quitLoop(std::vector<std::shared_ptr<TriangleObject>> &ts, Background &bg, double quitTime = 3.0);
 };
 
 // ==========================================================================
@@ -129,6 +130,9 @@ void MyWin::MainLoop() {
             printf("You win.\nTime: %.3lf seconds", glfwGetTime() - startTime);
         }
 
+        if (gameOver)
+            quitLoop(ts, bg);
+
         glfwPollEvents();
         //glfwWaitEvents();
 
@@ -145,6 +149,27 @@ void MyWin::MainLoop() {
     } while(glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(win()) == 0 &&
             !gameOver);
+}
+
+void MyWin::quitLoop(std::vector<std::shared_ptr<TriangleObject>> &ts, Background &bg, double quitTime) {
+    double start = glfwGetTime();
+    do {
+        glClear( GL_COLOR_BUFFER_BIT );
+
+        AGLErrors("quit-loopbegin");
+        // =====================================================        Drawing
+        bg.draw(aspect, glfwGetTime() - start, quitTime, true);
+        for (auto const &t : ts) {
+            t->draw(aspect, glfwGetTime() - start, quitTime, true);
+        }
+        AGLErrors("quit-afterdraw");
+
+        WaitForFixedFPS();
+        glfwSwapBuffers(win()); // =============================   Swap buffers
+
+        glfwPollEvents();
+        //glfwWaitEvents();
+    } while (glfwGetTime() - start < quitTime);
 }
 
 int main(int argc, char *argv[]) {

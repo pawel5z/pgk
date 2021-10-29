@@ -3,6 +3,9 @@
 #extension GL_ARB_shading_language_420pack : require
 
 layout(location = 0) uniform float aspect;
+layout(location = 1) uniform float quitProgress;
+layout(location = 2) uniform float quitTime;
+layout(location = 3) uniform bool quitting;
 
 out vec4 vcolor;
 out vec2 pos;
@@ -24,6 +27,8 @@ void main(void) {
                                    vec4(0.937f, 0.458f, 0.023f, 1.0f));
     pos = vpositions[gl_VertexID];
     compensateForAspect(pos);
+    if (quitting)
+        pos -= float(quitting) * pos * quitProgress / quitTime;
     gl_Position = vec4(pos, 0.5, 1.0);
     vcolor = vcolors[gl_VertexID];
 }

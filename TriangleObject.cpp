@@ -12,14 +12,7 @@ TriangleObject::TriangleObject(glm::vec2 pos, GLfloat rot, GLfloat scale) : AGLD
 }
 
 void TriangleObject::draw(GLfloat aspect) {
-    bindProgram();
-    bindBuffers();
-    glUniform2fv(0, 1, glm::value_ptr(pos));
-    glUniform1f(1, scale);
-    glUniform1f(2, rot);
-    glUniform1f(3, aspect);
-    glUniform4fv(4, 3, colors);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    draw(aspect, 0.0, 0.0, false);
 }
 
 void TriangleObject::setShaders() {
@@ -81,4 +74,18 @@ glm::vec2 TriangleObject::getVertexWorldCoords(int i) {
     if (i < 0 || 2 < i)
         throw std::invalid_argument("vertex index out of range: " + std::to_string(i));
     return pos + scale * rotMat * vertices[i];
+}
+
+void TriangleObject::draw(GLfloat aspect, GLdouble progress, GLdouble quitTime, bool quitting) {
+    bindProgram();
+    bindBuffers();
+    glUniform2fv(0, 1, glm::value_ptr(pos));
+    glUniform1f(1, scale);
+    glUniform1f(2, rot);
+    glUniform1f(3, aspect);
+    glUniform4fv(4, 3, colors);
+    glUniform1f(7, (GLfloat)progress);
+    glUniform1f(8, (GLfloat)quitTime);
+    glUniform1i(9, quitting);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 }

@@ -21,6 +21,7 @@ public:
     TriangleObject();
     TriangleObject(glm::vec2 pos, GLfloat rot, GLfloat scale);
     void draw(GLfloat aspect) override;
+    void draw(GLfloat aspect, GLdouble progress, GLdouble quitTime, bool quitting);
     // set i-th vertex colors
     void setVertexColor(int i, const glm::vec4 &color);
     GLfloat getRot() const;

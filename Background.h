@@ -7,6 +7,7 @@ class Background : public AGLDrawable {
 public:
     Background();
     void draw(GLfloat aspect) override;
+    void draw(GLfloat aspect, GLdouble progress, GLdouble quitTime, bool quitting);
 
 private:
     void setShaders();
