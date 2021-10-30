@@ -17,6 +17,7 @@
 #include "AGL3Drawable.hpp"
 #include "TriangleObject.hpp"
 #include "Background.h"
+#include "TriangleGrid.hpp"
 
 // ==========================================================================
 // Window Main Loop Inits ...................................................
@@ -28,7 +29,7 @@ public:
         : AGLWindow(_wd, _ht, name, fullscr, vers) {};
     void KeyCB(int key, int scancode, int action, int mods) override;
     void MainLoop() override;
-    void quitLoop(std::vector<std::shared_ptr<TriangleObject>> &ts, Background &bg, double quitTime = 3.0);
+    void quitLoop(TriangleGrid &tg, Background &bg, double quitTime = 3.0);
 };
 
 // ==========================================================================
@@ -60,22 +61,22 @@ inline bool sameSide(const glm::vec2 &a, const glm::vec2 &b, const glm::vec2 &p1
                     glm::cross(baDiff, glm::vec3(p2 - a, 0.0f))) >= 0.0f;
 }
 
-bool isCollision(std::shared_ptr<TriangleObject> &t1, std::shared_ptr<TriangleObject> &t2) {
+bool isCollision(TriangleGrid &tg, int t1, int t2) {
     bool flag = true;
     // relative to edges of t1
     for (int i = 0; i < 3; i++) {
         int a = i, b = (i + 1) % 3, c = (i + 2) % 3;
-        if (!sameSide(t1->getVertexWorldCoords(a), t1->getVertexWorldCoords(b), t1->getVertexWorldCoords(c), t2->getVertexWorldCoords(0)) &&
-            !sameSide(t1->getVertexWorldCoords(a), t1->getVertexWorldCoords(b), t1->getVertexWorldCoords(c), t2->getVertexWorldCoords(1)) &&
-            !sameSide(t1->getVertexWorldCoords(a), t1->getVertexWorldCoords(b), t1->getVertexWorldCoords(c), t2->getVertexWorldCoords(2)))
+        if (!sameSide(tg.getTriVertexWorldCoords(t1, a), tg.getTriVertexWorldCoords(t1, b), tg.getTriVertexWorldCoords(t1, c), tg.getTriVertexWorldCoords(t2, 0)) &&
+            !sameSide(tg.getTriVertexWorldCoords(t1, a), tg.getTriVertexWorldCoords(t1, b), tg.getTriVertexWorldCoords(t1, c), tg.getTriVertexWorldCoords(t2, 1)) &&
+            !sameSide(tg.getTriVertexWorldCoords(t1, a), tg.getTriVertexWorldCoords(t1, b), tg.getTriVertexWorldCoords(t1, c), tg.getTriVertexWorldCoords(t2, 2)))
             flag = false;
     }
     // relative to edges of t2
     for (int i = 0; i < 3; i++) {
         int a = i, b = (i + 1) % 3, c = (i + 2) % 3;
-        if (!sameSide(t2->getVertexWorldCoords(a), t2->getVertexWorldCoords(b), t2->getVertexWorldCoords(c), t1->getVertexWorldCoords(0)) &&
-            !sameSide(t2->getVertexWorldCoords(a), t2->getVertexWorldCoords(b), t2->getVertexWorldCoords(c), t1->getVertexWorldCoords(1)) &&
-            !sameSide(t2->getVertexWorldCoords(a), t2->getVertexWorldCoords(b), t2->getVertexWorldCoords(c), t1->getVertexWorldCoords(2)))
+        if (!sameSide(tg.getTriVertexWorldCoords(t2, a), tg.getTriVertexWorldCoords(t2, b), tg.getTriVertexWorldCoords(t2, c), tg.getTriVertexWorldCoords(t1, 0)) &&
+            !sameSide(tg.getTriVertexWorldCoords(t2, a), tg.getTriVertexWorldCoords(t2, b), tg.getTriVertexWorldCoords(t2, c), tg.getTriVertexWorldCoords(t1, 1)) &&
+            !sameSide(tg.getTriVertexWorldCoords(t2, a), tg.getTriVertexWorldCoords(t2, b), tg.getTriVertexWorldCoords(t2, c), tg.getTriVertexWorldCoords(t1, 2)))
             flag = false;
     }
     return flag;
@@ -87,16 +88,8 @@ static int latticeSize = 10;
 void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
 
-    std::vector<std::shared_ptr<TriangleObject>> ts;
-    for (int i = 0; i < latticeSize; i++) {
-        for (int j = 0; j < latticeSize; j++) {
-            ts.push_back(std::make_shared<TriangleObject>(onBoard(i, j, latticeSize), randAngle(), 1.0f/12.0f));
-        }
-    }
-    std::shared_ptr<TriangleObject> &player = ts.at(0);
-    player->setVertexColor(0, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
-    player->setVertexColor(1, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
-    player->setVertexColor(2, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    TriangleGrid tg(latticeSize, 1.0f / 12.0f);
+    int player = 0;
     GLfloat speed = 0.005;
     GLfloat angSpeed = 0.02;
     Background bg;
@@ -109,49 +102,47 @@ void MyWin::MainLoop() {
         AGLErrors("main-loopbegin");
         // =====================================================        Drawing
         bg.draw(aspect);
-        for (auto const &t : ts) {
-            t->draw(aspect);
-        }
+        tg.draw(aspect);
         AGLErrors("main-afterdraw");
 
         WaitForFixedFPS();
         glfwSwapBuffers(win()); // =============================   Swap buffers
 
-        for (int i = 1; i < ts.size() - 1; i++) {
-            if (isCollision(player, ts.at(i))) {
+        for (int i = 1; i < latticeSize * latticeSize - 1; i++) {
+            if (isCollision(tg, player, i)) {
                 gameOver = true;
                 printf("You lose.\n");
                 break;
             }
         }
 
-        if (isCollision(player, ts.at(ts.size()-1))) {
+        if (isCollision(tg, player, latticeSize * latticeSize - 1)) {
             gameOver = true;
             printf("You win.\nTime: %.3lf seconds", glfwGetTime() - startTime);
         }
 
         if (gameOver)
-            quitLoop(ts, bg);
+            quitLoop(tg, bg);
 
         glfwPollEvents();
         //glfwWaitEvents();
 
         // player moving
         if (glfwGetKey(win(), GLFW_KEY_RIGHT ) == GLFW_PRESS) {
-            player->setRot(glm::mod(player->getRot() - angSpeed, 2.0f * glm::pi<GLfloat>()));
+            tg.setRot(player, glm::mod(tg.getRot(player) - angSpeed, 2.0f * glm::pi<GLfloat>()));
         } else if (glfwGetKey(win(), GLFW_KEY_LEFT ) == GLFW_PRESS) {
-            player->setRot(glm::mod(player->getRot() + angSpeed, 2.0f * glm::pi<GLfloat>()));
+            tg.setRot(player, glm::mod(tg.getRot(player) + angSpeed, 2.0f * glm::pi<GLfloat>()));
         } else if (glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS) {
-            player->pos += player->getRotMat() * glm::vec2(0.0f, speed);
+            tg.setPos(player, tg.getPos(player) + tg.getRotMat(player) * glm::vec2(0.0f, speed));
         } else if (glfwGetKey(win(), GLFW_KEY_DOWN) == GLFW_PRESS) {
-            player->pos += player->getRotMat() * glm::vec2(0.0f, -speed);
+            tg.setPos(player, tg.getPos(player) - tg.getRotMat(player) * glm::vec2(0.0f, speed));
         }
     } while(glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(win()) == 0 &&
             !gameOver);
 }
 
-void MyWin::quitLoop(std::vector<std::shared_ptr<TriangleObject>> &ts, Background &bg, double quitTime) {
+void MyWin::quitLoop(TriangleGrid &tg, Background &bg, double quitTime) {
     double start = glfwGetTime();
     do {
         glClear( GL_COLOR_BUFFER_BIT );
@@ -159,8 +150,8 @@ void MyWin::quitLoop(std::vector<std::shared_ptr<TriangleObject>> &ts, Backgroun
         AGLErrors("quit-loopbegin");
         // =====================================================        Drawing
         bg.draw(aspect, glfwGetTime() - start, quitTime, true);
-        for (auto const &t : ts) {
-            t->draw(aspect, glfwGetTime() - start, quitTime, true);
+        for (int i = 0; i < latticeSize * latticeSize; i++) {
+            tg.draw(aspect, glfwGetTime() - start, quitTime, true);
         }
         AGLErrors("quit-afterdraw");
 
@@ -169,7 +160,9 @@ void MyWin::quitLoop(std::vector<std::shared_ptr<TriangleObject>> &ts, Backgroun
 
         glfwPollEvents();
         //glfwWaitEvents();
-    } while (glfwGetTime() - start < quitTime);
+    } while (glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
+             glfwWindowShouldClose(win()) == 0 &&
+             glfwGetTime() - start < quitTime);
 }
 
 int main(int argc, char *argv[]) {
