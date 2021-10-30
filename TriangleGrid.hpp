@@ -11,6 +11,11 @@ public:
     virtual ~TriangleGrid();
     void draw(GLfloat aspect) override;
     void draw(GLfloat aspect, GLdouble progress, GLdouble quitTime, bool quitting);
+    glm::vec2 getTriVertexWorldCoords(int t, int v);
+    GLfloat getTriangleRot(int t);
+    glm::mat2 getTriangleRotMat(int t);
+    glm::vec2 getTrianglePosition(int t);
+    void setRot(int t, float rot);
 
 private:
     int n;
@@ -38,6 +43,7 @@ private:
     GLfloat randAngle() {
         return (GLfloat)(rand() % 360) * glm::pi<GLfloat>() / 180.0f;
     }
+    void updateTransforms();
 };
 
 #endif //TRIANGLEGRID_HPP
