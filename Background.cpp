@@ -1,4 +1,4 @@
-#include "Background.h"
+#include "Background.hpp"
 
 Background::Background() : AGLDrawable(0) {
     setShaders();

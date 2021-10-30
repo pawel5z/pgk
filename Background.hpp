@@ -1,5 +1,5 @@
-#ifndef BACKGROUND_H
-#define BACKGROUND_H
+#ifndef BACKGROUND_HPP
+#define BACKGROUND_HPP
 
 #include "AGL3Drawable.hpp"
 
@@ -13,4 +13,4 @@ private:
     void setShaders();
 };
 
-#endif //BACKGROUND_H
+#endif //BACKGROUND_HPP
