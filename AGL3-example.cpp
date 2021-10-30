@@ -43,18 +43,6 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
     }
 }
 
-/* Interpolate (i, j) from {0..n}x{0..n}
- * to [-0.9, 0.9]x[-0.9, 0.9]
- */
-inline glm::vec2 onBoard(int i, int j, int n) {
-    return {-0.9f + (GLfloat)i / (GLfloat)(n-1) * 1.8f,
-            -0.9f + (GLfloat)j / (GLfloat)(n-1) * 1.8f};
-}
-
-inline GLfloat randAngle() {
-    return (GLfloat)(rand() % 360) * glm::pi<GLfloat>() / 180.0f;
-}
-
 inline bool sameSide(const glm::vec2 &a, const glm::vec2 &b, const glm::vec2 &p1, const glm::vec2 &p2) {
     glm::vec3 baDiff = glm::vec3(b - a, 0.0f);
     return glm::dot(glm::cross(baDiff, glm::vec3(p1 - a, 0.0f)),
