@@ -12,10 +12,11 @@ public:
     void draw(GLfloat aspect) override;
     void draw(GLfloat aspect, GLdouble progress, GLdouble quitTime, bool quitting);
     glm::vec2 getTriVertexWorldCoords(int t, int v);
-    GLfloat getTriangleRot(int t);
-    glm::mat2 getTriangleRotMat(int t);
-    glm::vec2 getTrianglePosition(int t);
+    GLfloat getRot(int t);
+    glm::mat2 getRotMat(int t);
     void setRot(int t, float rot);
+    glm::vec2 getPos(int t);
+    void setPos(int t, glm::vec2 pos);
 
 private:
     int n;

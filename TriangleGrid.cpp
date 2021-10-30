@@ -89,12 +89,12 @@ TriangleGrid::~TriangleGrid() {
     glDeleteBuffers(1, &isPlayerVBO);
 }
 
-GLfloat TriangleGrid::getTriangleRot(int t) {
+GLfloat TriangleGrid::getRot(int t) {
     return transforms.at(t)[2];
 }
 
-glm::mat2 TriangleGrid::getTriangleRotMat(int t) {
-    GLfloat rot = getTriangleRot(t);
+glm::mat2 TriangleGrid::getRotMat(int t) {
+    GLfloat rot = getRot(t);
     glm::mat2 rotMat = glm::mat2(
             glm::vec2(glm::cos(rot), glm::sin(rot)),
             glm::vec2(-glm::sin(rot), glm::cos(rot)));
@@ -104,10 +104,10 @@ glm::mat2 TriangleGrid::getTriangleRotMat(int t) {
 glm::vec2 TriangleGrid::getTriVertexWorldCoords(int t, int v) {
     if (v < 0 || 2 < v)
         throw std::invalid_argument("vertex index out of range: " + std::to_string(v));
-    return pos + scale * getTriangleRotMat(t) * vertices[v];
+    return getPos(t) + scale * getRotMat(t) * vertices[v];
 }
 
-glm::vec2 TriangleGrid::getTrianglePosition(int t) {
+glm::vec2 TriangleGrid::getPos(int t) {
     return {transforms.at(t).x, transforms.at(t).y};
 }
 
@@ -120,4 +120,10 @@ void TriangleGrid::updateTransforms() {
     bindBuffers();
     glBindBuffer(GL_ARRAY_BUFFER, transformsVBO);
     glBufferData(GL_ARRAY_BUFFER, n * n * sizeof(glm::vec4), transforms.data(), GL_STATIC_DRAW);
+}
+
+void TriangleGrid::setPos(int t, glm::vec2 pos) {
+    transforms.at(t).x = pos.x;
+    transforms.at(t).y = pos.y;
+    updateTransforms();
 }
