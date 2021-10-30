@@ -14,8 +14,6 @@
 #include <glm/gtc/constants.hpp>
 
 #include "AGL3Window.hpp"
-#include "AGL3Drawable.hpp"
-#include "TriangleObject.hpp"
 #include "Background.h"
 #include "TriangleGrid.hpp"
 
