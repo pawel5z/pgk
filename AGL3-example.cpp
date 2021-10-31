@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
     srand(time(nullptr));
     int c;
     static struct option long_options[] = {
-            {"seed", required_argument, nullptr, 'n'},
+            {"seed", required_argument, nullptr, 's'},
             {nullptr, 0, nullptr, 0}
     };
     int conv;
