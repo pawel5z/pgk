@@ -21,7 +21,7 @@ TriangleGrid::TriangleGrid(int n, GLfloat scale) : n(n), scale(scale) {
 }
 
 void TriangleGrid::draw(GLfloat aspect) {
-    draw(aspect, 0.0, 0.0, false);
+    draw(aspect, 0.0, 1.0, false);
 }
 
 void TriangleGrid::setShaders() {

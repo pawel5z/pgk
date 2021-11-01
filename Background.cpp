@@ -5,7 +5,7 @@ Background::Background() : AGLDrawable(0) {
 }
 
 void Background::draw(GLfloat aspect) {
-    draw(aspect, 0.0, 0.0, false);
+    draw(aspect, 0.0, 1.0, false);
 }
 
 void Background::setShaders() {

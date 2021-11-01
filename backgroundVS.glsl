@@ -27,8 +27,7 @@ void main(void) {
                                    vec4(0.937f, 0.458f, 0.023f, 1.0f));
     pos = vpositions[gl_VertexID];
     compensateForAspect(pos);
-    if (quitting)
-        pos -= float(quitting) * pos * quitProgress / quitTime;
+    pos -= float(quitting) * pos * quitProgress / quitTime;
     gl_Position = vec4(pos, 0.5, 1.0);
     vcolor = vcolors[gl_VertexID];
 }

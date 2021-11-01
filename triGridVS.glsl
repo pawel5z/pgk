@@ -44,7 +44,6 @@ void main(void) {
     rotate(vpos, rotPos);
     vec2 position = rotPos * scale + objCenter;
     compensateForAspect(position);
-    if (quitting)
-        position -= float(quitting) * position * quitProgress / quitTime;
+    position -= float(quitting) * position * quitProgress / quitTime;
     gl_Position = vec4(position, 0.0, 1.0);
 }
