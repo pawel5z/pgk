@@ -48,14 +48,13 @@ inline bool sameSide(const glm::vec2 &a, const glm::vec2 &b, const glm::vec2 &p1
 }
 
 bool isCollision(TriangleGrid &tg, int t1, int t2) {
-    bool flag = true;
     // relative to edges of t1
     for (int i = 0; i < 3; i++) {
         int a = i, b = (i + 1) % 3, c = (i + 2) % 3;
         if (!sameSide(tg.getTriVertexWorldCoords(t1, a), tg.getTriVertexWorldCoords(t1, b), tg.getTriVertexWorldCoords(t1, c), tg.getTriVertexWorldCoords(t2, 0)) &&
             !sameSide(tg.getTriVertexWorldCoords(t1, a), tg.getTriVertexWorldCoords(t1, b), tg.getTriVertexWorldCoords(t1, c), tg.getTriVertexWorldCoords(t2, 1)) &&
             !sameSide(tg.getTriVertexWorldCoords(t1, a), tg.getTriVertexWorldCoords(t1, b), tg.getTriVertexWorldCoords(t1, c), tg.getTriVertexWorldCoords(t2, 2)))
-            flag = false;
+            return false;
     }
     // relative to edges of t2
     for (int i = 0; i < 3; i++) {
@@ -63,9 +62,9 @@ bool isCollision(TriangleGrid &tg, int t1, int t2) {
         if (!sameSide(tg.getTriVertexWorldCoords(t2, a), tg.getTriVertexWorldCoords(t2, b), tg.getTriVertexWorldCoords(t2, c), tg.getTriVertexWorldCoords(t1, 0)) &&
             !sameSide(tg.getTriVertexWorldCoords(t2, a), tg.getTriVertexWorldCoords(t2, b), tg.getTriVertexWorldCoords(t2, c), tg.getTriVertexWorldCoords(t1, 1)) &&
             !sameSide(tg.getTriVertexWorldCoords(t2, a), tg.getTriVertexWorldCoords(t2, b), tg.getTriVertexWorldCoords(t2, c), tg.getTriVertexWorldCoords(t1, 2)))
-            flag = false;
+            return false;
     }
-    return flag;
+    return true;
 }
 
 static int latticeSize = 10;
