@@ -44,7 +44,7 @@ private:
     GLfloat randAngle() {
         return (GLfloat)(rand() % 360) * glm::pi<GLfloat>() / 180.0f;
     }
-    void updateTransforms();
+    void updateTransform(int t);
 };
 
 #endif //TRIANGLEGRID_HPP

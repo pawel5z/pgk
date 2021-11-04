@@ -43,7 +43,7 @@ void TriangleGrid::setBuffers() {
 
     // bind transforms
     glBindBuffer(GL_ARRAY_BUFFER, transformsVBO);
-    glBufferData(GL_ARRAY_BUFFER, n * n * sizeof(glm::vec4), transforms.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, n * n * sizeof(glm::vec4), transforms.data(), GL_DYNAMIC_DRAW);
 
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)0);
@@ -113,17 +113,17 @@ glm::vec2 TriangleGrid::getPos(int t) {
 
 void TriangleGrid::setRot(int t, float rot) {
     transforms.at(t)[2] = rot;
-    updateTransforms();
+    updateTransform(t);
 }
 
-void TriangleGrid::updateTransforms() {
+void TriangleGrid::updateTransform(int t) {
     bindBuffers();
     glBindBuffer(GL_ARRAY_BUFFER, transformsVBO);
-    glBufferData(GL_ARRAY_BUFFER, n * n * sizeof(glm::vec4), transforms.data(), GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, t * sizeof(glm::vec4), sizeof(glm::vec4), transforms.data() + t);
 }
 
 void TriangleGrid::setPos(int t, glm::vec2 pos) {
     transforms.at(t).x = pos.x;
     transforms.at(t).y = pos.y;
-    updateTransforms();
+    updateTransform(t);
 }
