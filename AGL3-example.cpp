@@ -136,9 +136,7 @@ void MyWin::quitLoop(TriangleGrid &tg, Background &bg, double quitTime) {
         AGLErrors("quit-loopbegin");
         // =====================================================        Drawing
         bg.draw(aspect, glfwGetTime() - start, quitTime, true);
-        for (int i = 0; i < latticeSize * latticeSize; i++) {
-            tg.draw(aspect, glfwGetTime() - start, quitTime, true);
-        }
+        tg.draw(aspect, glfwGetTime() - start, quitTime, true);
         AGLErrors("quit-afterdraw");
 
         WaitForFixedFPS();
