@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -O3
-LFLAGS = -lepoxy -lGL -lglfw -lm
-NAME = lab3
+LFLAGS = -lepoxy -lGL -lglfw
+NAME = lab4
 
 OBJS = $(shell ls *.cpp | sed 's/\.cpp/\.o/')
 DEPS = $(shell ls *.hpp)
