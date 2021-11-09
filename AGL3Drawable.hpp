@@ -18,18 +18,21 @@
 
 class AGLDrawable {
 public:
-    glm::vec2 pos = glm::vec2(0, 0);
-    GLfloat scale = 1.0f;
+    glm::vec3 pos = glm::vec3(0, 0, 0);
+    glm::vec3 rot = glm::vec3(0, 0, 0);
+    glm::vec3 scale = glm::vec3(1, 1, 1);
 
     explicit AGLDrawable(GLuint _pid=0);
     ~AGLDrawable(); // Cleanup VBO,VBO,Prog
     int compileShaders(const char *vs, const char *fs, const char *gs=nullptr);
     int compileShadersFromFile(const char *vs, const char *fs, const char *gs=nullptr);
-    void bindVAO() const;
-    void bindBuffers() const;
+    // bind vertex array AND program (shader)
+    void bind() const;
+    void bindVertexArray() const;
     void bindProgram() const;
+    // get program (shader) id
     GLuint p() const;
-    virtual void draw(GLfloat aspect) = 0;
+    virtual void draw() = 0;
 
 private:
     // VAO, VBO, Prog to clean in destructor

@@ -5,6 +5,11 @@ AGLDrawable::AGLDrawable(GLuint _pid) {
     glGenVertexArrays(1, &vaoId);
     glGenBuffers(     1, &vboId);
     glGenBuffers(     1, &eboId);
+
+    // associate generated buffers with vertex array `vaoId`
+    glBindVertexArray(            vaoId);
+    glBindBuffer(GL_ARRAY_BUFFER, vboId);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId);
 }
 
 AGLDrawable::~AGLDrawable() {    // Cleanup VBO,VBO,Prog
@@ -45,14 +50,8 @@ int AGLDrawable::compileShadersFromFile(const char *vs, const char *fs, const ch
     return res;
 }
 
-void AGLDrawable::bindVAO() const {
+void AGLDrawable::bindVertexArray() const {
     glBindVertexArray(vaoId);
-}
-
-void AGLDrawable::bindBuffers() const {
-    glBindVertexArray(            vaoId);
-    glBindBuffer(GL_ARRAY_BUFFER, vboId);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId);
 }
 
 void AGLDrawable::bindProgram() const {
@@ -118,4 +117,9 @@ void AGLDrawable::getShaderSource(GLuint sId, const char * file) {
     }
     char const * SourcePointer = sCode.c_str();
     glShaderSource(sId, 1, &SourcePointer, nullptr);
+}
+
+void AGLDrawable::bind() const {
+    bindVertexArray();
+    bindProgram();
 }
