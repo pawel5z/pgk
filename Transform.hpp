@@ -27,11 +27,11 @@ public:
     glm::vec3 scale = glm::vec3(1, 1, 1);
 
     glm::vec3 getRot() const;
-    virtual void setRot(const glm::vec3 &rot);
+    void setRot(const glm::vec3 &rot);
     glm::vec3 forward() const;
     glm::vec3 right() const;
     glm::vec3 up() const;
-    virtual void rotate(glm::vec3 axis, float angle, Space space);
+    void rotate(glm::vec3 axis, float angle, Space space = SELF);
 
 protected:
     glm::mat4 getRotMat() const;
