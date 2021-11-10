@@ -7,10 +7,9 @@
 #include <stdexcept>
 
 Camera::Camera() {
-    updatePVMat();
 }
 
-void Camera::updatePVMat() {
+glm::mat4 Camera::getPVMat() {
     glm::mat4 projection;
     switch (type) {
         case PERSPECTIVE:
@@ -22,17 +21,11 @@ void Camera::updatePVMat() {
         default:
             throw std::logic_error("invalid camera type");
     }
-
     // Y -> Z -> X
     glm::vec3 dir = getRotMat() * glm::vec4(Camera::defaultDir, 0);
     fprintf(stderr, "cam dir: %f %f %f\n", dir.x, dir.y, dir.z);
     glm::mat4 view = glm::lookAt(eye, eye + dir, up);
-
-    pvMat = projection * view;
-}
-
-glm::mat4 Camera::getPVMat() {
-    return pvMat;
+    return projection * view;
 }
 
 CameraType Camera::getType() const {
@@ -41,7 +34,6 @@ CameraType Camera::getType() const {
 
 void Camera::setType(CameraType type) {
     Camera::type = type;
-    updatePVMat();
 }
 
 glm::vec3 Camera::getEye() const {
@@ -50,16 +42,14 @@ glm::vec3 Camera::getEye() const {
 
 void Camera::setEye(const glm::vec3 &eye) {
     Camera::eye = eye;
-    updatePVMat();
 }
 
 glm::vec3 Camera::getRot() const {
-    return rot;
+    return glm::eulerAngles(rot);
 }
 
 void Camera::setRot(const glm::vec3 &rot) {
-    Camera::rot = rot;
-    updatePVMat();
+    Camera::rot = glm::quat(rot);
 }
 
 glm::vec3 Camera::getUp() const {
@@ -68,7 +58,6 @@ glm::vec3 Camera::getUp() const {
 
 void Camera::setUp(const glm::vec3 &up) {
     Camera::up = up;
-    updatePVMat();
 }
 
 glm::vec2 Camera::getNf() const {
@@ -77,7 +66,6 @@ glm::vec2 Camera::getNf() const {
 
 void Camera::setNf(const glm::vec2 &nf) {
     Camera::nf = nf;
-    updatePVMat();
 }
 
 float Camera::getFovY() const {
@@ -86,7 +74,6 @@ float Camera::getFovY() const {
 
 void Camera::setFovY(float fovY) {
     Camera::fovY = fovY;
-    updatePVMat();
 }
 
 float Camera::getAspect() const {
@@ -95,7 +82,6 @@ float Camera::getAspect() const {
 
 void Camera::setAspect(float aspect) {
     Camera::aspect = aspect;
-    updatePVMat();
 }
 
 glm::vec2 Camera::getLr() const {
@@ -104,7 +90,6 @@ glm::vec2 Camera::getLr() const {
 
 void Camera::setLr(const glm::vec2 &lr) {
     Camera::lr = lr;
-    updatePVMat();
 }
 
 glm::vec2 Camera::getBt() const {
@@ -113,13 +98,14 @@ glm::vec2 Camera::getBt() const {
 
 void Camera::setBt(const glm::vec2 &bt) {
     Camera::bt = bt;
-    updatePVMat();
 }
 
 glm::mat4 Camera::getRotMat() const {
-    return glm::rotate(rot.x, glm::vec3(1, 0, 0)) * glm::rotate(rot.z, glm::vec3(0, 0, 1)) * glm::rotate(rot.y, glm::vec3(0, 1, 0));
+    return glm::toMat4(rot);
 }
 
-void Camera::rotate(glm::vec3 axis, float a) {
-    pvMat *= glm::rotate(a, axis);
+void Camera::rotate(glm::vec3 axis, float angle, Space space) {
+    if (space == SELF)
+        axis = getRotMat() * glm::vec4(axis, 0);
+    rot = glm::angleAxis(angle, glm::normalize(axis)) * rot;
 }
