@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -O3
+CFLAGS = -std=c++17 -O3
 LFLAGS = -lepoxy -lGL -lglfw
 NAME = lab4
 
