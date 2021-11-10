@@ -3,6 +3,8 @@
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
+#include <cstdio>
+#include <stdexcept>
 
 Camera::Camera() {
     updatePVMat();
@@ -17,12 +19,19 @@ void Camera::updatePVMat() {
         case ORTHOGRAPHIC:
             projection = glm::ortho(lr[0], lr[1], bt[0], bt[1], nf[0], nf[1]);
             break;
+        default:
+            throw std::logic_error("invalid camera type");
     }
+
+    // Y -> Z -> X
+    glm::vec3 dir = getRotMat() * glm::vec4(Camera::defaultDir, 0);
+    fprintf(stderr, "cam dir: %f %f %f\n", dir.x, dir.y, dir.z);
     glm::mat4 view = glm::lookAt(eye, eye + dir, up);
+
     pvMat = projection * view;
 }
 
-const glm::mat4 &Camera::getPVMat() {
+glm::mat4 Camera::getPVMat() {
     return pvMat;
 }
 
@@ -35,7 +44,7 @@ void Camera::setType(CameraType type) {
     updatePVMat();
 }
 
-const glm::vec3 &Camera::getEye() const {
+glm::vec3 Camera::getEye() const {
     return eye;
 }
 
@@ -44,18 +53,16 @@ void Camera::setEye(const glm::vec3 &eye) {
     updatePVMat();
 }
 
-const glm::vec3 &Camera::getRot() const {
+glm::vec3 Camera::getRot() const {
     return rot;
 }
 
 void Camera::setRot(const glm::vec3 &rot) {
     Camera::rot = rot;
-    // Y -> Z -> X
-    dir = glm::rotate(rot.x, glm::vec3(1, 0, 0)) * glm::rotate(rot.z, glm::vec3(0, 0, 1)) * glm::rotate(rot.y, glm::vec3(0, 1, 0)) * glm::vec4(Camera::defaultDir, 0);
     updatePVMat();
 }
 
-const glm::vec3 &Camera::getUp() const {
+glm::vec3 Camera::getUp() const {
     return up;
 }
 
@@ -64,7 +71,7 @@ void Camera::setUp(const glm::vec3 &up) {
     updatePVMat();
 }
 
-const glm::vec2 &Camera::getNf() const {
+glm::vec2 Camera::getNf() const {
     return nf;
 }
 
@@ -91,7 +98,7 @@ void Camera::setAspect(float aspect) {
     updatePVMat();
 }
 
-const glm::vec2 &Camera::getLr() const {
+glm::vec2 Camera::getLr() const {
     return lr;
 }
 
@@ -100,7 +107,7 @@ void Camera::setLr(const glm::vec2 &lr) {
     updatePVMat();
 }
 
-const glm::vec2 &Camera::getBt() const {
+glm::vec2 Camera::getBt() const {
     return bt;
 }
 
@@ -109,17 +116,10 @@ void Camera::setBt(const glm::vec2 &bt) {
     updatePVMat();
 }
 
-const glm::vec3 &Camera::getDir() const {
-    return dir;
+glm::mat4 Camera::getRotMat() const {
+    return glm::rotate(rot.x, glm::vec3(1, 0, 0)) * glm::rotate(rot.z, glm::vec3(0, 0, 1)) * glm::rotate(rot.y, glm::vec3(0, 1, 0));
 }
 
-void Camera::setDir(const glm::vec3 &dir) {
-    Camera::dir = dir;
-    // compute rotation
-    rot = {
-            glm::orientedAngle(dir, defaultDir, glm::vec3(1, 0, 0)),
-            glm::orientedAngle(dir, defaultDir, glm::vec3(0, 1, 0)),
-            glm::orientedAngle(dir, defaultDir, glm::vec3(0, 0, 1))
-    };
-    updatePVMat();
+void Camera::rotate(glm::vec3 axis, float a) {
+    pvMat *= glm::rotate(a, axis);
 }
