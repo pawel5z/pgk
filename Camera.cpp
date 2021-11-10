@@ -6,7 +6,12 @@
 #include <cstdio>
 #include <stdexcept>
 
-Camera::Camera() {
+Camera::Camera(float fovY, float aspect, float near, float far) : fovY(fovY), aspect(aspect), nf(near, far) {}
+
+Camera::Camera(float left, float right, float bottom, float top, float near, float far) : lr(left, right),
+                                                                                          bt(bottom, top),
+                                                                                          nf(near, far) {
+    type = ORTHOGRAPHIC;
 }
 
 glm::mat4 Camera::getPVMat() {
@@ -21,9 +26,7 @@ glm::mat4 Camera::getPVMat() {
         default:
             throw std::logic_error("invalid camera type");
     }
-    // Y -> Z -> X
     glm::vec3 dir = getRotMat() * glm::vec4(Camera::defaultDir, 0);
-    fprintf(stderr, "cam dir: %f %f %f\n", dir.x, dir.y, dir.z);
     glm::mat4 view = glm::lookAt(eye, eye + dir, up);
     return projection * view;
 }
@@ -50,14 +53,7 @@ glm::vec3 Camera::getRot() const {
 
 void Camera::setRot(const glm::vec3 &rot) {
     Camera::rot = glm::quat(rot);
-}
-
-glm::vec3 Camera::getUp() const {
-    return up;
-}
-
-void Camera::setUp(const glm::vec3 &up) {
-    Camera::up = up;
+    up = getRotMat() * glm::vec4(up, 0);
 }
 
 glm::vec2 Camera::getNf() const {
@@ -108,4 +104,5 @@ void Camera::rotate(glm::vec3 axis, float angle, Space space) {
     if (space == SELF)
         axis = getRotMat() * glm::vec4(axis, 0);
     rot = glm::angleAxis(angle, glm::normalize(axis)) * rot;
+    up = glm::angleAxis(angle, glm::normalize(axis)) * up;
 }

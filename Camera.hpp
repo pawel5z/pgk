@@ -18,7 +18,9 @@ enum Space {
 
 class Camera {
 public:
-    Camera();
+    Camera() = default;
+    Camera(float fovY, float aspect, float near, float far);
+    Camera(float left, float right, float bottom, float top, float near, float far);
     glm::mat4 getPVMat();
     CameraType getType() const;
     void setType(CameraType type);
@@ -26,8 +28,6 @@ public:
     void setEye(const glm::vec3 &eye);
     glm::vec3 getRot() const;
     void setRot(const glm::vec3 &rot);
-    glm::vec3 getUp() const;
-    void setUp(const glm::vec3 &up);
     glm::vec2 getNf() const;
     void setNf(const glm::vec2 &nf);
     float getFovY() const;
@@ -46,7 +46,7 @@ private:
 
     CameraType type = PERSPECTIVE;
     glm::vec3 eye = glm::vec3(0, 0, 0);
-    glm::quat rot; // identity
+    glm::quat rot = glm::quat(); // identity
     glm::vec3 up = glm::vec3(0, 1, 0);
     glm::vec2 nf = glm::vec2(0.1, 100);
 
