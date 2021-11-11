@@ -140,14 +140,14 @@ int main(int argc, char *argv[]) {
         ss >> seed;
         if (!ss.fail())
             srand(seed);
-        else
-            ss.clear();
     }
+    ss.str("");
+    ss.clear();
     if (argc > 2) {
         ss << argv[2];
         int newLatticeSize;
         ss >> newLatticeSize;
-        if (!ss.fail())
+        if (!ss.fail() && newLatticeSize >= 2)
             latticeSize = newLatticeSize;
     }
     MyWin win;
