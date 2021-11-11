@@ -66,14 +66,13 @@ void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
 
     Sphere s(45);
+    s.rot = glm::quatLookAt(glm::normalize(-Transform::ONE), Transform::UP);
     float r = .9f * 1.0f / (float)latticeSize / 2.0f;
     s.scale = Transform::ONE * r;
 
     Camera cam;
     cam.setFovY(60);
     cam.setNf({0.01f, 10.0f});
-    cam.pos = glm::vec3(0, 0, 0);
-    cam.rot = glm::quatLookAt(glm::normalize(-Transform::ONE), Transform::UP);
 
     float ortCamRange = 3;
     Camera camOrt(-ortCamRange * r, ortCamRange * r, -ortCamRange * r, ortCamRange * r, 0, 10);
@@ -90,8 +89,8 @@ void MyWin::MainLoop() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     do {
-        s.pos = cam.pos;
-        s.rot = cam.rot;
+        cam.pos = s.pos;
+        cam.rot = s.rot;
         camOrt.rot = cam.rot;
         camOrt.pos = cam.pos - 2.0f * r * camOrt.forward();
 
@@ -117,38 +116,47 @@ void MyWin::MainLoop() {
         glfwSwapBuffers(win()); // =============================   Swap buffers
 
         // game over check
+        if (glm::distance2(s.pos, Transform::ONE) <= 1.5f * s.scale.x * s.scale.x) {
+            printf("You win!\n");
+            break;
+        }
 
         glfwPollEvents();
         //glfwWaitEvents();
 
+        glm::vec3 oldPos = s.pos;
         // player movement
         // yaw
         if (glfwGetKey(win(), GLFW_KEY_RIGHT ) == GLFW_PRESS) {
-            cam.rotate(Transform::UP, -angSpeed, SELF);
+            s.rotate(Transform::UP, -angSpeed, SELF);
         }
         if (glfwGetKey(win(), GLFW_KEY_LEFT ) == GLFW_PRESS) {
-            cam.rotate(Transform::UP, angSpeed, SELF);
+            s.rotate(Transform::UP, angSpeed, SELF);
         }
         // pitch
         if (glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS) {
-            cam.rotate(Transform::RIGHT, angSpeed, SELF);
+            s.rotate(Transform::RIGHT, angSpeed, SELF);
         }
         if (glfwGetKey(win(), GLFW_KEY_DOWN) == GLFW_PRESS) {
-            cam.rotate(Transform::RIGHT, -angSpeed, SELF);
+            s.rotate(Transform::RIGHT, -angSpeed, SELF);
         }
         // roll
         if (glfwGetKey(win(), GLFW_KEY_E) == GLFW_PRESS) {
-            cam.rotate(Transform::FORWARD, angSpeed, SELF);
+            s.rotate(Transform::FORWARD, angSpeed, SELF);
         }
         if (glfwGetKey(win(), GLFW_KEY_Q) == GLFW_PRESS) {
-            cam.rotate(Transform::FORWARD, -angSpeed, SELF);
+            s.rotate(Transform::FORWARD, -angSpeed, SELF);
         }
         // move forwards/backwards
         if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS) {
-            cam.pos = cam.pos + speed * cam.forward();
+            s.pos = s.pos + speed * s.forward();
         }
         if (glfwGetKey(win(), GLFW_KEY_Z) == GLFW_PRESS) {
-            cam.pos = cam.pos - speed * cam.forward();
+            s.pos = s.pos - speed * s.forward();
+        }
+
+        if (doesCollide(s, tetraGrid)) {
+            s.pos = oldPos;
         }
     } while(glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(win()) == 0 &&
