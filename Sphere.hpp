@@ -15,8 +15,8 @@ protected:
     void setShaders();
 
 private:
-    // each row defines single wall
     std::vector<glm::vec3> vertices;
+    std::vector<GLushort> indices;
 
     void initWithTetrahedron(int n);
     void initWithPolarCoords(int n);

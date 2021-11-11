@@ -1,12 +1,13 @@
 #include "Sphere.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <unordered_map>
 
 void Sphere::draw(Camera camera) {
     bind();
     glm::mat4 mvp = camera.getPVMat() * getModelMat();
     glUniformMatrix4fv(0, 1, false, &mvp[0][0]);
-    glDrawArrays(GL_TRIANGLES, 0, (int)vertices.size());
+    glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_SHORT, nullptr);
 }
 
 void Sphere::setBuffers() {
@@ -14,6 +15,8 @@ void Sphere::setBuffers() {
     glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(vertices.size() * sizeof(glm::vec3)), vertices.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(glm::vec3), nullptr);
+
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (int)(indices.size() * sizeof(GLushort)), indices.data(), GL_STATIC_DRAW);
 }
 
 void Sphere::setShaders() {
@@ -42,23 +45,32 @@ void Sphere::initWithPolarCoords(int n) {
  *  |         |
  * v0 ------- v1    la
  * */
-// TODO Store only unique vertices. Make use of element buffer.
+    auto hash = [](const glm::vec3 &v) { return std::hash<float>{}(v.x) * std::hash<float>{}(v.y) * std::hash<float>{}(v.z); };
+    auto comp = [](const glm::vec3 &v, const glm::vec3 &u) { return v.x == u.x & v.y == u.y && v.z == u.z; };
+    std::unordered_map<glm::vec3, GLushort, decltype(hash), decltype(comp)> existing(10, hash, comp);
     for (int la = 0; la < n; la++) {
         for (int lo = 0; lo < n; lo++) {
-            glm::vec3 v0(glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::cos((float)lo / (float)n * glm::two_pi<GLfloat>()),
-                         glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::sin((float)lo / (float)n * glm::two_pi<GLfloat>()),
-                         glm::cos((float)la / (float)n * glm::pi<GLfloat>()));
-            glm::vec3 v1(glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::cos((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
-                         glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::sin((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
-                         glm::cos((float)la / (float)n * glm::pi<GLfloat>()));
-            glm::vec3 v2(glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::cos((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
-                         glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::sin((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
-                         glm::cos((float)(la + 1) / (float)n * glm::pi<GLfloat>()));
-            glm::vec3 v3(glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::cos((float)lo / (float)n * glm::two_pi<GLfloat>()),
-                         glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::sin((float)lo / (float)n * glm::two_pi<GLfloat>()),
-                         glm::cos((float)(la + 1) / (float)n * glm::pi<GLfloat>()));
-            vertices.insert(vertices.end(), {v0, v1, v3});
-            vertices.insert(vertices.end(), {v1, v2, v3});
+            std::vector<glm::vec3> v {
+                glm::vec3 (glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::cos((float)lo / (float)n * glm::two_pi<GLfloat>()),
+                           glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::sin((float)lo / (float)n * glm::two_pi<GLfloat>()),
+                           glm::cos((float)la / (float)n * glm::pi<GLfloat>())),
+                glm::vec3 (glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::cos((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
+                           glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::sin((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
+                           glm::cos((float)la / (float)n * glm::pi<GLfloat>())),
+                glm::vec3 (glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::cos((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
+                           glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::sin((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
+                           glm::cos((float)(la + 1) / (float)n * glm::pi<GLfloat>())),
+                glm::vec3 (glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::cos((float)lo / (float)n * glm::two_pi<GLfloat>()),
+                           glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::sin((float)lo / (float)n * glm::two_pi<GLfloat>()),
+                           glm::cos((float)(la + 1) / (float)n * glm::pi<GLfloat>()))
+            };
+            for (auto &candidate : v)
+                if (!existing.count(candidate)) {
+                    vertices.push_back(candidate);
+                    existing[candidate] = vertices.size() - 1;
+                }
+            indices.insert(indices.end(), {existing[v[0]], existing[v[1]], existing[v[3]]});
+            indices.insert(indices.end(), {existing[v[1]], existing[v[2]], existing[v[3]]});
         }
     }
 }
