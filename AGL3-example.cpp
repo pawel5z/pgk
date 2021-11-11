@@ -7,6 +7,7 @@
 //===========================================================================
 #include "AGL3Window.hpp"
 #include "Sphere.hpp"
+#include "TetraGrid.hpp"
 
 #include <cstdlib>
 #include <cstdio>
@@ -59,6 +60,8 @@ void MyWin::MainLoop() {
     GLfloat speed = 0.1;
     GLfloat angSpeed = 0.02;
 
+    TetraGrid tetraGrid(latticeSize);
+
     bool gameOver = false;
 
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
@@ -80,13 +83,13 @@ void MyWin::MainLoop() {
         ViewportOne(0, 0, wd, ht);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         // don't draw sphere in FPP view
-        // TODO draw obstacles
+        tetraGrid.draw(cam);
         // secondary camera
         int m = glm::min(wd, ht);
         Viewport(wd - m / 3.0f, 0, m / 3.0f, m / 3.0f);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         s.draw(camOrt);
-        // TODO draw obstacles
+        tetraGrid.draw(camOrt);
         AGLErrors("main-afterdraw");
 
         WaitForFixedFPS();
