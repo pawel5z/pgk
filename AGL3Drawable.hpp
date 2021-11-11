@@ -8,6 +8,8 @@
 #ifndef AGL3DRAWABLE_HPP
 #define AGL3DRAWABLE_HPP
 
+#include "Camera.hpp"
+
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -16,12 +18,8 @@
 #include <epoxy/gl.h>
 #include <epoxy/glx.h>
 
-class AGLDrawable {
+class AGLDrawable : public Transform {
 public:
-    glm::vec3 pos = glm::vec3(0, 0, 0);
-    glm::vec3 rot = glm::vec3(0, 0, 0);
-    glm::vec3 scale = glm::vec3(1, 1, 1);
-
     explicit AGLDrawable(GLuint _pid=0);
     ~AGLDrawable(); // Cleanup VBO,VBO,Prog
     int compileShaders(const char *vs, const char *fs, const char *gs=nullptr);
@@ -32,7 +30,7 @@ public:
     void bindProgram() const;
     // get program (shader) id
     GLuint p() const;
-    virtual void draw() = 0;
+    virtual void draw(Camera camera) = 0;
 
 private:
     // VAO, VBO, Prog to clean in destructor
