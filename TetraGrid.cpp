@@ -74,3 +74,19 @@ void TetraGrid::setBuffers() {
 void TetraGrid::setShaders() {
     compileShadersFromFile("tetraGridVS.glsl", "tetraGridFS.glsl");
 }
+
+glm::vec3 TetraGrid::getPos(int i) const{
+    return poss.at(i);
+}
+
+GLuint TetraGrid::size() const {
+    return poss.size();
+}
+
+std::vector<glm::vec3> TetraGrid::getVerticesPos(int i) const {
+    std::vector<glm::vec3> ret;
+    for (auto &vertex : vertices) {
+        ret.emplace_back(modelMats[i] * glm::vec4(vertex, 1));
+    }
+    return ret;
+}

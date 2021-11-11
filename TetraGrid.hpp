@@ -8,6 +8,9 @@ public:
     TetraGrid(GLuint n);
     void draw(Camera camera) override;
     virtual ~TetraGrid();
+    glm::vec3 getPos(int i) const;
+    GLuint size() const;
+    std::vector<glm::vec3> getVerticesPos(int i) const;
 
 protected:
     void setBuffers();
