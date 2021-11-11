@@ -24,6 +24,7 @@ public:
     static constexpr glm::vec3 LEFT = -RIGHT;
 
     glm::vec3 pos = glm::vec3(0, 0, 0);
+    glm::quat rot = glm::quat();
     glm::vec3 scale = glm::vec3(1, 1, 1);
 
     glm::vec3 getRot() const;
@@ -36,9 +37,6 @@ public:
 protected:
     glm::mat4 getRotMat() const;
     glm::mat4 getModelMat() const;
-
-private:
-    glm::quat rot = glm::quat();
 };
 
 #endif //TRANSFORM_HPP
