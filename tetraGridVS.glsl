@@ -5,12 +5,17 @@
 layout(location = 0) uniform mat4 vp;
 
 layout(location = 0) in vec3 vertexPos;
-layout(location = 1) in mat4 model;
-layout(location = 2) in vec3 pos;
+layout(location = 1) in vec3 pos;
+layout(location = 2) in vec4 model0;
+layout(location = 3) in vec4 model1;
+layout(location = 4) in vec4 model2;
+layout(location = 5) in vec4 model3;
 
 out vec4 fragmentColor;
 
 void main(void) {
-    gl_Position = vp * model * vec4(vertexPos, 1);
-    fragmentColor = vec4(pos, 1);
+    mat4 model = mat4(model0, model1, model2, model3);
+    vec4 vertexWorldPos = model * vec4(vertexPos, 1);
+    gl_Position = vp * vertexWorldPos;
+    fragmentColor = vertexWorldPos;
 }
