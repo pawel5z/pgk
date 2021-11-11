@@ -47,18 +47,20 @@ void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
 
     Sphere s(45);
-    float r = .9f * (float)latticeSize;
+    float r = .9f * 1.0f / (float)latticeSize / 2.0f;
     s.scale = Transform::ONE * r;
 
     Camera cam;
+    cam.setFovY(60);
+    cam.setNf({0.01f, 10.0f});
     cam.pos = glm::vec3(0, 0, 0);
-    cam.rot = glm::quatLookAt(glm::normalize(Transform::ONE), Transform::UP);
+    cam.rot = glm::quatLookAt(glm::normalize(-Transform::ONE), Transform::UP);
 
-    int ortCamRange = 3;
+    float ortCamRange = 3;
     Camera camOrt(-ortCamRange * r, ortCamRange * r, -ortCamRange * r, ortCamRange * r, 0, 10);
 
-    GLfloat speed = 0.1;
-    GLfloat angSpeed = 0.02;
+    GLfloat speed = 0.01;
+    GLfloat angSpeed = 0.015;
 
     TetraGrid tetraGrid(latticeSize);
 
