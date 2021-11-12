@@ -7,7 +7,7 @@
 
 class Sphere : public AGLDrawable {
 public:
-    Sphere(int n = 3, bool polar = true);
+    explicit Sphere(int n = 3);
     void draw(Camera camera) override;
 
 protected:
@@ -18,7 +18,6 @@ private:
     std::vector<glm::vec3> vertices;
     std::vector<GLushort> indices;
 
-    void initWithTetrahedron(int n);
     void initWithPolarCoords(int n);
 };
 
