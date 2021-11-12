@@ -6,9 +6,9 @@ layout(location = 0) uniform mat4 mvp;
 
 layout(location = 0) in vec3 vertexPos;
 
-out vec3 fragmentColor;
+out vec3 fragPos;
 
 void main(void) {
     gl_Position = mvp * vec4(vertexPos, 1);
-    fragmentColor = vertexPos;
+    fragPos = vertexPos * 2.0f + vec3(.5, .5, .5);
 }
