@@ -7,6 +7,7 @@ class Cube : public AGLDrawable {
 public:
     Cube();
     void draw(Camera camera) override;
+    void draw(Camera camera, float time);
 
 private:
     std::vector<glm::vec3> vertices = {

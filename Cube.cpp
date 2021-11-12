@@ -9,8 +9,13 @@ Cube::Cube() {
 }
 
 void Cube::draw(Camera camera) {
+    draw(camera, 0);
+}
+
+void Cube::draw(Camera camera, float time) {
     bind();
     glUniformMatrix4fv(0, 1, false, &(camera.getPVMat() * getModelMat())[0][0]);
+    glUniform1f(1, time);
     glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_BYTE, nullptr);
 }
 
@@ -26,3 +31,4 @@ void Cube::setBuffers() {
 void Cube::setShaders() {
     compileShadersFromFile("cubeVS.glsl", "cubeFS.glsl");
 }
+

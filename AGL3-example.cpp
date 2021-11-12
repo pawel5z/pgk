@@ -108,14 +108,14 @@ void MyWin::MainLoop() {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         // don't draw sphere in FPP view
         tetraGrid.draw(cam);
-        box.draw(cam);
+        box.draw(cam, (float)glfwGetTime());
         // secondary camera
         int m = glm::min(wd, ht);
         Viewport(wd - m / 3.0f, 0, m / 3.0f, m / 3.0f);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         s.draw(camOrt);
         tetraGrid.draw(camOrt);
-        box.draw(camOrt);
+        box.draw(camOrt, (float)glfwGetTime());
         AGLErrors("main-afterdraw");
 
         WaitForFixedFPS();
