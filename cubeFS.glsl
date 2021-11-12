@@ -5,12 +5,14 @@ in vec3 fragPos;
 
 out vec4 color;
 
-const float n = 16.0f;
-const float black = .4;
+const float n = 64.0f;
+const float black = 0;
 const float white = .6;
 
 void main(void) {
-    vec3 aux = floor(fragPos * n);
+    vec3 aux = fragPos;
+    aux = aux * aux * aux;
+    aux = floor(aux * n);
     aux.x = float(!(abs(n - aux.x) < 0.001)) + float(abs(n - aux.x) >= 0.001) * aux.x;
     aux.y = float(!(abs(n - aux.y) < 0.001)) + float(abs(n - aux.y) >= 0.001) * aux.y;
     aux.z = float(!(abs(n - aux.z) < 0.001)) + float(abs(n - aux.z) >= 0.001) * aux.z;
