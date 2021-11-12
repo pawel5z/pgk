@@ -70,6 +70,8 @@ void MyWin::MainLoop() {
     s.rot = glm::quatLookAt(glm::normalize(-Transform::ONE), Transform::UP);
     float r = .9f * 1.0f / (float)latticeSize / 2.0f;
     s.scale = Transform::ONE * r;
+    GLfloat speed = 0.01;
+    GLfloat angSpeed = 0.015;
 
     Camera cam;
     cam.setFovY(60);
@@ -77,9 +79,6 @@ void MyWin::MainLoop() {
 
     float ortCamRange = 3;
     Camera camOrt(-ortCamRange * r, ortCamRange * r, -ortCamRange * r, ortCamRange * r, 0, 10);
-
-    GLfloat speed = 0.01;
-    GLfloat angSpeed = 0.015;
 
     TetraGrid tetraGrid(latticeSize);
 
