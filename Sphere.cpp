@@ -30,7 +30,7 @@ Sphere::Sphere(int n) : AGLDrawable() {
 }
 
 void Sphere::initWithPolarCoords(int n) {
-    if (n < 3) {
+    if (n < 3 || 45 < n) {
         fprintf(stderr, "incorrect sphere smoothness parameter: %d\nresetting to default: 45\n", n);
         n = 45;
     }
