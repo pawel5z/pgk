@@ -21,7 +21,7 @@ private:
     GLuint modelVBO{}, posVBO{};
     GLuint n;
     std::vector<glm::vec3> vertices = {{0, 0, 0}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0}};
-    const std::vector<GLuint> indices = {
+    const std::vector<GLubyte> indices = {
             0, 3, 1,
             0, 2, 3,
             0, 2, 1,

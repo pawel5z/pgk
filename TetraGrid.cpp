@@ -39,7 +39,7 @@ TetraGrid::~TetraGrid() {
 void TetraGrid::draw(Camera camera) {
     bind();
     glUniformMatrix4fv(0, 1, false, &camera.getPVMat()[0][0]);
-    glDrawElementsInstanced(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, nullptr, (int)(poss.size()));
+    glDrawElementsInstanced(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_BYTE, nullptr, (int)(poss.size()));
 }
 
 void TetraGrid::setBuffers() {
@@ -50,7 +50,7 @@ void TetraGrid::setBuffers() {
     glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(glm::vec3), nullptr);
 
     // eboId already bound
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (int)(sizeof(GLuint) * indices.size()), indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (int)(sizeof(GLubyte) * indices.size()), indices.data(), GL_STATIC_DRAW);
 
     // model matrices
     glBindBuffer(GL_ARRAY_BUFFER, modelVBO);
