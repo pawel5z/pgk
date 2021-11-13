@@ -9,7 +9,7 @@ out vec4 color;
 const float n = 4.0f;
 const float dark = 0;
 const float bright = .6;
-const float timeScale = 0.1;
+const float timeScale = 0.025;
 
 void main(void) {
     vec3 aux = fragPos;
