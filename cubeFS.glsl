@@ -7,8 +7,8 @@ in vec3 fragPos;
 out vec4 color;
 
 const float n = 4.0f;
-const float dark = 0;
-const float bright = .6;
+const vec4 dark = vec4(0, 0, 0, 1);
+const vec4 bright = vec4(.6, .6, .6, 1);
 const float timeScale = 0.025;
 
 void main(void) {
@@ -19,7 +19,6 @@ void main(void) {
     aux.x *= float(!((abs(1. - fragPos.x) < 0.001)));
     aux.y *= float(!((abs(1. - fragPos.y) < 0.001)));
     aux.z *= float(!((abs(1. - fragPos.z) < 0.001)));
-    float darkOrBright = dark + mod(aux.x + aux.y + aux.z, 2.0f) * (bright - dark);
-
-    color = vec4(vec3(darkOrBright), 1.0f);
+    bool isBright = mod(aux.x + aux.y + aux.z, 2.0f) == 1;
+    color = float(isBright) * bright + float(!isBright) * dark;
 }
