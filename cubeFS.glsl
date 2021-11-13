@@ -6,7 +6,7 @@ in vec3 fragPos;
 
 out vec4 color;
 
-const float n = 4.0f;
+const float n = 8.0f;
 const vec4 dark = vec4(0, 0, 0, 1);
 const vec4 bright = vec4(.6, .6, .6, 1);
 const float timeScale = 0.025;
