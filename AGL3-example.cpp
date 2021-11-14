@@ -41,15 +41,13 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
     }
 }
 
-/* Exclusive to this program. Assumes that every tetrahedron is inscribed inside a sphere of player's size.
- * That is, its radius is equal to any of its scale coordinates.
- * */
-// TODO This is just some heuristic. Make accurate collision detection.
-bool doesCollide(const Sphere& s, const TetraGrid& t) {
-    float r = s.scale.x;
+// TODO This is just some approximation. Make accurate collision detection.
+bool doesCollide(const Sphere &s, const TetraGrid &t) {
+    float r = .5f * (s.scale.x + s.scale.y + s.scale.z) / 3.f;
     for (int i = 0; i < t.size(); i++) {
         // rough filtering
-        if (glm::distance2(s.pos, t.getPos(i)) > r * r)
+        float checkThreshold = 2.f * r * glm::root_three<GLfloat>() / 2.f;
+        if (glm::distance2(s.pos, t.getPos(i)) > checkThreshold * checkThreshold)
             continue;
         // collision detection with vertices
         for (auto &vertex : t.getVerticesPos(i)) {
