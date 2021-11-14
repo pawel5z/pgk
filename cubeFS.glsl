@@ -2,7 +2,7 @@
 #extension GL_ARB_explicit_uniform_location : require
 
 in float time;
-in vec3 fragPos;
+in vec3 fragPos; // from [0, 0, 0] to [1, 1, 1]
 
 out vec4 color;
 
@@ -15,10 +15,13 @@ void main(void) {
     vec3 aux = fragPos;
     aux *= aux;
     aux = aux - vec3(time) * timeScale;
-    aux = floor(aux * n);
-    aux.x *= float(!((abs(1. - fragPos.x) < 0.001)));
-    aux.y *= float(!((abs(1. - fragPos.y) < 0.001)));
-    aux.z *= float(!((abs(1. - fragPos.z) < 0.001)));
+    aux = round(aux * n);
+    /* Set appropriate components to zero when they are close to 0 or 1.
+     * Without it, ugly checker color inversion occurs when squares perform full offset. */
+    aux.x *= float(!((abs(1. - fragPos.x) < 0.001) || (abs(fragPos.x) < 0.001)));
+    aux.y *= float(!((abs(1. - fragPos.y) < 0.001) || (abs(fragPos.y) < 0.001)));
+    aux.z *= float(!((abs(1. - fragPos.z) < 0.001) || (abs(fragPos.z) < 0.001)));
+
     bool isBright = mod(aux.x + aux.y + aux.z, 2.0f) == 1;
     color = float(isBright) * bright + float(!isBright) * dark;
 }
