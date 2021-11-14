@@ -129,12 +129,6 @@ void MyWin::MainLoop() {
         WaitForFixedFPS();
         glfwSwapBuffers(win()); // =============================   Swap buffers
 
-        // game over check
-        if (glm::distance2(s.pos, Transform::ONE) <= 1.5f * s.scale.x * s.scale.x) {
-            printf("You win!\n");
-            break;
-        }
-
         glfwPollEvents();
         //glfwWaitEvents();
 
@@ -167,6 +161,12 @@ void MyWin::MainLoop() {
         }
         if (glfwGetKey(win(), GLFW_KEY_Z) == GLFW_PRESS) {
             s.pos = s.pos - speed * s.forward();
+        }
+
+        // game over check
+        if (glm::distance2(s.pos, Transform::ONE) <= 1.5f * r * r) {
+            printf("You win!\n");
+            break;
         }
 
         if (doesCollide(s, tetraGrid)
