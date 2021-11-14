@@ -3,6 +3,7 @@
 
 #include "AGL3Drawable.hpp"
 
+// cube with dimensions 1x1x1
 class Cube : public AGLDrawable {
 public:
     Cube();

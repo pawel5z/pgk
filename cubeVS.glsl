@@ -12,6 +12,6 @@ out float time;
 
 void main(void) {
     gl_Position = mvp * vec4(vertexPos, 1);
-    fragPos = vertexPos * 2.0f + vec3(.5, .5, .5);
+    fragPos = vertexPos + vec3(.5, .5, .5);
     time = inTime;
 }

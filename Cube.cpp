@@ -1,9 +1,9 @@
 #include "Cube.hpp"
 
 Cube::Cube() {
-    // move cube center to [0, 0, 0] and make its side length of 1
+    // move cube center to [0, 0, 0]
     for (auto &v : vertices)
-        v = (v - Transform::ONE * .5f) * .5f;
+        v = (v - Transform::ONE * .5f);
     setBuffers();
     setShaders();
 }
