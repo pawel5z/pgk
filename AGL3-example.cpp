@@ -76,8 +76,8 @@ void MyWin::MainLoop() {
 
     Sphere s(45);
     s.rot = glm::quatLookAt(glm::normalize(-Transform::ONE), Transform::UP);
-    float r = .9f * 1.0f / (float)latticeSize / 2.0f;
-    s.scale = Transform::ONE * r;
+    float r = 0.75f * .5f / (float)latticeSize;
+    s.scale = Transform::ONE * .75f / (float)latticeSize;
     GLfloat speed = 0.01;
     GLfloat angSpeed = 0.015;
 
