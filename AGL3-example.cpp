@@ -60,6 +60,16 @@ bool doesCollide(const Sphere& s, const TetraGrid& t) {
     return false;
 }
 
+bool isSphereInsideBox(const Sphere &s, const Cube &c) {
+    float r = .5f * (s.scale.x + s.scale.y + s.scale.z) / 3.f;
+    return s.pos.x + r <= c.pos.x + c.scale.x * .5 &&
+           s.pos.y + r <= c.pos.y + c.scale.y * .5 &&
+           s.pos.z + r <= c.pos.z + c.scale.z * .5 &&
+           s.pos.x - r >= c.pos.x - c.scale.x * .5 &&
+           s.pos.y - r >= c.pos.y - c.scale.y * .5 &&
+           s.pos.z - r >= c.pos.z - c.scale.z * .5;
+}
+
 static int latticeSize = 4;
 
 // ==========================================================================
@@ -161,7 +171,9 @@ void MyWin::MainLoop() {
             s.pos = s.pos - speed * s.forward();
         }
 
-        if (doesCollide(s, tetraGrid)) {
+        if (doesCollide(s, tetraGrid)
+            // restrict movement by box boundary
+            || !isSphereInsideBox(s, box)) {
             s.pos = oldPos;
         }
     } while(glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
