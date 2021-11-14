@@ -175,6 +175,13 @@ void MyWin::MainLoop() {
         if (glfwGetKey(win(), GLFW_KEY_Z) == GLFW_PRESS) {
             s.pos = s.pos - speed * s.forward();
         }
+        float mouseSens = .1;
+        double xPos, yPos;
+        glfwGetCursorPos(win(), &xPos, &yPos);
+        // yaw
+        s.rotate(Transform::UP, -angSpeed * mouseSens * (xPos - wd / 2.), SELF);
+        // pitch
+        s.rotate(Transform::RIGHT, angSpeed * mouseSens * (yPos - ht / 2.), SELF);
 
         // game over check
         if (doesCollide(s, tetraGrid, tetraGrid.size() - 1)) {
@@ -187,6 +194,10 @@ void MyWin::MainLoop() {
             || !isSphereInsideBox(s, box)) {
             s.pos = oldPos;
         }
+
+        // reset cursor position
+        glfwSetCursorPos(win(), wd / 2, ht / 2);
+
     } while(glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(win()) == 0 &&
             !gameOver);
