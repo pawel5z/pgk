@@ -42,7 +42,7 @@ void Sphere::initWithPolarCoords(int n) {
  *  |         |
  * v0 ------- v1    la
  * */
-    auto hash = [](const glm::vec3 &v) { return std::hash<float>{}(v.x) * std::hash<float>{}(v.y) * std::hash<float>{}(v.z); };
+    auto hash = [](const glm::vec3 &v) { return std::hash<size_t>{}(std::hash<float>{}(v.x) * std::hash<float>{}(v.y) * std::hash<float>{}(v.z)); };
     auto comp = [](const glm::vec3 &v, const glm::vec3 &u) { return v.x == u.x & v.y == u.y && v.z == u.z; };
     std::unordered_map<glm::vec3, GLushort, decltype(hash), decltype(comp)> existing(10, hash, comp);
     for (int la = 0; la < n; la++) {
