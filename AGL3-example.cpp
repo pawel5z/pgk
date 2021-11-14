@@ -92,7 +92,8 @@ void MyWin::MainLoop() {
 
     Cube box;
     box.pos = Transform::ONE * .5f;
-    box.scale *= 3.0f;
+    // make sure the sphere at [0, 0, 0] fits in the box
+    box.scale *= 1 + 2.f * 3.f / 8.f / (float)latticeSize;
 
     bool gameOver = false;
 
