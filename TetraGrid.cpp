@@ -9,10 +9,10 @@ glm::vec3 TetraGrid::latticeToScene(int i, int j, int k) const {
 }
 
 TetraGrid::TetraGrid(GLuint n) : n(n) {
-    // center tetrahedron mesh and normalize
+    // move tetrahedron center to [0, 0, 0]
     for (auto &vertex : vertices)
-        vertex = glm::normalize(vertex - Transform::ONE * .5f);
-    scale = Transform::ONE * .9f / (float)n / 2.0f;
+        vertex -= Transform::ONE * .5f;
+    scale = Transform::ONE * .75f * glm::root_two<GLfloat>() / 2.f / (float)n;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             for (int k = 0; k < n; k++) {
