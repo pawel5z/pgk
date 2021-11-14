@@ -79,6 +79,7 @@ static int latticeSize = 4;
 // ==========================================================================
 void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
+    glfwSetInputMode(win(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     Sphere s(45);
     s.rot = glm::quatLookAt(glm::normalize(-Transform::ONE), Transform::UP);
