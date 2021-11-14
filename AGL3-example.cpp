@@ -86,7 +86,7 @@ void MyWin::MainLoop() {
     cam.setNf({0.01f, 10.0f});
 
     float ortCamRange = 3;
-    Camera camOrt(-ortCamRange * r, ortCamRange * r, -ortCamRange * r, ortCamRange * r, 0, 10);
+    Camera camOrt(-ortCamRange * r, ortCamRange * r, -ortCamRange * r, ortCamRange * r, 0, 6.f * r);
 
     TetraGrid tetraGrid(latticeSize);
 
