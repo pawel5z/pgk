@@ -70,4 +70,7 @@ void Sphere::initWithPolarCoords(int n) {
             indices.insert(indices.end(), {existing[v[1]], existing[v[2]], existing[v[3]]});
         }
     }
+    // make sphere radius 0.5 so that it fits in 1x1x1 cube
+    for (auto &v : vertices)
+        v *= .5;
 }

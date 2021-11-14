@@ -5,6 +5,7 @@
 
 #include <vector>
 
+// sphere with radius 0.5
 class Sphere : public AGLDrawable {
 public:
     explicit Sphere(int n = 3);
