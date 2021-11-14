@@ -112,19 +112,25 @@ void MyWin::MainLoop() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         AGLErrors("main-loopbegin");
         // =====================================================        Drawing
-        // main camera
+        // >>> main camera
         ViewportOne(0, 0, wd, ht);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         // don't draw sphere in FPP view
         tetraGrid.draw(cam);
         box.draw(cam, (float)glfwGetTime());
-        // secondary camera
+        // <<< main camera
+        // >>> secondary camera
         int m = glm::min(wd, ht);
+        glScissor(wd - m / 3.0f, 0, m / 3.0f, m / 3.0f);
+        glEnable(GL_SCISSOR_TEST);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Viewport(wd - m / 3.0f, 0, m / 3.0f, m / 3.0f);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         s.draw(camOrt);
         tetraGrid.draw(camOrt);
         box.draw(camOrt, (float)glfwGetTime());
+        glDisable(GL_SCISSOR_TEST);
+        // <<< secondary camera
         AGLErrors("main-afterdraw");
 
         WaitForFixedFPS();
