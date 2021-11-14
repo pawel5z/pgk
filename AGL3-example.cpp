@@ -17,7 +17,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 
-
 // ==========================================================================
 // Window Main Loop Inits ...................................................
 // ==========================================================================
@@ -42,6 +41,15 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
 }
 
 // TODO This is just some approximation. Make accurate collision detection.
+bool doesCollide(const Sphere &s, const TetraGrid &t, int i) {
+    float r = .5f * (s.scale.x + s.scale.y + s.scale.z) / 3.f;
+    // collision detection with vertices
+    for (auto &vertex : t.getVerticesPos(i))
+        if (glm::distance2(s.pos, vertex) <= r * r)
+            return true;
+    return false;
+}
+
 bool doesCollide(const Sphere &s, const TetraGrid &t) {
     float r = .5f * (s.scale.x + s.scale.y + s.scale.z) / 3.f;
     for (int i = 0; i < t.size(); i++) {
@@ -49,11 +57,9 @@ bool doesCollide(const Sphere &s, const TetraGrid &t) {
         float checkThreshold = 2.f * r * glm::root_three<GLfloat>() / 2.f;
         if (glm::distance2(s.pos, t.getPos(i)) > checkThreshold * checkThreshold)
             continue;
-        // collision detection with vertices
-        for (auto &vertex : t.getVerticesPos(i)) {
-            if (glm::distance2(s.pos, vertex) <= r * r)
-                return true;
-        }
+        // exact check
+        if (doesCollide(s, t, i))
+            return true;
     }
     return false;
 }
@@ -171,7 +177,7 @@ void MyWin::MainLoop() {
         }
 
         // game over check
-        if (glm::distance2(s.pos, Transform::ONE) <= 1.5f * r * r) {
+        if (doesCollide(s, tetraGrid, tetraGrid.size() - 1)) {
             printf("You win!\n");
             break;
         }
