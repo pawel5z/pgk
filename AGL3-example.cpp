@@ -121,6 +121,7 @@ void MyWin::MainLoop() {
         // >>> main camera
         ViewportOne(0, 0, wd, ht);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glLineWidth(1.f);
         // don't draw sphere in FPP view
         tetraGrid.draw(cam);
         box.draw(cam, (float)glfwGetTime());
@@ -132,6 +133,7 @@ void MyWin::MainLoop() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Viewport(wd - m / 3.0f, 0, m / 3.0f, m / 3.0f);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glLineWidth(3.f);
         s.draw(camOrt);
         tetraGrid.draw(camOrt);
         box.draw(camOrt, (float)glfwGetTime());
