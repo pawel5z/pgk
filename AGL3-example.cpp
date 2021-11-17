@@ -40,12 +40,27 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
     }
 }
 
-// TODO This is just some approximation. Make accurate collision detection.
 bool doesCollide(const Sphere &s, const TetraGrid &t, int i) {
     float r = .5f * (s.scale.x + s.scale.y + s.scale.z) / 3.f;
     // collision detection with vertices
-    for (auto &vertex : t.getVerticesPos(i))
+    auto vertices = t.getVerticesPos(i);
+    for (auto &vertex : vertices)
         if (glm::distance2(s.pos, vertex) <= r * r)
+            return true;
+    std::vector<glm::vec3> edgeMids;
+    for (int i = 0; i < vertices.size(); i++)
+        for (int j = i + 1; j < vertices.size(); j++)
+            edgeMids.push_back((vertices[i] + vertices[j]) / 2.f);
+    for (auto &edgeMid : edgeMids)
+        if (glm::distance2(s.pos, edgeMid) <= r * r)
+            return true;
+    std::vector<glm::vec3> faceMids;
+    for (int i = 0; i < vertices.size(); i++)
+        for (int j = i + 1; j < vertices.size(); j++)
+            for (int k = j + 1; k < vertices.size(); k++)
+                faceMids.push_back((vertices[i] + vertices[j] + vertices[k]) / 3.f);
+    for (auto &faceMid : faceMids)
+        if (glm::distance2(s.pos, faceMid) <= r * r)
             return true;
     return false;
 }
