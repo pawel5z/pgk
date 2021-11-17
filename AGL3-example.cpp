@@ -100,7 +100,7 @@ void MyWin::MainLoop() {
     s.rot = glm::quatLookAt(glm::normalize(-Transform::ONE), Transform::UP);
     float r = 0.75f * .5f / (float)latticeSize;
     s.scale = Transform::ONE * .75f / (float)latticeSize;
-    GLfloat speed = 0.01;
+    GLfloat speed = 0.05 / latticeSize;
     GLfloat angSpeed = 0.015;
 
     Camera cam;
