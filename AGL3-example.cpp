@@ -40,10 +40,10 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
     }
 }
 
-bool doesCollide(const Sphere &s, const TetraGrid &t, int i) {
+bool doesCollide(const Sphere &s, const TetraGrid &t, int index) {
     float r = .5f * (s.scale.x + s.scale.y + s.scale.z) / 3.f;
     // collision detection with vertices
-    auto vertices = t.getVerticesPos(i);
+    auto vertices = t.getVerticesPos(index);
     for (auto &vertex : vertices)
         if (glm::distance2(s.pos, vertex) <= r * r)
             return true;
@@ -100,7 +100,7 @@ void MyWin::MainLoop() {
     s.rot = glm::quatLookAt(glm::normalize(-Transform::ONE), Transform::UP);
     float r = 0.75f * .5f / (float)latticeSize;
     s.scale = Transform::ONE * .75f / (float)latticeSize;
-    GLfloat speed = 0.05 / latticeSize;
+    GLfloat speed = .05f / (float)latticeSize;
     GLfloat angSpeed = 0.015;
 
     Camera cam;
@@ -116,8 +116,6 @@ void MyWin::MainLoop() {
     box.pos = Transform::ONE * .5f;
     // make sure the sphere at [0, 0, 0] fits in the box
     box.scale *= 1 + 2.f * 3.f / 8.f / (float)latticeSize;
-
-    bool gameOver = false;
 
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
     // enable depth buffer comparisons
@@ -202,7 +200,7 @@ void MyWin::MainLoop() {
         s.rotate(Transform::RIGHT, angSpeed * mouseSens * (yPos - ht / 2.), SELF);
 
         // game over check
-        if (doesCollide(s, tetraGrid, tetraGrid.size() - 1)) {
+        if (doesCollide(s, tetraGrid, (int)tetraGrid.size() - 1)) {
             printf("You win!\n");
             break;
         }
@@ -214,11 +212,10 @@ void MyWin::MainLoop() {
         }
 
         // reset cursor position
-        glfwSetCursorPos(win(), wd / 2, ht / 2);
+        glfwSetCursorPos(win(), wd / 2., ht / 2.);
 
     } while(glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-            glfwWindowShouldClose(win()) == 0 &&
-            !gameOver);
+            glfwWindowShouldClose(win()) == 0);
 }
 
 int main(int argc, char *argv[]) {
