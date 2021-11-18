@@ -94,7 +94,6 @@ static int latticeSize = 4;
 // ==========================================================================
 void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
-    glfwSetInputMode(win(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     Sphere s(45);
     s.rot = glm::quatLookAt(glm::normalize(-Transform::ONE), Transform::UP);
@@ -116,6 +115,8 @@ void MyWin::MainLoop() {
     box.pos = Transform::ONE * .5f;
     // make sure the sphere at [0, 0, 0] fits in the box
     box.scale *= 1 + 2.f * 3.f / 8.f / (float)latticeSize;
+
+    double refMouseXPos, refMouseYPos;
 
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
     // enable depth buffer comparisons
@@ -191,13 +192,17 @@ void MyWin::MainLoop() {
         if (glfwGetKey(win(), GLFW_KEY_Z) == GLFW_PRESS) {
             s.pos = s.pos - speed * s.forward();
         }
-        float mouseSens = .1;
-        double xPos, yPos;
-        glfwGetCursorPos(win(), &xPos, &yPos);
-        // yaw
-        s.rotate(Transform::UP, -angSpeed * mouseSens * (xPos - wd / 2.), SELF);
-        // pitch
-        s.rotate(Transform::RIGHT, angSpeed * mouseSens * (yPos - ht / 2.), SELF);
+
+        if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+            float mouseSens = .1;
+            double xPos, yPos;
+            glfwGetCursorPos(win(), &xPos, &yPos);
+            // yaw
+            s.rotate(Transform::UP, -angSpeed * mouseSens * (xPos - refMouseXPos), SELF);
+            // pitch
+            s.rotate(Transform::RIGHT, angSpeed * mouseSens * (yPos - refMouseYPos), SELF);
+        }
+        glfwGetCursorPos(win(), &refMouseXPos, &refMouseYPos);
 
         // game over check
         if (doesCollide(s, tetraGrid, (int)tetraGrid.size() - 1)) {
@@ -210,10 +215,6 @@ void MyWin::MainLoop() {
             || !isSphereInsideBox(s, box)) {
             s.pos = oldPos;
         }
-
-        // reset cursor position
-        glfwSetCursorPos(win(), wd / 2., ht / 2.);
-
     } while(glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(win()) == 0);
 }
