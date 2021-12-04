@@ -139,7 +139,7 @@ void BubbleContainer::update(float deltaTime) {
             bubbles[idx].alive = true;
             lastUsedBubbleIdx = idx;
             bubbles[idx].pos = glm::vec3(xMin +(xMax - xMin) * (float)rand() / (float)RAND_MAX, yMin, zMin +(zMax - zMin) * (float)rand() / (float)RAND_MAX);
-            bubbles[idx].scale = 1.f;
+            bubbles[idx].scale = initScale;
         }
     }
     std::sort(bubbles.begin(), bubbles.end());
