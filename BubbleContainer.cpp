@@ -47,7 +47,7 @@ void BubbleContainer::draw(Camera camera) {
     glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, nullptr);
     glVertexAttribDivisor(2, 1);
 
-    glDrawElementsInstanced(GL_TRIANGLES, (int)indices.size(), GL_SHORT, nullptr, (int)liveBubblesCnt);
+    glDrawElementsInstanced(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_SHORT, nullptr, (int)liveBubblesCnt);
 }
 
 void BubbleContainer::initWithPolarCoords(int n) {
