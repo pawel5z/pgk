@@ -37,13 +37,15 @@ void BubbleContainer::draw(Camera camera) {
     glBindBuffer(GL_ARRAY_BUFFER, posAndScaleVBO);
     glBufferData(GL_ARRAY_BUFFER, (int)(liveBubblesCnt * sizeof(glm::vec4)), posAndScaleData.data(), GL_DYNAMIC_DRAW);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(0, 4, GL_FLOAT, false, 0, nullptr);
+    glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, nullptr);
+    glVertexAttribDivisor(1, 1);
 
     // pass colors
     glBindBuffer(GL_ARRAY_BUFFER, colVBO);
     glBufferData(GL_ARRAY_BUFFER, (int)(liveBubblesCnt * sizeof(glm::vec4)), colorData.data(), GL_DYNAMIC_DRAW);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, nullptr);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, nullptr);
+    glVertexAttribDivisor(2, 1);
 
     glDrawElementsInstanced(GL_TRIANGLES, (int)indices.size(), GL_SHORT, nullptr, (int)liveBubblesCnt);
 }
