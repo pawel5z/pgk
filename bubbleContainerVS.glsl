@@ -11,7 +11,7 @@ layout(location = 2) in vec3 color; // r, g, b
 out vec3 fragmentColor;
 
 void main(void) {
-    float scale = posAndScale.w;
+    float s = posAndScale.w;
     mat4 model = // translation matrix
                  mat4(vec4(1, 0, 0, 0),
                       vec4(0, 1, 0, 0),
