@@ -1,7 +1,7 @@
 #version 330
 #extension GL_ARB_explicit_uniform_location : require
 
-const float alpha = .5f;
+const float alpha = .25f;
 
 in vec3 fragmentColor;
 
