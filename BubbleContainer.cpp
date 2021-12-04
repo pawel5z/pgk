@@ -9,7 +9,8 @@ BubbleContainer::BubbleContainer(int smoothness, int maxBubbles, int spawnFreq, 
     glGenBuffers(1, &colVBO);
     setBuffers();
     setShaders();
-    bubbles = std::vector<Bubble>(maxBubbles, Bubble(initScale));
+    for (int i = 0; i < maxBubbles; i++)
+        bubbles.emplace_back(initScale);
     posAndScaleData = std::vector<glm::vec4>(maxBubbles);
     colorData = std::vector<glm::vec3>(maxBubbles);
 }
