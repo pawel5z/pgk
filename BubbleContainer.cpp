@@ -24,6 +24,11 @@ void BubbleContainer::draw(Camera camera) {
     bind();
     glUniformMatrix4fv(0, 1, false, &camera.getPVMat()[0][0]);
 
+    for (auto &bubble : bubbles)
+        if (bubble.alive)
+            bubble.distToCam = glm::distance2(bubble.pos, camera.pos);
+        else
+            bubble.distToCam = -1.f;
     std::sort(bubbles.begin(), bubbles.end());
     size_t liveBubblesCnt = 0;
     for (auto &bubble : bubbles) {
