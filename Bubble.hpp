@@ -9,7 +9,7 @@ public:
     glm::vec3 pos = {0.f, 0.f, 0.f};
     glm::vec3 col{};
     float distToCam = 0.f;
-    bool alive = true;
+    bool alive = false;
 
     explicit Bubble(float scale = 1.f);
     bool operator<(const Bubble &rhs) const;
