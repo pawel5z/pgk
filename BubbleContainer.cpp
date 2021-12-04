@@ -128,7 +128,7 @@ void BubbleContainer::update(float deltaTime) {
             b.distToCam = -1.f;
             continue;
         }
-        b.scale += (targetScale - b.scale) * .25f;
+        b.scale = (b.pos.y - yMin) / (yMax - yMin) * (targetScale - initScale) + initScale;
     }
     timeTowardsSecond += deltaTime;
     if (timeTowardsSecond >= 1.f) {
