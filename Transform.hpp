@@ -20,7 +20,7 @@ public:
     static constexpr glm::vec3 DOWN = -UP;
     static constexpr glm::vec3 FORWARD = glm::vec3(0, 0, 1);
     static constexpr glm::vec3 BACKWARD = -FORWARD;
-    static constexpr glm::vec3 RIGHT = glm::vec3(1, 0, 0);
+    static constexpr glm::vec3 RIGHT = glm::vec3(-1, 0, 0);
     static constexpr glm::vec3 LEFT = -RIGHT;
 
     glm::vec3 pos = glm::vec3(0, 0, 0);
