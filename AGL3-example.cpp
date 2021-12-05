@@ -9,6 +9,7 @@
 #include "Sphere.hpp"
 #include "TetraGrid.hpp"
 #include "Cube.hpp"
+#include "BubbleContainer.hpp"
 
 #include <cstdlib>
 #include <cstdio>
@@ -53,104 +54,120 @@ bool isSphereInsideBox(const Sphere &s, const Cube &c) {
 // ==========================================================================
 void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
+    int level = 1;
+    bool gameOver = false;
+    double lastFrameTimeStamp = glfwGetTime();
 
-    Sphere player(20);
-    player.rot = glm::quatLookAtLH(Transform::FORWARD, Transform::UP);
-    float r = .1f;
-    player.scale = Transform::ONE * 2.f * r;
-    player.pos = player.forward() * r + 1e-6f;
-    GLfloat speed = .05f;
-    GLfloat angSpeed = 0.015;
+    while (!gameOver) {
+        Sphere player(20);
+        player.rot = glm::quatLookAtLH(Transform::FORWARD, Transform::UP);
+        float r = .1f;
+        player.scale = Transform::ONE * 2.f * r;
+        player.pos = player.forward() * r + 1e-6f;
+        GLfloat speed = .05f;
+        GLfloat angSpeed = 0.015;
 
-    Camera cam;
-    cam.setFovY(60);
-    cam.setNf({0.01f, 10.0f});
+        Camera cam;
+        cam.setFovY(60);
+        cam.setNf({0.01f, 10.0f});
 
-    Cube box;
-    box.scale.z *= 5.f;
-    box.pos.z = .5f * box.scale.z;
+        Cube box;
+        box.scale.z *= 5.f;
+        box.pos.z = .5f * box.scale.z;
 
-    double refMouseXPos, refMouseYPos;
+        float bubbleRadius = .1f;
+        BubbleContainer bc(20, 1000, 1 + (int)glm::log2((float)level), .005f, -.5f, .5f, -.2f, .2f, 2.f * r + 2.f * bubbleRadius * 1.5f, 4.5f, 2.f * bubbleRadius, 2.f * bubbleRadius * 1.5f);
 
-    glClearColor(0.913f, 0.847f, 0.086f, 0.0f);
-    // enable depth buffer comparisons
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    do {
-        glfwPollEvents();
-        //glfwWaitEvents();
+        double refMouseXPos, refMouseYPos;
 
-        glm::vec3 oldPos = player.pos;
-        // player movement
-        // roll
-        if (glfwGetKey(win(), GLFW_KEY_E) == GLFW_PRESS)
-            player.rotate(Transform::FORWARD, angSpeed, SELF);
-        if (glfwGetKey(win(), GLFW_KEY_Q) == GLFW_PRESS)
-            player.rotate(Transform::FORWARD, -angSpeed, SELF);
-        // forward
-        if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS ||
-            glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS)
-            player.pos += speed * player.forward();
-        // backward
-        if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS ||
-            glfwGetKey(win(), GLFW_KEY_DOWN) == GLFW_PRESS)
-            player.pos -= speed * player.forward();
-        // rightward
-        if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS ||
-            glfwGetKey(win(), GLFW_KEY_RIGHT) == GLFW_PRESS)
-            player.pos += speed * player.right();
-        // leftward
-        if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS ||
-            glfwGetKey(win(), GLFW_KEY_LEFT) == GLFW_PRESS)
-            player.pos -= speed * player.right();
-        // up
-        if (glfwGetKey(win(), GLFW_KEY_PAGE_UP) == GLFW_PRESS)
-            player.pos += speed * player.up();
-        // down
-        if (glfwGetKey(win(), GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
-            player.pos -= speed * player.up();
-        // mouse input
-        if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-            float mouseSens = .1;
-            double xPos, yPos;
-            glfwGetCursorPos(win(), &xPos, &yPos);
-            // yaw
-            player.rotate(Transform::UP, -angSpeed * mouseSens * (float)(xPos - refMouseXPos), SELF);
-            // pitch
-            player.rotate(Transform::RIGHT, angSpeed * mouseSens * (float)(yPos - refMouseYPos), SELF);
-        }
-        glfwGetCursorPos(win(), &refMouseXPos, &refMouseYPos);
+        glClearColor(0.913f, 0.847f, 0.086f, 0.0f);
+        // enable depth buffer comparisons
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        do {
+            double currentFrameTimeStamp = glfwGetTime();
 
-        if (// restrict movement by box boundary
-            !isSphereInsideBox(player, box)) {
-            player.pos = oldPos;
-        }
+            glfwPollEvents();
+            //glfwWaitEvents();
 
-        cam.rot = player.rot;
-        // camera TPP
-        cam.pos = player.pos - 3 * r * cam.forward() + r * cam.up();
-        cam.setAspect(aspect);
+            glm::vec3 oldPos = player.pos;
+            // player movement
+            // roll
+            if (glfwGetKey(win(), GLFW_KEY_E) == GLFW_PRESS)
+                player.rotate(Transform::FORWARD, angSpeed, SELF);
+            if (glfwGetKey(win(), GLFW_KEY_Q) == GLFW_PRESS)
+                player.rotate(Transform::FORWARD, -angSpeed, SELF);
+            // forward
+            if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS)
+                player.pos += speed * player.forward();
+            // backward
+            if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_DOWN) == GLFW_PRESS)
+                player.pos -= speed * player.forward();
+            // rightward
+            if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_RIGHT) == GLFW_PRESS)
+                player.pos += speed * player.right();
+            // leftward
+            if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_LEFT) == GLFW_PRESS)
+                player.pos -= speed * player.right();
+            // up
+            if (glfwGetKey(win(), GLFW_KEY_PAGE_UP) == GLFW_PRESS)
+                player.pos += speed * player.up();
+            // down
+            if (glfwGetKey(win(), GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
+                player.pos -= speed * player.up();
+            // mouse input
+            if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+                float mouseSens = .1;
+                double xPos, yPos;
+                glfwGetCursorPos(win(), &xPos, &yPos);
+                // yaw
+                player.rotate(Transform::UP, -angSpeed * mouseSens * (float) (xPos - refMouseXPos), SELF);
+                // pitch
+                player.rotate(Transform::RIGHT, angSpeed * mouseSens * (float) (yPos - refMouseYPos), SELF);
+            }
+            glfwGetCursorPos(win(), &refMouseXPos, &refMouseYPos);
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        AGLErrors("main-loopbegin");
-        // =====================================================        Drawing
-        // >>> main camera
-        player.draw(cam);
-        box.draw(cam);
-        // <<< main camera
-        AGLErrors("main-afterdraw");
+            if (// restrict movement by box boundary
+                    !isSphereInsideBox(player, box)) {
+                player.pos = oldPos;
+            }
 
-        WaitForFixedFPS();
-        glfwSwapBuffers(win()); // =============================   Swap buffers
+            cam.rot = player.rot;
+            // camera TPP
+            cam.pos = player.pos - 3 * r * cam.forward() + r * cam.up();
+            cam.setAspect(aspect);
 
-        // game over check
-        if (/* TODO */ false) {
-            printf("You win!\n");
-            break;
-        }
+            bc.update((float)(currentFrameTimeStamp - lastFrameTimeStamp));
 
-    } while(glfwGetKey(win(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-            glfwWindowShouldClose(win()) == 0);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            AGLErrors("main-loopbegin");
+            // =====================================================        Drawing
+            box.draw(cam);
+            bc.draw(cam);
+            player.draw(cam);
+            AGLErrors("main-afterdraw");
+
+            WaitForFixedFPS();
+            glfwSwapBuffers(win()); // =============================   Swap buffers
+
+            // check level complete
+            if (player.pos.z >= 5.f - 1.5f * r) {
+                printf("Level %d complete!\n", level++);
+                break;
+            }
+
+            // check for close request
+            if (glfwGetKey(win(), GLFW_KEY_ESCAPE) == GLFW_PRESS ||
+                glfwWindowShouldClose(win()) == 1)
+                gameOver = true;
+
+            lastFrameTimeStamp = currentFrameTimeStamp;
+        } while (!gameOver);
+    }
 }
 
 int main(int argc, char *argv[]) {
