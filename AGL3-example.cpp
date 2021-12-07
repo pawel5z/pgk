@@ -98,7 +98,7 @@ void MyWin::MainLoop() {
         // set up blending
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        do {
+        while (!gameOver) {
             double currentFrameTimeStamp = glfwGetTime();
 
             glfwPollEvents();
@@ -180,7 +180,7 @@ void MyWin::MainLoop() {
                 gameOver = true;
 
             lastFrameTimeStamp = currentFrameTimeStamp;
-        } while (!gameOver);
+        }
         this->cam = nullptr;
     }
 }
