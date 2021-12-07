@@ -23,12 +23,21 @@
 // ==========================================================================
 class MyWin : public AGLWindow {
 public:
+    Camera *cam = nullptr;
+
     MyWin() = default;
     MyWin(int _wd, int _ht, const char *name, int vers, int fullscr=0)
         : AGLWindow(_wd, _ht, name, fullscr, vers) {};
     void KeyCB(int key, int scancode, int action, int mods) override;
     void MainLoop() override;
+    void ScrollCB(double xp, double yp) override;
 };
+
+void MyWin::ScrollCB(double xp, double yp) {
+    AGLWindow::ScrollCB(xp, yp);
+    float fov = cam->getFovY();
+    cam->setFovY(fov + (float)(yp < .0 && fov < 90.f) * 1.f  - (float)(yp > .0 && fov > 45.f) * 1.f);
+}
 
 // ==========================================================================
 void MyWin::KeyCB(int key, int scancode, int action, int mods) {
@@ -70,6 +79,7 @@ void MyWin::MainLoop() {
         Camera cam;
         cam.setFovY(60);
         cam.setNf({0.01f, 10.0f});
+        this->cam = &cam;
 
         Cube box;
         box.scale.z *= 5.f;
@@ -171,6 +181,7 @@ void MyWin::MainLoop() {
 
             lastFrameTimeStamp = currentFrameTimeStamp;
         } while (!gameOver);
+        this->cam = nullptr;
     }
 }
 
