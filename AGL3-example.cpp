@@ -84,6 +84,9 @@ void MyWin::MainLoop() {
         // enable depth buffer comparisons
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+        // set up blending
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         do {
             double currentFrameTimeStamp = glfwGetTime();
 
