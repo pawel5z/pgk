@@ -21,6 +21,7 @@ BubbleContainer::~BubbleContainer() {
 }
 
 void BubbleContainer::draw(Camera camera) {
+    glDisable(GL_CULL_FACE);
     bind();
     glUniformMatrix4fv(0, 1, false, &camera.getPVMat()[0][0]);
 

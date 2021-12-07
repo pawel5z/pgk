@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 void Sphere::draw(Camera camera) {
+    glDisable(GL_CULL_FACE);
     bind();
     glm::mat4 mvp = camera.getPVMat() * getModelMat();
     glUniformMatrix4fv(0, 1, false, &mvp[0][0]);
