@@ -76,7 +76,8 @@ void MyWin::MainLoop() {
         box.pos.z = .5f * box.scale.z;
 
         float bubbleRadius = .1f;
-        BubbleContainer bc(20, 1000, 1 + (int)glm::log2((float)level), .005f, -.5f, .5f, -.2f, .2f, 2.f * r + 2.f * bubbleRadius * 1.5f, 4.5f, 2.f * bubbleRadius, 2.f * bubbleRadius * 1.5f);
+        float targetMul = 1.5f;
+        BubbleContainer bc(20, 1000, 1 + (int)glm::log2((float)level), .005f, -.5f + bubbleRadius, .5f - bubbleRadius * targetMul, -.2f, .2f, 2.f * r + 2.f * bubbleRadius * 1.5f, 4.5f, 2.f * bubbleRadius, 2.f * bubbleRadius * targetMul);
 
         double refMouseXPos, refMouseYPos;
 
