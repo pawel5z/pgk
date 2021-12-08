@@ -17,7 +17,8 @@ void main(void) {
     vec3 vertexPosWorldspace = vec3(m * vec4(vertexPosModelspace, 1.f));
     gl_Position = vp * vec4(vertexPosWorldspace, 1.f);
 
-    normalWorldspace = normalize(transpose(inverse(mat3(m))) * normalize(vertexPosModelspace));
+    vec3 normalModelspace = normalize(vertexPosModelspace) * float(vertexPosModelspace.y > 0.f) + normalize(vertexPosModelspace * vec3(1.f, -1.f, 1.f)) * float(vertexPosModelspace.y < 0.f);
+    normalWorldspace = normalize(transpose(inverse(mat3(m))) * normalModelspace);
     lightDirWorldspace = normalize(-dlDirWorldspace);
     eyeDirWorldspace = normalize(cameraPosWorldspace - vertexPosWorldspace);
 }
