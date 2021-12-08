@@ -98,7 +98,7 @@ void MyWin::MainLoop() {
         float targetMul = 1.5f;
         BubbleContainer bc(20, 1000, 1 + (int)glm::log2((float)level), .005f, -.5f + bubbleRadius, .5f - bubbleRadius * targetMul, -.2f, .2f, 2.f * r + 2.f * bubbleRadius * 1.5f, 4.5f, 2.f * bubbleRadius, 2.f * bubbleRadius * targetMul);
 
-        DirectionalLight directionalLight(Transform::DOWN, {0.913f, 0.847f, 0.086f});
+        DirectionalLight directionalLight(Transform::DOWN, {1.f, 1.f, 1.f});
         directionalLight.setIntensity(1.f);
 
         double refMouseXPos, refMouseYPos;
