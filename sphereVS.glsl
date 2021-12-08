@@ -6,17 +6,22 @@ layout(location = 0) uniform mat4 m;
 layout(location = 1) uniform mat4 vp;
 layout(location = 2) uniform vec3 dlDirWorldspace;
 layout(location = 3) uniform vec3 dlColor;
+layout(location = 4) uniform vec3 cameraPosWorldspace;
 
-layout(location = 0) in vec3 vertexPos;
+layout(location = 0) in vec3 vertexPosModelspace;
 
 out vec3 fragmentColor;
 
 void main(void) {
-    gl_Position = vp * m * vec4(vertexPos, 1);
+    vec3 vertexPosWorldspace = vec3(m * vec4(vertexPosModelspace, 1.f));
+    gl_Position = vp * vec4(vertexPosWorldspace, 1);
 
-    vec3 n = normalize(vec3(transpose(inverse(m)) * vec4(vertexPos, 1)));
+    vec3 diffuseCol = vertexPosModelspace * 2.f + vec3(1.f);
+    vec3 n = normalize(vec3(transpose(inverse(m)) * vec4(vertexPosModelspace, 1)));
     vec3 l = normalize(-dlDirWorldspace);
-
-    vec3 diffuseCol = vertexPos * 2.f + vec3(1.f);
-    fragmentColor = diffuseCol * dlColor * clamp(dot(n, l), 0.f, 1.f);
+    vec3 e = normalize(cameraPosWorldspace - vertexPosWorldspace);
+    vec3 r = reflect(-l, n);
+    fragmentColor = diffuseCol * dlColor * clamp(dot(n, l), 0.f, 1.f) // diffuse component
+                  + vec3(.5f, .5f, .5f) * pow(clamp(dot(e, r), 0.f, 1.f), 7.f) * float(dot(l, n) > 0.f) // specular component
+    ;
 }

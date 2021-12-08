@@ -18,6 +18,7 @@ void Cube::draw(Camera camera, DirectionalLight directionalLight) {
     glUniformMatrix4fv(1, 1, false, &camera.getPVMat()[0][0]);
     glUniform3fv(2, 1, &directionalLight.getDir()[0]);
     glUniform3fv(3, 1, &directionalLight.getLightColor()[0]);
+    glUniform3fv(4, 1, &camera.pos[0]);
     glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_BYTE, nullptr);
 }
 
