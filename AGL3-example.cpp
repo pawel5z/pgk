@@ -181,7 +181,7 @@ void MyWin::MainLoop() {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             AGLErrors("main-loopbegin");
             // =====================================================        Drawing
-            box.draw(*drawingCam);
+            box.draw(*drawingCam, directionalLight);
             player.draw(*drawingCam, directionalLight);
             bc.draw(*drawingCam);
             AGLErrors("main-afterdraw");
