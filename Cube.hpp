@@ -41,4 +41,4 @@ private:
     void setShaders();
 };
 
-#endif //LAB4_CUBE_HPP
+#endif //CUBE_HPP
