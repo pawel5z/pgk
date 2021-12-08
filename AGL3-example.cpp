@@ -105,7 +105,7 @@ void MyWin::MainLoop() {
 
         int tabPrevState = GLFW_RELEASE;
 
-        glClearColor(0.913f, 0.847f, 0.086f, 0.0f);
+        glClearColor(.8f, .8f, .8f, .0f);
         // enable depth buffer comparisons
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
