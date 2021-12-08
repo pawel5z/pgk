@@ -7,7 +7,6 @@
 //===========================================================================
 #include "AGL3Window.hpp"
 #include "Sphere.hpp"
-#include "TetraGrid.hpp"
 #include "Cube.hpp"
 #include "BubbleContainer.hpp"
 #include "DirectionalLight.hpp"
