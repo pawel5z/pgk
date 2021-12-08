@@ -3,12 +3,14 @@
 
 #include "AGL3Drawable.hpp"
 #include "Bubble.hpp"
+#include "DirectionalLight.hpp"
 
 class BubbleContainer : AGLDrawable {
 public:
     explicit BubbleContainer(int smoothness = 20, int maxBubbles = 1000, int spawnFreq = 10, float floatingSpd = .5f, float yMin = 0.f, float yMax = 0.f, float xMin = 0.f, float xMax = 0.f, float zMin = 0.f, float zMax = 0.f, float initScale = 1.f, float targetScale = 1.3f);
     ~BubbleContainer();
     void draw(Camera camera) override;
+    void draw(Camera camera, DirectionalLight directionalLight);
     void update(float deltaTime);
 
 protected:

@@ -20,10 +20,14 @@ BubbleContainer::~BubbleContainer() {
     glDeleteBuffers(1, &colVBO);
 }
 
-void BubbleContainer::draw(Camera camera) {
+void BubbleContainer::draw(Camera camera) {}
+
+void BubbleContainer::draw(Camera camera, DirectionalLight directionalLight) {
     glDisable(GL_CULL_FACE);
     bind();
     glUniformMatrix4fv(0, 1, false, &camera.getPVMat()[0][0]);
+    glUniform3fv(1, 1, &directionalLight.getDir()[0]);
+    glUniform3fv(2, 1, &directionalLight.getLightColor()[0]);
 
     for (auto &bubble : bubbles)
         if (bubble.alive)

@@ -183,7 +183,7 @@ void MyWin::MainLoop() {
             // =====================================================        Drawing
             box.draw(*drawingCam, directionalLight);
             player.draw(*drawingCam, directionalLight);
-            bc.draw(*drawingCam);
+            bc.draw(*drawingCam, directionalLight);
             AGLErrors("main-afterdraw");
 
             WaitForFixedFPS();
