@@ -19,7 +19,7 @@ void main(void) {
     gl_Position = vp * vec4(vertexPosWorldspace, 1.f);
 
     const vec3 diffuseCol = vec3(.094f, .623f, .949f);
-    vec3 n = normalize(vec3(transpose(inverse(m)) * vec4(vertexPosModelspace, 1)));
+    vec3 n = normalize(transpose(inverse(mat3(m))) * normalize(vertexPosModelspace));
     vec3 l = normalize(-dlDirWorldspace);
     vec3 e = normalize(cameraPosWorldspace - vertexPosWorldspace);
     vec3 r = reflect(-l, n);
