@@ -10,6 +10,7 @@
 #include "TetraGrid.hpp"
 #include "Cube.hpp"
 #include "BubbleContainer.hpp"
+#include "DirectionalLight.hpp"
 
 #include <cstdlib>
 #include <cstdio>
@@ -97,6 +98,9 @@ void MyWin::MainLoop() {
         float targetMul = 1.5f;
         BubbleContainer bc(20, 1000, 1 + (int)glm::log2((float)level), .005f, -.5f + bubbleRadius, .5f - bubbleRadius * targetMul, -.2f, .2f, 2.f * r + 2.f * bubbleRadius * 1.5f, 4.5f, 2.f * bubbleRadius, 2.f * bubbleRadius * targetMul);
 
+        DirectionalLight directionalLight(Transform::DOWN, {0.913f, 0.847f, 0.086f});
+        directionalLight.setIntensity(1.f);
+
         double refMouseXPos, refMouseYPos;
 
         int tabPrevState = GLFW_RELEASE;
@@ -178,7 +182,7 @@ void MyWin::MainLoop() {
             AGLErrors("main-loopbegin");
             // =====================================================        Drawing
             box.draw(*drawingCam);
-            player.draw(*drawingCam);
+            player.draw(*drawingCam, directionalLight);
             bc.draw(*drawingCam);
             AGLErrors("main-afterdraw");
 

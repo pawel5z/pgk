@@ -1,13 +1,18 @@
 #include "Sphere.hpp"
+#include "DirectionalLight.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <unordered_map>
 
-void Sphere::draw(Camera camera) {
+void Sphere::draw(Camera camera) {}
+
+void Sphere::draw(Camera camera, DirectionalLight directionalLight) {
     glDisable(GL_CULL_FACE);
     bind();
-    glm::mat4 mvp = camera.getPVMat() * getModelMat();
-    glUniformMatrix4fv(0, 1, false, &mvp[0][0]);
+    glUniformMatrix4fv(0, 1, false, &getModelMat()[0][0]);
+    glUniformMatrix4fv(1, 1, false, &camera.getPVMat()[0][0]);
+    glUniform3fv(2, 1, &directionalLight.getDir()[0]);
+    glUniform3fv(3, 1, &directionalLight.getLightColor()[0]);
     glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_SHORT, nullptr);
 }
 

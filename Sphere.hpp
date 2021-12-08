@@ -2,6 +2,7 @@
 #define SPHERE_HPP
 
 #include "AGL3Drawable.hpp"
+#include "DirectionalLight.hpp"
 
 #include <vector>
 
@@ -10,6 +11,7 @@ class Sphere : public AGLDrawable {
 public:
     explicit Sphere(int n = 3);
     void draw(Camera camera) override;
+    void draw(Camera camera, DirectionalLight directionalLight);
 
 protected:
     void setBuffers();
