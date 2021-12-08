@@ -28,6 +28,7 @@ void BubbleContainer::draw(Camera camera, DirectionalLight directionalLight) {
     glUniformMatrix4fv(0, 1, false, &camera.getPVMat()[0][0]);
     glUniform3fv(1, 1, &directionalLight.getDir()[0]);
     glUniform3fv(2, 1, &directionalLight.getLightColor()[0]);
+    glUniform3fv(3, 1, &camera.pos[0]);
 
     for (auto &bubble : bubbles)
         if (bubble.alive)
