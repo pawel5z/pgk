@@ -14,20 +14,23 @@ Camera::Camera(float left, float right, float bottom, float top, float near, flo
     type = ORTHOGRAPHIC;
 }
 
-glm::mat4 Camera::getPVMat() {
-    glm::mat4 projection;
+glm::mat4 Camera::getProjectionMat() {
     switch (type) {
         case PERSPECTIVE:
-            projection = glm::perspective(glm::radians(fovY), aspect, nf[0], nf[1]);
-            break;
+            return glm::perspective(glm::radians(fovY), aspect, nf[0], nf[1]);
         case ORTHOGRAPHIC:
-            projection = glm::ortho(lr[0], lr[1], bt[0], bt[1], nf[0], nf[1]);
-            break;
+            return glm::ortho(lr[0], lr[1], bt[0], bt[1], nf[0], nf[1]);
         default:
             throw std::logic_error("invalid camera type");
     }
-    glm::mat4 view = glm::lookAt(pos, pos + forward(), up());
-    return projection * view;
+}
+
+glm::mat4 Camera::getViewMat() {
+    return glm::lookAt(pos, pos + forward(), up());
+}
+
+glm::mat4 Camera::getPVMat() {
+    return getProjectionMat() * getViewMat();
 }
 
 CameraType Camera::getType() const {

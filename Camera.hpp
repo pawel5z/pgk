@@ -18,6 +18,8 @@ public:
     Camera() = default;
     Camera(float fovY, float aspect, float near, float far);
     Camera(float left, float right, float bottom, float top, float near, float far);
+    glm::mat4 getProjectionMat();
+    glm::mat4 getViewMat();
     glm::mat4 getPVMat();
     CameraType getType() const;
     void setType(CameraType type);

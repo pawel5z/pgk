@@ -1,7 +1,7 @@
 #include "Transform.hpp"
 
 glm::mat4 Transform::getModelMat() const {
-    return glm::translate(glm::mat4(1.0f), pos) * glm::toMat4(rot) * glm::scale(scale);
+    return glm::translate(glm::mat4(1.0f), pos) * glm::toMat4(rot) * getScaleMat();
 }
 
 void Transform::setRot(const glm::vec3 &rot) {
@@ -10,6 +10,10 @@ void Transform::setRot(const glm::vec3 &rot) {
 
 glm::vec3 Transform::getRot() const {
     return glm::eulerAngles(rot);
+}
+
+glm::mat4 Transform::getScaleMat() const {
+    return glm::scale(scale);
 }
 
 glm::mat4 Transform::getRotMat() const {

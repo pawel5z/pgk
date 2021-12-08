@@ -35,6 +35,7 @@ public:
     void rotate(glm::vec3 axis, float angle, Space space = SELF);
 
 protected:
+    glm::mat4 getScaleMat() const;
     glm::mat4 getRotMat() const;
     glm::mat4 getModelMat() const;
 };
