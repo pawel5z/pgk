@@ -13,6 +13,8 @@ layout(location = 2) in vec3 diffuseCol; // r, g, b
 
 out vec3 fragmentColor;
 
+const vec3 ambientCol = vec3(1.f) * .1f;
+
 void main(void) {
     float s = posAndScale.w;
     mat4 m = // translation matrix
@@ -34,5 +36,6 @@ void main(void) {
     vec3 r = reflect(-l, n);
     fragmentColor = diffuseCol * dlColor * clamp(dot(n, l), 0.f, 1.f) // diffuse component
                   + vec3(.5f, .5f, .5f) * pow(clamp(dot(e, r), 0.f, 1.f), 20.f) * float(dot(l, n) > 0.f) // specular component
+                  + ambientCol
     ;
 }
