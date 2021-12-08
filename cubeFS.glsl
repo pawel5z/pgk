@@ -18,7 +18,7 @@ void main(void) {
     vec3 e = normalize(eyeDirWorldspace);
     vec3 r = reflect(-l, n);
     vec3 fragmentColor = diffuseCol * dlColor * clamp(dot(n, l), 0.f, 1.f) // diffuse component
-                       + vec3(.5f, .5f, .5f) * pow(clamp(dot(e, r), 0.f, 1.f), 16.f) * float(dot(l, n) > 0.f) // specular component
+                       + vec3(.5f, .5f, .5f) * pow(clamp(dot(e, r), 0.f, 1.f), 16.f) // specular component
                        + ambientCol;
     color = vec4(fragmentColor, 1.f);
 }
