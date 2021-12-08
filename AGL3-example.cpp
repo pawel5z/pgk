@@ -81,6 +81,14 @@ void MyWin::MainLoop() {
         cam.setNf({0.01f, 10.0f});
         this->cam = &cam;
 
+        Camera outCam;
+        cam.setFovY(60);
+        cam.setNf({.01f, 10.f});
+        outCam.pos = {4.f, 4.f, 2.5f};
+        outCam.rot = glm::quatLookAtLH(glm::normalize(glm::vec3(-1.f, -1.f, 0.f)), Transform::UP);
+
+        Camera *drawingCam = &cam;
+
         Cube box;
         box.scale.z *= 5.f;
         box.pos.z = .5f * box.scale.z;
@@ -90,6 +98,8 @@ void MyWin::MainLoop() {
         BubbleContainer bc(20, 1000, 1 + (int)glm::log2((float)level), .005f, -.5f + bubbleRadius, .5f - bubbleRadius * targetMul, -.2f, .2f, 2.f * r + 2.f * bubbleRadius * 1.5f, 4.5f, 2.f * bubbleRadius, 2.f * bubbleRadius * targetMul);
 
         double refMouseXPos, refMouseYPos;
+
+        int tabPrevState = GLFW_RELEASE;
 
         glClearColor(0.913f, 0.847f, 0.086f, 0.0f);
         // enable depth buffer comparisons
@@ -103,6 +113,12 @@ void MyWin::MainLoop() {
 
             glfwPollEvents();
             //glfwWaitEvents();
+
+            // camera toggle
+            int tabState = glfwGetKey(win(), GLFW_KEY_TAB);
+            if (tabState == GLFW_PRESS && tabPrevState == GLFW_RELEASE)
+                drawingCam = drawingCam == &cam ? &outCam : &cam;
+            tabPrevState = tabState;
 
             glm::vec3 oldPos = player.pos;
             // player movement
@@ -154,15 +170,16 @@ void MyWin::MainLoop() {
             // camera TPP
             cam.pos = player.pos - 3 * r * cam.forward() + r * cam.up();
             cam.setAspect(aspect);
+            outCam.setAspect(aspect);
 
             bc.update((float)(currentFrameTimeStamp - lastFrameTimeStamp));
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             AGLErrors("main-loopbegin");
             // =====================================================        Drawing
-            box.draw(cam);
-            bc.draw(cam);
-            player.draw(cam);
+            box.draw(*drawingCam);
+            bc.draw(*drawingCam);
+            player.draw(*drawingCam);
             AGLErrors("main-afterdraw");
 
             WaitForFixedFPS();
