@@ -178,8 +178,8 @@ void MyWin::MainLoop() {
             AGLErrors("main-loopbegin");
             // =====================================================        Drawing
             box.draw(*drawingCam);
-            bc.draw(*drawingCam);
             player.draw(*drawingCam);
+            bc.draw(*drawingCam);
             AGLErrors("main-afterdraw");
 
             WaitForFixedFPS();
