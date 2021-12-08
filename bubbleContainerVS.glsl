@@ -4,16 +4,16 @@
 
 layout(location = 0) uniform mat4 vp; // view and projection matrix
 layout(location = 1) uniform vec3 dlDirWorldspace;
-layout(location = 2) uniform vec3 dlColor;
 layout(location = 3) uniform vec3 cameraPosWorldspace;
 
 layout(location = 0) in vec3 vertexPosModelspace;
 layout(location = 1) in vec4 posAndScale; // x, y, z - pos; w - scale (for all three dimensions)
-layout(location = 2) in vec3 diffuseCol; // r, g, b
+layout(location = 2) in vec3 bubbleDiffCol; // r, g, b
 
-out vec3 fragmentColor;
-
-const vec3 ambientCol = vec3(1.f) * .1f;
+out vec3 diffuseCol;
+out vec3 normalWorldspace;
+out vec3 lightDirWorldspace;
+out vec3 eyeDirWorldspace;
 
 void main(void) {
     float s = posAndScale.w;
@@ -30,12 +30,8 @@ void main(void) {
     vec3 vertexPosWorldspace = vec3(m * vec4(vertexPosModelspace, 1.f));
     gl_Position = vp * vec4(vertexPosWorldspace, 1.f);
 
-    vec3 n = normalize(transpose(inverse(mat3(m))) * normalize(vertexPosModelspace));
-    vec3 l = normalize(-dlDirWorldspace);
-    vec3 e = normalize(cameraPosWorldspace - vertexPosWorldspace);
-    vec3 r = reflect(-l, n);
-    fragmentColor = diffuseCol * dlColor * clamp(dot(n, l), 0.f, 1.f) // diffuse component
-                  + vec3(.5f, .5f, .5f) * pow(clamp(dot(e, r), 0.f, 1.f), 20.f) * float(dot(l, n) > 0.f) // specular component
-                  + ambientCol
-    ;
+    diffuseCol = bubbleDiffCol;
+    normalWorldspace = normalize(transpose(inverse(mat3(m))) * normalize(vertexPosModelspace));
+    lightDirWorldspace = normalize(-dlDirWorldspace);
+    eyeDirWorldspace = normalize(cameraPosWorldspace - vertexPosWorldspace);
 }
