@@ -15,8 +15,7 @@ in vec3 pointLightDirWorldspace;
 
 out vec4 color;
 
-const float alpha = .2f;
-const vec3 ambientCol = vec3(1.f) * .1f;
+const vec3 ambientCol = vec3(1.f) * .2f;
 
 void main(void) {
     vec3 n = normalize(normalWorldspace);
@@ -28,14 +27,13 @@ void main(void) {
     vec3 rPointLight = reflect(-lPointLight, n);
     float plDist = distance(vertexPosWorldspace, plPosWorldspace);
 
-
     float dist = length(cameraPosWorldspace - vertexPosWorldspace);
-    float c = exp(-dist * .75f);
+    float c = exp(-dist * .05f);
     vec3 blueStrength = vec3(c, c, 1.f);
     vec3 fragmentColor = diffuseCol * blueStrength * dlColor * clamp(dot(n, l), 0.f, 1.f) // directional light diffuse component
-                       + vec3(1.f, 1.f, 1.f) * 3.f * pow(clamp(dot(e, r), 0.f, 1.f), 64.f) * float(dot(l, n) > 0.f) // directional light specular component
+                       + vec3(1.f) * 3.f * pow(clamp(dot(e, r), 0.f, 1.f), 64.f) * float(dot(l, n) > 0.f) // directional light specular component
                        + diffuseCol * blueStrength * dlColor * clamp(dot(n, lPointLight), 0.f, 1.f) / (plDist * plDist) // point light diffuse component
-                       + vec3(1.f, 1.f, 1.f) * 3.f * pow(clamp(dot(e, rPointLight), 0.f, 1.f), 64.f) * float(dot(lPointLight, n) > 0.f) / (plDist * plDist) // point light specular component
+                       + vec3(1.f) * 3.f * pow(clamp(dot(e, rPointLight), 0.f, 1.f), 64.f) * float(dot(lPointLight, n) > 0.f) / (plDist * plDist) // point light specular component
                        + ambientCol;
-    color = vec4(fragmentColor, alpha);
+    color = vec4(fragmentColor, pow(1 - abs(dot(n, e)), 1.5f));
 }
