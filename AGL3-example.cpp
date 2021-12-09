@@ -109,6 +109,9 @@ void MyWin::MainLoop() {
                            sideLength - bubbleRadius * targetMul,
                            2.f * bubbleRadius,
                            2.f * bubbleRadius * targetMul);
+        // heat up bubble container to fill in the aquarium
+        for (int i = 0; i < 10000; i++)
+            bc.update(1.f / 60.f);
 
         DirectionalLight directionalLight(Transform::DOWN, {1.f, 1.f, 1.f});
         directionalLight.setIntensity(1.f);
