@@ -9,14 +9,13 @@ layout(location = 4) uniform vec3 cameraPosWorldspace;
 
 layout(location = 0) in vec3 vertexPosModelspace;
 
-out vec3 vertexPosWorldspace;
 out vec3 diffuseCol;
 out vec3 normalWorldspace;
 out vec3 lightDirWorldspace;
 out vec3 eyeDirWorldspace;
 
 void main(void) {
-    vertexPosWorldspace = vec3(m * vec4(vertexPosModelspace, 1.f));
+    vec3 vertexPosWorldspace = vec3(m * vec4(vertexPosModelspace, 1.f));
     gl_Position = vp * vec4(vertexPosWorldspace, 1);
 
     diffuseCol = vertexPosModelspace * 2.f + vec3(1.f);
