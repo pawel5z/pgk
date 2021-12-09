@@ -4,6 +4,7 @@
 #include "AGL3Drawable.hpp"
 #include "Bubble.hpp"
 #include "DirectionalLight.hpp"
+#include "Sphere.hpp"
 
 class BubbleContainer : AGLDrawable {
 public:
@@ -12,6 +13,7 @@ public:
     void draw(Camera camera) override;
     void draw(Camera camera, DirectionalLight directionalLight);
     void update(float deltaTime);
+    bool doesCollide(const Sphere &s);
 
 protected:
     void setBuffers();

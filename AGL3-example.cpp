@@ -194,6 +194,12 @@ void MyWin::MainLoop() {
                 break;
             }
 
+            // check game over
+            if (bc.doesCollide(player)) {
+                printf("Game over at level %d.\n", level);
+                gameOver = true;
+            }
+
             // check for close request
             if (glfwGetKey(win(), GLFW_KEY_ESCAPE) == GLFW_PRESS ||
                 glfwWindowShouldClose(win()) == 1)

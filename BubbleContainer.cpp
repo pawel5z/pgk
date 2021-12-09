@@ -160,3 +160,11 @@ int BubbleContainer::getUnusedBubble() {
             return i;
     return 0;
 }
+
+bool BubbleContainer::doesCollide(const Sphere &s) {
+    for (auto &b : bubbles)
+        // .5f is default sphere and bubble radius
+        if (b.alive && glm::length(b.pos - s.pos) < s.scale.x * .5f + b.scale * .5f)
+            return true;
+    return false;
+}
