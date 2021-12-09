@@ -70,18 +70,12 @@ void MyWin::MainLoop() {
 
     Camera cam;
     cam.setFovY(60);
-    cam.setNf({0.01f, 10.0f});
-
-    Camera outCam;
-    outCam.setFovY(60);
-    outCam.setNf({.01f, 10.f});
-    outCam.pos = {2.f, 2.f, 2.5f};
-    outCam.rot = glm::quatLookAtLH(glm::normalize(glm::vec3(-1.f, -1.f, 0.f)), Transform::UP);
+    cam.setNf({0.01f, 100.0f});
 
     while (!gameOver) {
         Sphere player(20);
         player.rot = glm::quatLookAtLH(Transform::FORWARD, Transform::UP);
-        float r = .1f;
+        float r = .5f;
         player.scale = Transform::ONE * 2.f * r;
         player.pos = player.forward() * r + 1e-6f;
         GLfloat speed = .025f;
@@ -90,13 +84,31 @@ void MyWin::MainLoop() {
         this->cam = &cam;
         Camera *drawingCam = &cam;
 
+        float sideLength = 20.f;
         Cube box;
-        box.scale.z *= 5.f;
+        box.scale *= sideLength;
         box.pos.z = .5f * box.scale.z;
 
-        float bubbleRadius = .1f;
+        Camera outCam;
+        outCam.setFovY(60);
+        outCam.setNf({.01f, 100.f});
+        outCam.pos = {sideLength / 2.f, sideLength / 2.f, sideLength / 2.f};
+        outCam.rot = glm::quatLookAtLH(glm::normalize(glm::vec3(-1.f, -1.f, 0.f)), Transform::UP);
+
+        float bubbleRadius = 2.f * r;
         float targetMul = 1.5f;
-        BubbleContainer bc(20, 1000, 1 + (int)glm::log2((float)level), .005f, -.5f + bubbleRadius, .5f - bubbleRadius * targetMul, -.2f, .2f, 2.f * r + 2.f * bubbleRadius * 1.5f, 4.5f, 2.f * bubbleRadius, 2.f * bubbleRadius * targetMul);
+        BubbleContainer bc(20,
+                           1000,
+                           1 + (int)glm::log2((float)level),
+                           .005f,
+                           -.5f * sideLength + bubbleRadius,
+                           .5f * sideLength - bubbleRadius * targetMul,
+                           -.5f * sideLength + bubbleRadius * targetMul,
+                           .5f * sideLength - bubbleRadius * targetMul,
+                           bubbleRadius * targetMul + 2.f * r * 2.f,
+                           sideLength - bubbleRadius * targetMul,
+                           2.f * bubbleRadius,
+                           2.f * bubbleRadius * targetMul);
 
         DirectionalLight directionalLight(Transform::DOWN, {1.f, 1.f, 1.f});
         directionalLight.setIntensity(1.f);
@@ -194,7 +206,7 @@ void MyWin::MainLoop() {
             glfwSwapBuffers(win()); // =============================   Swap buffers
 
             // check level complete
-            if (player.pos.z >= 5.f - 1.5f * r) {
+            if (player.pos.z >= sideLength - 1.5f * r) {
                 printf("Level %d complete!\n", level++);
                 break;
             }
