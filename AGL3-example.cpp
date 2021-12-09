@@ -114,7 +114,7 @@ void MyWin::MainLoop() {
             bc.update(1.f / 60.f);
 
         DirectionalLight directionalLight({-.3f, -1.f, -.3f}, {1.f, 1.f, 1.f});
-        directionalLight.setIntensity(2.f);
+        directionalLight.setIntensity(1.f);
 
         PointLight pl(player.pos, {.878f, 0.f, .901f});
         pl.setIntensity(1.5f);
