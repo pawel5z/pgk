@@ -73,7 +73,7 @@ void MyWin::MainLoop() {
     cam.setNf({0.01f, 100.0f});
 
     while (!gameOver) {
-        Sphere player(20);
+        Sphere player(45);
         player.rot = glm::quatLookAtLH(Transform::FORWARD, Transform::UP);
         float r = .5f;
         player.scale = Transform::ONE * 2.f * r;
@@ -97,7 +97,7 @@ void MyWin::MainLoop() {
 
         float bubbleRadius = 2.f * r;
         float targetMul = 1.5f;
-        BubbleContainer bc(20,
+        BubbleContainer bc(45,
                            1000,
                            1 + (int)glm::log2((float)level),
                            .005f,
