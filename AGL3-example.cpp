@@ -82,9 +82,9 @@ void MyWin::MainLoop() {
         this->cam = &cam;
 
         Camera outCam;
-        cam.setFovY(60);
-        cam.setNf({.01f, 10.f});
-        outCam.pos = {4.f, 4.f, 2.5f};
+        outCam.setFovY(60);
+        outCam.setNf({.01f, 10.f});
+        outCam.pos = {2.f, 2.f, 2.5f};
         outCam.rot = glm::quatLookAtLH(glm::normalize(glm::vec3(-1.f, -1.f, 0.f)), Transform::UP);
 
         Camera *drawingCam = &cam;
