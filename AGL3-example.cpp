@@ -84,7 +84,7 @@ void MyWin::MainLoop() {
         float r = .1f;
         player.scale = Transform::ONE * 2.f * r;
         player.pos = player.forward() * r + 1e-6f;
-        GLfloat speed = .05f;
+        GLfloat speed = .025f;
         GLfloat angSpeed = 0.015;
 
         this->cam = &cam;
