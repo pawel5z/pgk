@@ -67,6 +67,16 @@ void MyWin::MainLoop() {
     bool gameOver = false;
     double lastFrameTimeStamp = glfwGetTime();
 
+    Camera cam;
+    cam.setFovY(60);
+    cam.setNf({0.01f, 10.0f});
+
+    Camera outCam;
+    outCam.setFovY(60);
+    outCam.setNf({.01f, 10.f});
+    outCam.pos = {2.f, 2.f, 2.5f};
+    outCam.rot = glm::quatLookAtLH(glm::normalize(glm::vec3(-1.f, -1.f, 0.f)), Transform::UP);
+
     while (!gameOver) {
         Sphere player(20);
         player.rot = glm::quatLookAtLH(Transform::FORWARD, Transform::UP);
@@ -76,17 +86,7 @@ void MyWin::MainLoop() {
         GLfloat speed = .05f;
         GLfloat angSpeed = 0.015;
 
-        Camera cam;
-        cam.setFovY(60);
-        cam.setNf({0.01f, 10.0f});
         this->cam = &cam;
-
-        Camera outCam;
-        outCam.setFovY(60);
-        outCam.setNf({.01f, 10.f});
-        outCam.pos = {2.f, 2.f, 2.5f};
-        outCam.rot = glm::quatLookAtLH(glm::normalize(glm::vec3(-1.f, -1.f, 0.f)), Transform::UP);
-
         Camera *drawingCam = &cam;
 
         Cube box;
