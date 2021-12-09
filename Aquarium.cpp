@@ -1,6 +1,6 @@
-#include "Cube.hpp"
+#include "Aquarium.hpp"
 
-Cube::Cube() {
+Aquarium::Aquarium() {
     // move cube center to [0, 0, 0]
     for (auto &v : vertices)
         v = (v - Transform::ONE * .5f);
@@ -9,9 +9,9 @@ Cube::Cube() {
     setShaders();
 }
 
-void Cube::draw(Camera camera) {}
+void Aquarium::draw(Camera camera) {}
 
-void Cube::draw(Camera camera, DirectionalLight directionalLight, PointLight pointLight) {
+void Aquarium::draw(Camera camera, DirectionalLight directionalLight, PointLight pointLight) {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
     bind();
@@ -25,7 +25,7 @@ void Cube::draw(Camera camera, DirectionalLight directionalLight, PointLight poi
     glDrawArrays(GL_TRIANGLES, 0, (int)vertices.size());
 }
 
-void Cube::setBuffers() {
+void Aquarium::setBuffers() {
     bindVertexArray();
     // vboId already bound
     glBufferData(GL_ARRAY_BUFFER, (int)(vertices.size() * sizeof(glm::vec3)), vertices.data(), GL_STATIC_DRAW);
@@ -38,11 +38,11 @@ void Cube::setBuffers() {
     glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(glm::vec3), nullptr);
 }
 
-void Cube::setShaders() {
-    compileShadersFromFile("cubeVS.glsl", "cubeFS.glsl");
+void Aquarium::setShaders() {
+    compileShadersFromFile("aquariumVS.glsl", "aquariumFS.glsl");
 }
 
-Cube::~Cube() {
+Aquarium::~Aquarium() {
     glDeleteBuffers(1, &normVBO);
 }
 

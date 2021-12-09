@@ -1,15 +1,15 @@
-#ifndef CUBE_HPP
-#define CUBE_HPP
+#ifndef AQUARIUM_HPP
+#define AQUARIUM_HPP
 
 #include "AGL3Drawable.hpp"
 #include "DirectionalLight.hpp"
 #include "PointLight.hpp"
 
 // cube with dimensions 1x1x1
-class Cube : public AGLDrawable {
+class Aquarium : public AGLDrawable {
 public:
-    Cube();
-    ~Cube();
+    Aquarium();
+    ~Aquarium();
     void draw(Camera camera) override;
     void draw(Camera camera, DirectionalLight directionalLight, PointLight pointLight);
 
@@ -37,27 +37,27 @@ private:
     };
     std::vector<glm::vec3> normals = {
             // bottom
-            Transform::DOWN, Transform::DOWN, Transform::DOWN,
-            Transform::DOWN, Transform::DOWN, Transform::DOWN,
+            Transform::UP, Transform::UP, Transform::UP,
+            Transform::UP, Transform::UP, Transform::UP,
             // back
-            Transform::BACKWARD, Transform::BACKWARD, Transform::BACKWARD,
-            Transform::BACKWARD, Transform::BACKWARD, Transform::BACKWARD,
+            Transform::FORWARD, Transform::FORWARD, Transform::FORWARD,
+            Transform::FORWARD, Transform::FORWARD, Transform::FORWARD,
             // right
-            Transform::RIGHT, Transform::RIGHT, Transform::RIGHT,
-            Transform::RIGHT, Transform::RIGHT, Transform::RIGHT,
+            Transform::LEFT, Transform::LEFT, Transform::LEFT,
+            Transform::LEFT, Transform::LEFT, Transform::LEFT,
             // up
             Transform::UP, Transform::UP, Transform::UP,
             Transform::UP, Transform::UP, Transform::UP,
             // left
-            Transform::LEFT, Transform::LEFT, Transform::LEFT,
-            Transform::LEFT, Transform::LEFT, Transform::LEFT,
+            Transform::RIGHT, Transform::RIGHT, Transform::RIGHT,
+            Transform::RIGHT, Transform::RIGHT, Transform::RIGHT,
             // front
-            Transform::FORWARD, Transform::FORWARD, Transform::FORWARD,
-            Transform::FORWARD, Transform::FORWARD, Transform::FORWARD
+            Transform::BACKWARD, Transform::BACKWARD, Transform::BACKWARD,
+            Transform::BACKWARD, Transform::BACKWARD, Transform::BACKWARD
     };
 
     void setBuffers();
     void setShaders();
 };
 
-#endif //CUBE_HPP
+#endif //AQUARIUM_HPP

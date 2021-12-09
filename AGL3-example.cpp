@@ -7,7 +7,7 @@
 //===========================================================================
 #include "AGL3Window.hpp"
 #include "Sphere.hpp"
-#include "Cube.hpp"
+#include "Aquarium.hpp"
 #include "BubbleContainer.hpp"
 #include "DirectionalLight.hpp"
 #include "PointLight.hpp"
@@ -51,7 +51,7 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
     }
 }
 
-bool isSphereInsideBox(const Sphere &s, const Cube &c) {
+bool isSphereInsideBox(const Sphere &s, const Aquarium &c) {
     float r = .5f * (s.scale.x + s.scale.y + s.scale.z) / 3.f;
     return s.pos.x + r <= c.pos.x + c.scale.x * .5 &&
            s.pos.y + r <= c.pos.y + c.scale.y * .5 &&
@@ -85,7 +85,7 @@ void MyWin::MainLoop() {
         Camera *drawingCam = &cam;
 
         float sideLength = 20.f;
-        Cube box;
+        Aquarium box;
         box.scale *= sideLength;
         box.pos.z = .5f * box.scale.z;
 
