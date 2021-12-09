@@ -27,12 +27,13 @@ void main(void) {
     vec3 rPointLight = reflect(-lPointLight, n);
     float plDist = distance(vertexPosWorldspace, plPosWorldspace);
 
-    float dist = length(cameraPosWorldspace - vertexPosWorldspace);
-    float c = exp(-dist * .05f);
-    vec3 fragmentColor = vec3(diffuseCol.r * c, diffuseCol.g * c, diffuseCol.b) * dlColor * clamp(dot(n, l), 0.f, 1.f) // directional light diffuse component
+    vec3 fragmentColor = diffuseCol * dlColor * clamp(dot(n, l), 0.f, 1.f) // directional light diffuse component
                        + vec3(1.f) * .5f * pow(clamp(dot(e, r), 0.f, 1.f), 16.f) * float(dot(l, n) > 0.f) // directional light specular component
-                       + vec3(diffuseCol.r * c, diffuseCol.g * c, diffuseCol.b) * plColor * clamp(dot(n, lPointLight), 0.f, 1.f) * float(dot(lPointLight, n) > 0.f) / (plDist * plDist) // point light diffuse component
+                       + diffuseCol * plColor * clamp(dot(n, lPointLight), 0.f, 1.f) * float(dot(lPointLight, n) > 0.f) / (plDist * plDist) // point light diffuse component
                        + vec3(1.f) * .5f * pow(clamp(dot(e, rPointLight), 0.f, 1.f), 16.f) / (plDist * plDist) // point light specular component
                        + ambientCol;
+    float dist = length(cameraPosWorldspace - vertexPosWorldspace);
+    float c = exp(-dist * .05f);
+    fragmentColor *= vec3(c, c, 1.f);
     color = vec4(fragmentColor, 1.f);
 }
