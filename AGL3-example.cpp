@@ -10,6 +10,7 @@
 #include "Cube.hpp"
 #include "BubbleContainer.hpp"
 #include "DirectionalLight.hpp"
+#include "PointLight.hpp"
 
 #include <cstdlib>
 #include <cstdio>
@@ -100,6 +101,9 @@ void MyWin::MainLoop() {
         DirectionalLight directionalLight(Transform::DOWN, {1.f, 1.f, 1.f});
         directionalLight.setIntensity(1.f);
 
+        PointLight pl(player.pos, {.878f, 0.f, .901f});
+        pl.setIntensity(2.f);
+
         double refMouseXPos, refMouseYPos;
 
         int tabPrevState = GLFW_RELEASE;
@@ -172,6 +176,7 @@ void MyWin::MainLoop() {
             cam.rot = player.rot;
             // camera TPP
             cam.pos = player.pos - 3 * r * cam.forward() + r * cam.up();
+            pl.pos = player.pos;
             cam.setAspect(aspect);
             outCam.setAspect(aspect);
 
@@ -180,7 +185,7 @@ void MyWin::MainLoop() {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             AGLErrors("main-loopbegin");
             // =====================================================        Drawing
-            box.draw(*drawingCam, directionalLight);
+            box.draw(*drawingCam, directionalLight, pl);
             player.draw(*drawingCam, directionalLight);
             bc.draw(*drawingCam, directionalLight);
             AGLErrors("main-afterdraw");

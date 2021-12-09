@@ -10,7 +10,7 @@ Cube::Cube() {
 
 void Cube::draw(Camera camera) {}
 
-void Cube::draw(Camera camera, DirectionalLight directionalLight) {
+void Cube::draw(Camera camera, DirectionalLight directionalLight, PointLight pointLight) {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
     bind();
@@ -19,6 +19,8 @@ void Cube::draw(Camera camera, DirectionalLight directionalLight) {
     glUniform3fv(2, 1, &directionalLight.getDir()[0]);
     glUniform3fv(3, 1, &directionalLight.getLightColor()[0]);
     glUniform3fv(4, 1, &camera.pos[0]);
+    glUniform3fv(5, 1, &pointLight.pos[0]);
+    glUniform3fv(6, 1, &pointLight.getLightColor()[0]);
     glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_BYTE, nullptr);
 }
 

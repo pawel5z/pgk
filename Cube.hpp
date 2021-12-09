@@ -3,13 +3,14 @@
 
 #include "AGL3Drawable.hpp"
 #include "DirectionalLight.hpp"
+#include "PointLight.hpp"
 
 // cube with dimensions 1x1x1
 class Cube : public AGLDrawable {
 public:
     Cube();
     void draw(Camera camera) override;
-    void draw(Camera camera, DirectionalLight directionalLight);
+    void draw(Camera camera, DirectionalLight directionalLight, PointLight pointLight);
 
 private:
     std::vector<glm::vec3> vertices = {
