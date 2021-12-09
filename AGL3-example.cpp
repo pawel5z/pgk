@@ -102,7 +102,7 @@ void MyWin::MainLoop() {
         directionalLight.setIntensity(1.f);
 
         PointLight pl(player.pos, {.878f, 0.f, .901f});
-        pl.setIntensity(2.f);
+        pl.setIntensity(1.f);
 
         double refMouseXPos, refMouseYPos;
 
