@@ -22,13 +22,15 @@ BubbleContainer::~BubbleContainer() {
 
 void BubbleContainer::draw(Camera camera) {}
 
-void BubbleContainer::draw(Camera camera, DirectionalLight directionalLight) {
+void BubbleContainer::draw(Camera camera, DirectionalLight directionalLight, PointLight pointLight) {
     glDisable(GL_CULL_FACE);
     bind();
     glUniformMatrix4fv(0, 1, false, &camera.getPVMat()[0][0]);
     glUniform3fv(1, 1, &directionalLight.getDir()[0]);
     glUniform3fv(2, 1, &directionalLight.getLightColor()[0]);
     glUniform3fv(3, 1, &camera.pos[0]);
+    glUniform3fv(4, 1, &pointLight.pos[0]);
+    glUniform3fv(5, 1, &pointLight.getLightColor()[0]);
 
     for (auto &bubble : bubbles)
         if (bubble.alive)
