@@ -24,7 +24,7 @@ void main(void) {
     float c = exp(-dist * .75f);
     vec3 blueStrength = vec3(c, c, 1.f);
     vec3 fragmentColor = diffuseCol * blueStrength * dlColor * clamp(dot(n, l), 0.f, 1.f) // diffuse component
-                  + vec3(1.f, 1.f, 1.f) * pow(clamp(dot(e, r), 0.f, 1.f), 64.f) * float(dot(l, n) > 0.f) // specular component
+                  + vec3(1.f, 1.f, 1.f) * 3.f * pow(clamp(dot(e, r), 0.f, 1.f), 64.f) * float(dot(l, n) > 0.f) // specular component
                   + ambientCol;
     color = vec4(fragmentColor, alpha);
 }
