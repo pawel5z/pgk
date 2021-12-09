@@ -10,6 +10,7 @@ layout(location = 0) in vec3 vertexPosModelspace;
 layout(location = 1) in vec4 posAndScale; // x, y, z - pos; w - scale (for all three dimensions)
 layout(location = 2) in vec3 bubbleDiffCol; // r, g, b
 
+out vec3 vertexPosWorldspace;
 out vec3 diffuseCol;
 out vec3 normalWorldspace;
 out vec3 lightDirWorldspace;
@@ -27,7 +28,7 @@ void main(void) {
                       vec4(0, s, 0, 0),
                       vec4(0, 0, s, 0),
                       vec4(0, 0, 0, 1));
-    vec3 vertexPosWorldspace = vec3(m * vec4(vertexPosModelspace, 1.f));
+    vertexPosWorldspace = vec3(m * vec4(vertexPosModelspace, 1.f));
     gl_Position = vp * vec4(vertexPosWorldspace, 1.f);
 
     diffuseCol = bubbleDiffCol;
