@@ -175,7 +175,7 @@ void MyWin::MainLoop() {
 
             cam.rot = player.rot;
             // camera TPP
-            cam.pos = player.pos - 3 * r * cam.forward() + r * cam.up();
+            cam.pos = player.pos - 5.f * r * cam.forward() + 2.f * r * cam.up();
             pl.pos = player.pos;
             cam.setAspect(aspect);
             outCam.setAspect(aspect);
