@@ -38,6 +38,25 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
     }
 }
 
+// display performance statistics once per `interval` seconds
+void displayPerformance(double interval = 1.f) {
+    static double lastTimestamp = 0.;
+    static double timeElapsed = 0.;
+    static size_t numberOfCalls = 0;
+
+    double currTimestamp = glfwGetTime();
+    numberOfCalls++;
+    timeElapsed += currTimestamp - lastTimestamp;
+    if (timeElapsed >= interval) {
+        fprintf(stderr,
+                "\rfps: %lf, ms per frame: %lf"
+                "                                                                                ",
+                (double)numberOfCalls / timeElapsed,
+                timeElapsed * 1000. / (double)numberOfCalls);
+        numberOfCalls = 0;
+        timeElapsed = 0.;
+    }
+    lastTimestamp = currTimestamp;
 }
 
 // ==========================================================================
@@ -57,6 +76,8 @@ void MyWin::MainLoop() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     do {
+        displayPerformance(0.03125);
+
         glfwPollEvents();
         //glfwWaitEvents();
 
