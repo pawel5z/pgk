@@ -234,7 +234,7 @@ void MyWin::MainLoop() {
 int main(int argc, char *argv[]) {
     srand(time(nullptr));
     MyWin win;
-    win.Init(800,600,"AGL3 example",0,33);
+    win.Init(800,600,"Assignment 5",0,33);
     win.MainLoop();
     return 0;
 }
