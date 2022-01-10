@@ -17,15 +17,12 @@ AreaFragment::AreaFragment(std::string filePath) {
     }
 
     std::ifstream fin(filePath, std::ios_base::binary);
-    short x = 0, y = 0;
     int readCnt = fastPow(Terrain::elementsCnt, 2);
     for (int i = 0; i < readCnt; i++) {
         short input = 0;
         fin.get(*((char *)&input + 1));
         fin.get(*(char *)&input);
-        vData.push_back({x, y, input});
-        y = y + (short)(x == Terrain::elementsCnt - 1);
-        x = (x + 1) % Terrain::elementsCnt;
+        vData.push_back({short(i % Terrain::elementsCnt), short(i / Terrain::elementsCnt), input});
     }
     fin.close();
 

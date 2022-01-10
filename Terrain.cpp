@@ -32,11 +32,11 @@ Terrain::Terrain(const std::string& dirPath) {
     midLo = (minLo + maxLo) / 2.f;
     midLa = (minLa + maxLa) / 2.f;
 
-    GLushort step = 1;
+    GLuint step = 1;
     for (GLushort lod = 0; lod <= maxLOD; lod++) {
         indices.emplace_back();
-        for (GLushort row = 0; row < Terrain::elementsCnt - step; row += step) {
-            for (GLushort col = 0; col < Terrain::elementsCnt; col += step) {
+        for (GLuint row = 0; row < Terrain::elementsCnt - step; row += step) {
+            for (GLuint col = 0; col < Terrain::elementsCnt; col += step) {
                 indices.at(lod).push_back(row * Terrain::elementsCnt + col);
                 indices.at(lod).push_back((row + step) * Terrain::elementsCnt + col);
             }
@@ -44,6 +44,7 @@ Terrain::Terrain(const std::string& dirPath) {
         step *= 2;
     }
 
+    bindVertexArray();
     compileShadersFromFile("areaMapVS.glsl", "areaFS.glsl");
     glEnableVertexAttribArray(0);
 }
@@ -57,20 +58,27 @@ float Terrain::getMidLa() const {
 }
 
 void Terrain::draw(Camera camera) {
-    throw std::logic_error("not implemented");
-}
-
-void Terrain::draw(Camera camera, int lod) {
     bind();
-    // eboId already bound
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (int)(indices[lod].size() * sizeof(GLushort)), indices[lod].data(), GL_STATIC_DRAW);
     glUniformMatrix4fv(0, 1, false, &(camera.getPVMat() * getModelMat())[0][0]);
     for (auto &area : areaFrags) {
         glUniform2f(1, area.getLeftLo(), area.getLowLa());
         int verticesCntInStrip = ((Terrain::elementsCnt - 1) / fastPow(2, lod) + 1) * 2;
         area.prepareForDrawing();
         for (size_t i = 0; i < indices.at(lod).size(); i += verticesCntInStrip) {
-            glDrawElements(GL_TRIANGLE_STRIP, verticesCntInStrip, GL_UNSIGNED_SHORT, (void *)i);
+            glDrawElements(GL_TRIANGLE_STRIP, verticesCntInStrip, GL_UNSIGNED_INT, (void *)i);
         }
     }
+}
+
+GLubyte Terrain::getLod() const {
+    return lod;
+}
+
+void Terrain::setLod(GLubyte lod) {
+    if ((size_t)lod >= indices.size())
+        throw std::invalid_argument("unavailable lod");
+    Terrain::lod = lod;
+    bindVertexArray();
+    // eboId already bound
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (int)(indices.at(lod).size() * sizeof(GLuint)), indices.at(lod).data(), GL_STATIC_DRAW);
 }

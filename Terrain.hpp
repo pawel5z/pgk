@@ -18,12 +18,14 @@ public:
     float getMidLo() const;
     float getMidLa() const;
     void draw(Camera camera) override;
-    void draw(Camera camera, int lod);
+    GLubyte getLod() const;
+    void setLod(GLubyte lod);
 
 private:
     std::vector<AreaFragment> areaFrags;
-    std::vector<std::vector<GLushort>> indices;
+    std::vector<std::vector<GLuint>> indices;
     float midLo, midLa;
+    GLubyte lod;
 };
 
 #endif //TERRAIN_HPP
