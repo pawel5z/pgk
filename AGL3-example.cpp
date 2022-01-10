@@ -8,6 +8,7 @@
 #include "AGL3Window.hpp"
 #include "Camera.hpp"
 #include "Terrain.hpp"
+#include "utils.hpp"
 
 #include <cstdlib>
 #include <cstdio>
@@ -80,6 +81,8 @@ void MyWin::MainLoop() {
 
     double refMouseXPos, refMouseYPos;
 
+    glEnable(GL_PRIMITIVE_RESTART);
+    glPrimitiveRestartIndex(primitiveRestartIndex);
     glClearColor(.7f, .7f, .7f, .0f);
     // enable depth buffer comparisons
     glEnable(GL_DEPTH_TEST);
