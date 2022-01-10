@@ -7,6 +7,7 @@
 //===========================================================================
 #include "AGL3Window.hpp"
 #include "Camera.hpp"
+#include "Terrain.hpp"
 
 #include <cstdlib>
 #include <cstdio>
@@ -59,19 +60,27 @@ void displayPerformance(double interval = 1.f) {
     lastTimestamp = currTimestamp;
 }
 
+static std::string dirPath;
+
 // ==========================================================================
 void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
 
+    Terrain terrain(dirPath);
+    terrain.setLod(3);
+
     Camera cam;
+    cam.pos = {terrain.getMidLo(), terrain.getMidLa(), 1.f};
+    cam.rot = glm::quatLookAtLH(glm::vec3(terrain.getMidLo(), terrain.getMidLa(), 0.f) - cam.pos, Transform::UP);
     cam.setFovY(60);
     cam.setNf({0.01f, 100.0f});
 
-    float angSpeed = .1f;
+    float angSpeed = .01f;
+    float speed = .01f;
 
     double refMouseXPos, refMouseYPos;
 
-    glClearColor(.8f, .8f, .8f, .0f);
+    glClearColor(.7f, .7f, .7f, .0f);
     // enable depth buffer comparisons
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -81,15 +90,29 @@ void MyWin::MainLoop() {
         glfwPollEvents();
         //glfwWaitEvents();
 
+        if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS ||
+            glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS)
+            cam.pos += speed * cam.forward();
+        if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS ||
+            glfwGetKey(win(), GLFW_KEY_DOWN) == GLFW_PRESS)
+            cam.pos -= speed * cam.forward();
+        // rightward
+        if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS ||
+            glfwGetKey(win(), GLFW_KEY_RIGHT) == GLFW_PRESS)
+            cam.rotate(Transform::UP, angSpeed, Space::WORLD);
+        // leftward
+        if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS ||
+            glfwGetKey(win(), GLFW_KEY_LEFT) == GLFW_PRESS)
+            cam.rotate(Transform::UP, -angSpeed, Space::WORLD);
         // mouse input
         if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
             float mouseSens = .1;
             double xPos, yPos;
             glfwGetCursorPos(win(), &xPos, &yPos);
-            // yaw
-            cam.rotate(Transform::UP, -angSpeed * mouseSens * (float) (xPos - refMouseXPos), SELF);
-            // pitch
-            cam.rotate(Transform::RIGHT, angSpeed * mouseSens * (float) (yPos - refMouseYPos), SELF);
+            // pan left/right
+            cam.pos -= cam.right() * (float)(xPos - refMouseXPos) * mouseSens * speed;
+            // pan up/down
+            cam.pos += cam.up() * (float)(yPos - refMouseYPos) * mouseSens * speed;
         }
         glfwGetCursorPos(win(), &refMouseXPos, &refMouseYPos);
 
@@ -98,6 +121,7 @@ void MyWin::MainLoop() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         AGLErrors("main-loopbegin");
         // =====================================================        Drawing
+        terrain.draw(cam);
         AGLErrors("main-afterdraw");
 
         WaitForFixedFPS();
@@ -107,6 +131,11 @@ void MyWin::MainLoop() {
 }
 
 int main(int argc, char *argv[]) {
+    if (argc <= 1) {
+        fprintf(stderr, "unspecified directory path");
+        exit(EXIT_FAILURE);
+    }
+    dirPath = argv[1];
     MyWin win;
     win.Init(800,600,"Assignment 6",0,33);
     win.MainLoop();
