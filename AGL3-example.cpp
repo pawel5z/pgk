@@ -9,13 +9,11 @@
 #include "Camera.hpp"
 #include "Terrain.hpp"
 #include "utils.hpp"
+#include "Sphere.hpp"
 
 #include <cstdlib>
 #include <cstdio>
-#include <memory>
-#include <sstream>
 #include <glm/glm.hpp>
-#include <glm/gtc/constants.hpp>
 
 // ==========================================================================
 // Window Main Loop Inits ...................................................
@@ -73,10 +71,10 @@ void lodAutoControl(Terrain &terrain) {
     try {
         if (fps <= 10.) {
             terrain.setLod(lod + 1);
-            printf("LOD set to %hhu.\n", terrain.getLod());
+            printf("LOD set to %i.\n", terrain.getLod() + 1);
         } else if (fps > 30.) {
             terrain.setLod(lod - 1);
-            printf("LOD set to %hhu.\n", terrain.getLod());
+            printf("LOD set to %i.\n", terrain.getLod() + 1);
         }
     } catch (std::exception &e) {
         return;
@@ -84,10 +82,16 @@ void lodAutoControl(Terrain &terrain) {
 }
 
 static std::string dirPath;
+static const float earthRadius = 6371008.f;
 
 // ==========================================================================
 void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
+
+    bool drawMapMode = true;
+
+    Sphere earth(45);
+    earth.scale = Transform::ONE * 2.f * earthRadius;
 
     Terrain terrain(dirPath);
     terrain.setLod(2);
@@ -95,16 +99,18 @@ void MyWin::MainLoop() {
 
     Camera cam;
     cam.pos = {terrain.getMidLo(), terrain.getMidLa(), 1.f};
-    cam.rot = glm::quatLookAtLH(glm::vec3(terrain.getMidLo(), terrain.getMidLa(), 0.f) - cam.pos, Transform::UP);
+    cam.rot = glm::quatLookAtLH(glm::normalize(glm::vec3(terrain.getMidLo(), terrain.getMidLa(), 0.f) - cam.pos), Transform::UP);
     cam.setFovY(60);
     cam.setNf({0.01f, 100.0f});
 
-    float angSpeed = .01f;
+    float angSpeed = .001f;
     const float baseSpeed = 0.025f;
     float speed = baseSpeed;
 
     double refMouseXPos, refMouseYPos;
+    int lastTabState = GLFW_RELEASE;
 
+    glLineWidth(10.f);
     glEnable(GL_PRIMITIVE_RESTART);
     glPrimitiveRestartIndex(primitiveRestartIndex);
     glClearColor(.7f, .7f, .7f, .0f);
@@ -112,37 +118,98 @@ void MyWin::MainLoop() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     do {
-        speed = baseSpeed * cam.pos.z;
         if (autoLod)
             lodAutoControl(terrain);
         (void)displayPerformance(0.03125);
-
         glfwPollEvents();
-        //glfwWaitEvents();
 
-        if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS ||
-            glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS)
-            cam.pos += speed * cam.forward();
-        if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS ||
-            glfwGetKey(win(), GLFW_KEY_DOWN) == GLFW_PRESS)
-            cam.pos -= speed * cam.forward();
-        // rightward
-        if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS ||
-            glfwGetKey(win(), GLFW_KEY_RIGHT) == GLFW_PRESS)
-            cam.rotate(Transform::UP, angSpeed, Space::WORLD);
-        // leftward
-        if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS ||
-            glfwGetKey(win(), GLFW_KEY_LEFT) == GLFW_PRESS)
-            cam.rotate(Transform::UP, -angSpeed, Space::WORLD);
-        // mouse input
-        if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-            float mouseSens = .1;
-            double xPos, yPos;
-            glfwGetCursorPos(win(), &xPos, &yPos);
-            // pan left/right
-            cam.pos -= cam.right() * (float)(xPos - refMouseXPos) * mouseSens * speed;
-            // pan up/down
-            cam.pos += cam.up() * (float)(yPos - refMouseYPos) * mouseSens * speed;
+        if (drawMapMode) {
+            speed = baseSpeed * cam.pos.z;
+            if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS)
+                cam.pos += speed * cam.forward();
+            if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_DOWN) == GLFW_PRESS)
+                cam.pos -= speed * cam.forward();
+            // rightward
+            if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_RIGHT) == GLFW_PRESS)
+                cam.rotate(Transform::UP, angSpeed, Space::WORLD);
+            // leftward
+            if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_LEFT) == GLFW_PRESS)
+                cam.rotate(Transform::UP, -angSpeed, Space::WORLD);
+            // mouse input
+            if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+                float mouseSens = .1;
+                double xPos, yPos;
+                glfwGetCursorPos(win(), &xPos, &yPos);
+                // pan left/right
+                cam.pos -= cam.right() * (float)(xPos - refMouseXPos) * mouseSens * speed;
+                // pan up/down
+                cam.pos += cam.up() * (float)(yPos - refMouseYPos) * mouseSens * speed;
+            }
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            AGLErrors("main-loopbegin");
+            // =====================================================        Drawing
+            terrain.draw(cam, false);
+            AGLErrors("main-afterdraw");
+
+            int currentTabState = glfwGetKey(win(), GLFW_KEY_TAB);
+            if (currentTabState == GLFW_PRESS && lastTabState == GLFW_RELEASE) {
+                // prepare for 3d mode
+                drawMapMode = !drawMapMode;
+                cam.pos = pointOnSphere(cam.pos.y, cam.pos.x, earthRadius + 10000.f);
+                cam.rot = glm::quatLookAtLH(glm::normalize(Transform::ZERO - cam.pos), Transform::UP);
+                cam.setNf({10.f, 1000000.f});
+            }
+            lastTabState = currentTabState;
+        } else {
+            float distFromZero = glm::length(cam.pos);
+            speed = baseSpeed * 10; //* distFromZero;
+            if (glfwGetKey(win(), GLFW_KEY_E) == GLFW_PRESS)
+                cam.pos += glm::normalize(cam.pos) * 100.f;
+            if (glfwGetKey(win(), GLFW_KEY_Q) == GLFW_PRESS)
+                cam.pos -= glm::normalize(cam.pos) * 100.f;
+            if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS)
+                cam.pos = glm::normalize(cam.pos + cam.forward() * speed) * distFromZero;
+            if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_DOWN) == GLFW_PRESS)
+                cam.pos = glm::normalize(cam.pos - cam.forward() * speed) * distFromZero;
+            if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_RIGHT) == GLFW_PRESS)
+                cam.pos = glm::normalize(cam.pos + cam.right() * speed) * distFromZero;
+            if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS ||
+                glfwGetKey(win(), GLFW_KEY_LEFT) == GLFW_PRESS)
+                cam.pos = glm::normalize(cam.pos - cam.right() * speed) * distFromZero;
+            if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+                float mouseSens = 1.f;
+                double xPos, yPos;
+                glfwGetCursorPos(win(), &xPos, &yPos);
+                // look left/right
+                cam.rotate(cam.up(), (float)(xPos - refMouseXPos) * mouseSens * angSpeed);
+                // look up/down
+                cam.rotate(cam.right(), (float)(yPos - refMouseYPos) * mouseSens * angSpeed);
+            }
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            AGLErrors("main-loopbegin");
+            // =====================================================        Drawing
+            terrain.draw(cam, true);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            earth.draw(cam);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            AGLErrors("main-afterdraw");
+
+            int currentTabState = glfwGetKey(win(), GLFW_KEY_TAB);
+            if (currentTabState == GLFW_PRESS && lastTabState == GLFW_RELEASE) {
+                // prepare for map mode
+                drawMapMode = !drawMapMode;
+                cam.pos = {terrain.getMidLo(), terrain.getMidLa(), 1.f};
+                cam.rot = glm::quatLookAtLH(glm::normalize(glm::vec3(terrain.getMidLo(), terrain.getMidLa(), 0.f) - cam.pos), Transform::UP);
+                cam.setNf({0.01f, 100.0f});
+            }
+            lastTabState = currentTabState;
         }
         glfwGetCursorPos(win(), &refMouseXPos, &refMouseYPos);
 
@@ -173,13 +240,6 @@ void MyWin::MainLoop() {
         }
 
         cam.setAspect(aspect);
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        AGLErrors("main-loopbegin");
-        // =====================================================        Drawing
-        terrain.draw(cam);
-        AGLErrors("main-afterdraw");
-
         WaitForFixedFPS();
         glfwSwapBuffers(win()); // =============================   Swap buffers
     } while (!(glfwGetKey(win(), GLFW_KEY_ESCAPE) == GLFW_PRESS ||

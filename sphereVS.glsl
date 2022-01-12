@@ -7,5 +7,5 @@ layout(location = 0) uniform mat4 mvp;
 layout(location = 0) in vec3 vertexPosModelspace;
 
 void main(void) {
-    gl_Position = mvp * vec4(vertexPosWorldspace, 1);
+    gl_Position = mvp * vec4(vertexPosModelspace, 1);
 }

@@ -20,13 +20,16 @@ public:
     static const GLushort elementsCnt = 1201;
 
     explicit Terrain(const std::string& dirPath);
+    ~Terrain();
     float getMidLo() const;
     float getMidLa() const;
     void draw(Camera camera) override;
+    void draw(Camera camera, bool threeDim);
     GLubyte getLod() const;
     void setLod(GLubyte lod);
 
 private:
+    GLuint pId{}; // to delete in destructor
     std::vector<AreaFragment> areaFrags;
     std::vector<GLuint> indices;
     std::vector<LodGroup> lodGroups;

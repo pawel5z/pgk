@@ -28,7 +28,7 @@ Sphere::Sphere(int n) : AGLDrawable() {
 
     initWithPolarCoords(n, vertices, indices);
     indicesCnt = indices.size();
-    setBuffers();
+    setBuffers(vertices, indices);
     setShaders();
 }
 

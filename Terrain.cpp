@@ -7,6 +7,7 @@
 Terrain::Terrain(const std::string& dirPath) {
     glEnableVertexAttribArray(0);
     compileShadersFromFile("areaMapVS.glsl", "areaFS.glsl");
+    compileProgramFromFile(pId, "area3dVS.glsl", "areaFS.glsl");
 
     GLint step = 1;
     for (GLuint lod = 0; lod <= maxLOD; lod++) {
@@ -52,6 +53,10 @@ Terrain::Terrain(const std::string& dirPath) {
     midLa = (minLa + maxLa) / 2.f;
 }
 
+Terrain::~Terrain() {
+    if (pId) glDeleteProgram(pId);
+}
+
 float Terrain::getMidLo() const {
     return midLo;
 }
@@ -61,7 +66,13 @@ float Terrain::getMidLa() const {
 }
 
 void Terrain::draw(Camera camera) {
+    throw std::logic_error("Not implemented.");
+}
+
+void Terrain::draw(Camera camera, bool threeDim) {
     bind();
+    if (threeDim) glUseProgram(pId);
+    if (glGetError()) fprintf(stderr, "error here\n");
     glUniformMatrix4fv(0, 1, false, &(camera.getPVMat() * getModelMat())[0][0]);
     for (auto &area : areaFrags) {
         area.prepareForDrawing();
