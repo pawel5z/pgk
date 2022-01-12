@@ -41,7 +41,7 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
 }
 
 // display performance statistics once per `interval` seconds
-void displayPerformance(double interval = 1.f) {
+double displayPerformance(double interval = 1.f) {
     static double lastTimestamp = 0.;
     static double timeElapsed = 0.;
     static size_t numberOfCalls = 0;
@@ -51,14 +51,36 @@ void displayPerformance(double interval = 1.f) {
     timeElapsed += currTimestamp - lastTimestamp;
     if (timeElapsed >= interval) {
         fprintf(stderr,
-                "\rfps: %lf, ms per frame: %lf"
-                "                                                                                ",
+                "\rfps: %lf, ms per frame: %lf                                                     ",
                 (double)numberOfCalls / timeElapsed,
                 timeElapsed * 1000. / (double)numberOfCalls);
         numberOfCalls = 0;
         timeElapsed = 0.;
     }
     lastTimestamp = currTimestamp;
+    return (double)numberOfCalls / timeElapsed;
+}
+
+void lodAutoControl(Terrain &terrain) {
+    static double lastTimestamp = 0.;
+
+    double currentTimestamp = glfwGetTime();
+    if (currentTimestamp - lastTimestamp < 2.f) // try modifying LOD every 2 seconds
+        return;
+    lastTimestamp = currentTimestamp;
+    GLubyte lod = terrain.getLod();
+    double fps = displayPerformance();
+    try {
+        if (fps <= 10.) {
+            terrain.setLod(lod + 1);
+            printf("LOD set to %hhu.\n", terrain.getLod());
+        } else if (fps > 30.) {
+            terrain.setLod(lod - 1);
+            printf("LOD set to %hhu.\n", terrain.getLod());
+        }
+    } catch (std::exception &e) {
+        return;
+    }
 }
 
 static std::string dirPath;
@@ -68,6 +90,8 @@ void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
 
     Terrain terrain(dirPath);
+    terrain.setLod(2);
+    bool autoLod = true;
 
     Camera cam;
     cam.pos = {terrain.getMidLo(), terrain.getMidLa(), 1.f};
@@ -76,7 +100,8 @@ void MyWin::MainLoop() {
     cam.setNf({0.01f, 100.0f});
 
     float angSpeed = .01f;
-    float speed = .01f;
+    const float baseSpeed = 0.025f;
+    float speed = baseSpeed;
 
     double refMouseXPos, refMouseYPos;
 
@@ -87,7 +112,10 @@ void MyWin::MainLoop() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     do {
-        displayPerformance(0.03125);
+        speed = baseSpeed * cam.pos.z;
+        if (autoLod)
+            lodAutoControl(terrain);
+        (void)displayPerformance(0.03125);
 
         glfwPollEvents();
         //glfwWaitEvents();
@@ -117,6 +145,32 @@ void MyWin::MainLoop() {
             cam.pos += cam.up() * (float)(yPos - refMouseYPos) * mouseSens * speed;
         }
         glfwGetCursorPos(win(), &refMouseXPos, &refMouseYPos);
+
+        // LOD controls
+        if (glfwGetKey(win(), GLFW_KEY_0) == GLFW_PRESS ||
+            glfwGetKey(win(), GLFW_KEY_KP_0) == GLFW_PRESS) {
+            autoLod = true;
+        } else if (glfwGetKey(win(), GLFW_KEY_1) == GLFW_PRESS ||
+            glfwGetKey(win(), GLFW_KEY_KP_1) == GLFW_PRESS) {
+            autoLod = false;
+            terrain.setLod(0);
+        } else if (glfwGetKey(win(), GLFW_KEY_2) == GLFW_PRESS ||
+                   glfwGetKey(win(), GLFW_KEY_KP_2) == GLFW_PRESS) {
+            autoLod = false;
+            terrain.setLod(1);
+        } else if (glfwGetKey(win(), GLFW_KEY_3) == GLFW_PRESS ||
+                   glfwGetKey(win(), GLFW_KEY_KP_3) == GLFW_PRESS) {
+            autoLod = false;
+            terrain.setLod(2);
+        } else if (glfwGetKey(win(), GLFW_KEY_4) == GLFW_PRESS ||
+                   glfwGetKey(win(), GLFW_KEY_KP_4) == GLFW_PRESS) {
+            autoLod = false;
+            terrain.setLod(3);
+        } else if (glfwGetKey(win(), GLFW_KEY_5) == GLFW_PRESS ||
+                   glfwGetKey(win(), GLFW_KEY_KP_5) == GLFW_PRESS) {
+            autoLod = false;
+            terrain.setLod(4);
+        }
 
         cam.setAspect(aspect);
 

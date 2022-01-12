@@ -38,6 +38,7 @@ Terrain::Terrain(const std::string& dirPath) {
         fprintf(stderr, "%s\n", e.what());
         throw std::logic_error("error while reading " + dirPath + " directory");
     }
+    printf("Rendering %lu tiles.\n", areaFrags.size());
 
     float minLo = std::numeric_limits<float>::max(), maxLo = std::numeric_limits<float>::min(),
           minLa = std::numeric_limits<float>::max(), maxLa = std::numeric_limits<float>::min();

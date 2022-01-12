@@ -8,7 +8,7 @@
 #include <string>
 #include <glm/glm.hpp>
 
-static GLubyte maxLOD = 3;
+static GLubyte maxLOD = 4;
 
 struct LodGroup {
     GLuint idx;
