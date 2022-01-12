@@ -16,6 +16,7 @@ AreaFragment::AreaFragment(std::string filePath) {
         throw std::invalid_argument("incorrect file path");
     }
 
+    std::vector<GLshort> heights;
     std::ifstream fin(filePath, std::ios_base::binary);
     int readCnt = fastPow(Terrain::elementsCnt, 2);
     for (int i = 0; i < readCnt; i++) {
@@ -32,19 +33,31 @@ AreaFragment::AreaFragment(std::string filePath) {
 }
 
 AreaFragment::AreaFragment(const AreaFragment &o) {
-    heights = std::vector<GLshort>(o.heights);
+    void  *otherVboData;
+    GLint otherVboSize;
+    o.bindVbo();
+    glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &otherVboSize);
     glGenBuffers(1, &vbo);
     bindVbo();
-    glBufferData(GL_ARRAY_BUFFER, (int)(heights.size() * sizeof(GLshort)), heights.data(), GL_STATIC_DRAW);
+    auto *temp = new GLbyte[otherVboSize];
+    glBufferData(GL_ARRAY_BUFFER, otherVboSize, temp, GL_STATIC_DRAW);
+    glCopyNamedBufferSubData(o.getVbo(), getVbo(), 0, 0, otherVboSize);
+    delete[] temp;
     leftLo = o.leftLo;
     lowLa = o.lowLa;
 }
 
 AreaFragment &AreaFragment::operator=(const AreaFragment &o) {
-    heights = std::vector<GLshort>(o.heights);
+    void  *otherVboData;
+    GLint otherVboSize;
+    o.bindVbo();
+    glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &otherVboSize);
     glGenBuffers(1, &vbo);
     bindVbo();
-    glBufferData(GL_ARRAY_BUFFER, (int)(heights.size() * sizeof(GLshort)), heights.data(), GL_STATIC_DRAW);
+    auto *temp = new GLbyte[otherVboSize];
+    glBufferData(GL_ARRAY_BUFFER, otherVboSize, temp, GL_STATIC_DRAW);
+    glCopyNamedBufferSubData(o.getVbo(), getVbo(), 0, 0, otherVboSize);
+    delete[] temp;
     leftLo = o.leftLo;
     lowLa = o.lowLa;
     return *this;
@@ -76,6 +89,10 @@ void AreaFragment::prepareForDrawing() {
     glVertexAttribPointer(0, 1, GL_SHORT, false, sizeof(GLshort), nullptr);
 }
 
-void AreaFragment::bindVbo() {
+void AreaFragment::bindVbo() const {
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
+}
+
+GLuint AreaFragment::getVbo() const {
+    return vbo;
 }

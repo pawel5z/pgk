@@ -22,9 +22,9 @@ public:
 private:
     GLuint vbo{}; // delete in destructor
     GLshort leftLo, lowLa;
-    std::vector<GLshort> heights;
 
-    void bindVbo();
+    void bindVbo() const;
+    GLuint getVbo() const;
 };
 
 #endif //AREAFRAGMENT_HPP
