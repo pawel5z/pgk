@@ -7,12 +7,6 @@
 #include <vector>
 #include <epoxy/gl.h>
 
-struct VertexData {
-    GLshort x;
-    GLshort y;
-    GLshort h;
-};
-
 class AreaFragment {
 public:
     explicit AreaFragment(std::string filePath);
@@ -28,7 +22,7 @@ public:
 private:
     GLuint vbo{}; // delete in destructor
     GLshort leftLo, lowLa;
-    std::vector<VertexData> vData;
+    std::vector<GLshort> heights;
 
     void bindVbo();
 };

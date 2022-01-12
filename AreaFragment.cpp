@@ -22,29 +22,29 @@ AreaFragment::AreaFragment(std::string filePath) {
         short input = 0;
         fin.get(*((char *)&input + 1));
         fin.get(*(char *)&input);
-        vData.push_back({short(i % Terrain::elementsCnt), short(i / Terrain::elementsCnt), input});
+        heights.push_back(input);
     }
     fin.close();
 
     glGenBuffers(1, &vbo);
     bindVbo();
-    glBufferData(GL_ARRAY_BUFFER, (int)(vData.size() * sizeof(VertexData)), vData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (int)(heights.size() * sizeof(GLshort)), heights.data(), GL_STATIC_DRAW);
 }
 
 AreaFragment::AreaFragment(const AreaFragment &o) {
-    vData = std::vector<VertexData>(o.vData);
+    heights = std::vector<GLshort>(o.heights);
     glGenBuffers(1, &vbo);
     bindVbo();
-    glBufferData(GL_ARRAY_BUFFER, (int)(vData.size() * sizeof(VertexData)), vData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (int)(heights.size() * sizeof(GLshort)), heights.data(), GL_STATIC_DRAW);
     leftLo = o.leftLo;
     lowLa = o.lowLa;
 }
 
 AreaFragment &AreaFragment::operator=(const AreaFragment &o) {
-    vData = std::vector<VertexData>(o.vData);
+    heights = std::vector<GLshort>(o.heights);
     glGenBuffers(1, &vbo);
     bindVbo();
-    glBufferData(GL_ARRAY_BUFFER, (int)(vData.size() * sizeof(VertexData)), vData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (int)(heights.size() * sizeof(GLshort)), heights.data(), GL_STATIC_DRAW);
     leftLo = o.leftLo;
     lowLa = o.lowLa;
     return *this;
@@ -73,7 +73,7 @@ GLshort AreaFragment::getHighLa() const {
 void AreaFragment::prepareForDrawing() {
     glUniform2f(1, leftLo, lowLa);
     bindVbo();
-    glVertexAttribPointer(0, 3, GL_SHORT, false, sizeof(VertexData), nullptr);
+    glVertexAttribPointer(0, 1, GL_SHORT, false, sizeof(GLshort), nullptr);
 }
 
 void AreaFragment::bindVbo() {
