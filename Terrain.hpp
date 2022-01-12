@@ -10,6 +10,11 @@
 
 static GLubyte maxLOD = 3;
 
+struct LodGroup {
+    GLuint idx;
+    GLuint size;
+};
+
 class Terrain : AGLDrawable {
 public:
     static const GLushort elementsCnt = 1201;
@@ -23,9 +28,10 @@ public:
 
 private:
     std::vector<AreaFragment> areaFrags;
-    std::vector<std::vector<GLuint>> indices;
+    std::vector<GLuint> indices;
+    std::vector<LodGroup> lodGroups;
     float midLo, midLa;
-    GLubyte lod;
+    GLubyte lod = 0;
 };
 
 #endif //TERRAIN_HPP

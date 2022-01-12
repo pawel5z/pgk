@@ -5,12 +5,30 @@
 #include <stdexcept>
 
 Terrain::Terrain(const std::string& dirPath) {
+    compileShadersFromFile("areaMapVS.glsl", "areaFS.glsl");
+
+    GLint step = 1;
+    for (GLuint lod = 0; lod <= maxLOD; lod++) {
+        lodGroups.push_back({(GLuint)indices.size(), 0});
+        for (GLuint row = 0; row < Terrain::elementsCnt - step; row += step) {
+            for (GLuint col = 0; col < Terrain::elementsCnt; col += step) {
+                indices.push_back(row * Terrain::elementsCnt + col);
+                indices.push_back((row + step) * Terrain::elementsCnt + col);
+            }
+            indices.push_back(primitiveRestartIndex);
+        }
+        lodGroups.at(lod).size = indices.size() - lodGroups.at(lod).idx;
+        step *= 2;
+    }
+    // eboId already bound
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)(indices.size() * sizeof(GLuint)), indices.data(), GL_STATIC_DRAW);
+
     try {
         for (const auto &dirEntry : std::filesystem::directory_iterator(dirPath)) {
             if (!dirEntry.is_regular_file())
                 continue;
             try {
-                areaFrags.emplace_back(dirEntry.path());
+                areaFrags.emplace_back(dirEntry.path(), getEboId());
             } catch (std::invalid_argument &e) {
                 fprintf(stderr, "%s\n", e.what());
                 throw std::invalid_argument("incorrect file name in specified path");
@@ -31,23 +49,6 @@ Terrain::Terrain(const std::string& dirPath) {
     }
     midLo = (minLo + maxLo) / 2.f;
     midLa = (minLa + maxLa) / 2.f;
-
-    GLint step = 1;
-    for (GLuint lod = 0; lod <= maxLOD; lod++) {
-        indices.emplace_back();
-        for (GLuint row = 0; row < Terrain::elementsCnt - step; row += step) {
-            for (GLuint col = 0; col < Terrain::elementsCnt; col += step) {
-                indices.at(lod).push_back(row * Terrain::elementsCnt + col);
-                indices.at(lod).push_back((row + step) * Terrain::elementsCnt + col);
-            }
-            indices.at(lod).push_back(primitiveRestartIndex);
-        }
-        step *= 2;
-    }
-
-    bindVertexArray();
-    compileShadersFromFile("areaMapVS.glsl", "areaFS.glsl");
-    glEnableVertexAttribArray(0);
 }
 
 float Terrain::getMidLo() const {
@@ -59,12 +60,10 @@ float Terrain::getMidLa() const {
 }
 
 void Terrain::draw(Camera camera) {
-    bind();
+    bindProgram();
     glUniformMatrix4fv(0, 1, false, &(camera.getPVMat() * getModelMat())[0][0]);
     for (auto &area : areaFrags) {
-        glUniform2f(1, area.getLeftLo(), area.getLowLa());
-        area.prepareForDrawing();
-        glDrawElements(GL_TRIANGLE_STRIP, (GLint)indices.at(lod).size(), GL_UNSIGNED_INT, nullptr);
+        area.draw(lodGroups[lod].size, lodGroups[lod].idx, p());
     }
 }
 
@@ -73,10 +72,7 @@ GLubyte Terrain::getLod() const {
 }
 
 void Terrain::setLod(GLubyte lod) {
-    if ((size_t)lod >= indices.size())
+    if ((size_t)lod >= lodGroups.size())
         throw std::invalid_argument("Unavailable lod. Available ranges: 0 (auto), 1 - " + std::to_string(maxLOD));
     Terrain::lod = lod;
-    bindVertexArray();
-    // eboId already bound
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (int)(indices.at(lod).size() * sizeof(GLuint)), indices.at(lod).data(), GL_STATIC_DRAW);
 }
