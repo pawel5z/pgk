@@ -63,7 +63,7 @@ void Terrain::draw(Camera camera) {
     bindProgram();
     glUniformMatrix4fv(0, 1, false, &(camera.getPVMat() * getModelMat())[0][0]);
     for (auto &area : areaFrags) {
-        area.draw(lodGroups[lod].size, lodGroups[lod].idx, p());
+        area.draw(lodGroups[lod].size, lodGroups[lod].idx);
     }
 }
 

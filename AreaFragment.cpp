@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <filesystem>
 
-AreaFragment::AreaFragment(std::string filePath) {
+AreaFragment::AreaFragment(std::string filePath, GLuint eboId) {
     std::string fileName = std::filesystem::path(filePath).filename();
     try {
         lowLa = (GLshort)std::stoi(std::string(fileName, 1, 2)) * (1 - 2 * (GLshort)(fileName[0] == 'S'));
@@ -26,23 +26,14 @@ AreaFragment::AreaFragment(std::string filePath) {
     }
     fin.close();
 
-    glGenBuffers(1, &vbo);
-    bindVbo();
+    bindVertexArray();
+    // vboId already bound
     glBufferData(GL_ARRAY_BUFFER, (int)(vData.size() * sizeof(VertexData)), vData.data(), GL_STATIC_DRAW);
-}
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_SHORT, false, sizeof(VertexData), nullptr);
 
-AreaFragment::~AreaFragment() {
-    glDeleteBuffers(1, &vbo);
-}
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId);
 
-void AreaFragment::bindVbo() const {
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-}
-
-void AreaFragment::prepareForDrawing() const {
-    bindVbo();
-    glVertexAttribPointer(0, 3, GL_SHORT, false, 0, nullptr);
-    glUniform2f(1, leftLo, lowLa);
 }
 
 GLshort AreaFragment::getLeftLo() const {
@@ -59,4 +50,12 @@ GLshort AreaFragment::getLowLa() const {
 
 GLshort AreaFragment::getHighLa() const {
     return lowLa + 1;
+}
+
+void AreaFragment::draw(Camera camera) {}
+
+void AreaFragment::draw(GLuint elementsCnt, GLuint firstElementIdx) {
+    bindVertexArray();
+    glUniform2f(1, leftLo, lowLa);
+    glDrawElements(GL_TRIANGLE_STRIP, (GLsizei)elementsCnt, GL_UNSIGNED_INT, (void *)(size_t)(firstElementIdx * sizeof(GLuint)));
 }
