@@ -62,6 +62,10 @@ GLuint AGLDrawable::p() const {
     return pId;
 }
 
+GLuint AGLDrawable::getEboId() const {
+    return eboId;
+}
+
 int AGLDrawable::compileShaders(GLuint v, GLuint f, GLuint g) {
     GLint Result = GL_FALSE;
     if (g) Result = CompileLink(g, "GS");

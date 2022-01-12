@@ -31,6 +31,7 @@ public:
     // get program (shader) id
     GLuint p() const;
     virtual void draw(Camera camera) = 0;
+    GLuint getEboId() const;
 
 private:
     // VAO, VBO, Prog to clean in destructor
