@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 Terrain::Terrain(const std::string& dirPath) {
+    glEnableVertexAttribArray(0);
     compileShadersFromFile("areaMapVS.glsl", "areaFS.glsl");
 
     GLint step = 1;
@@ -28,7 +29,7 @@ Terrain::Terrain(const std::string& dirPath) {
             if (!dirEntry.is_regular_file())
                 continue;
             try {
-                areaFrags.emplace_back(dirEntry.path(), getEboId());
+                areaFrags.emplace_back(dirEntry.path());
             } catch (std::invalid_argument &e) {
                 fprintf(stderr, "%s\n", e.what());
                 throw std::invalid_argument("incorrect file name in specified path");
@@ -60,10 +61,11 @@ float Terrain::getMidLa() const {
 }
 
 void Terrain::draw(Camera camera) {
-    bindProgram();
+    bind();
     glUniformMatrix4fv(0, 1, false, &(camera.getPVMat() * getModelMat())[0][0]);
     for (auto &area : areaFrags) {
-        area.draw(lodGroups[lod].size, lodGroups[lod].idx);
+        area.prepareForDrawing();
+        glDrawElements(GL_TRIANGLE_STRIP, lodGroups[lod].size, GL_UNSIGNED_INT, (void *)(size_t)(lodGroups[lod].idx * sizeof(GLuint)));
     }
 }
 

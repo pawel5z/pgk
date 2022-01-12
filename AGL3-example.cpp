@@ -68,7 +68,6 @@ void MyWin::MainLoop() {
     ViewportOne(0,0,wd,ht);
 
     Terrain terrain(dirPath);
-    terrain.setLod(3);
 
     Camera cam;
     cam.pos = {terrain.getMidLo(), terrain.getMidLa(), 1.f};

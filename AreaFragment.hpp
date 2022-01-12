@@ -13,19 +13,24 @@ struct VertexData {
     GLshort h;
 };
 
-class AreaFragment : AGLDrawable {
+class AreaFragment {
 public:
-    explicit AreaFragment(std::string filePath, GLuint eboId);
+    explicit AreaFragment(std::string filePath);
+    AreaFragment(const AreaFragment &o);
+    AreaFragment& operator=(const AreaFragment &o);
+    ~AreaFragment();
     GLshort getLeftLo() const;
     GLshort getRightLo() const;
     GLshort getLowLa() const;
     GLshort getHighLa() const;
-    void draw(Camera camera) override;
-    void draw(GLuint elementsCnt, GLuint firstElementIdx);
+    void prepareForDrawing();
 
 private:
+    GLuint vbo{}; // delete in destructor
     GLshort leftLo, lowLa;
     std::vector<VertexData> vData;
+
+    void bindVbo();
 };
 
 #endif //AREAFRAGMENT_HPP
