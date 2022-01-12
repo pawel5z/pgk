@@ -82,7 +82,7 @@ void lodAutoControl(Terrain &terrain) {
 }
 
 static std::string dirPath;
-static const float earthRadius = 6371008.f;
+static const float earthRadius = 6371.008f;
 
 // ==========================================================================
 void MyWin::MainLoop() {
@@ -159,18 +159,20 @@ void MyWin::MainLoop() {
             if (currentTabState == GLFW_PRESS && lastTabState == GLFW_RELEASE) {
                 // prepare for 3d mode
                 drawMapMode = !drawMapMode;
-                cam.pos = pointOnSphere(cam.pos.y, cam.pos.x, earthRadius + 10000.f);
+                cam.pos = pointOnSphere(cam.pos.y, cam.pos.x, earthRadius + 10.f);
                 cam.rot = glm::quatLookAtLH(glm::normalize(Transform::ZERO - cam.pos), Transform::UP);
-                cam.setNf({10.f, 1000000.f});
+                cam.setNf({.1f, 1000.f});
             }
             lastTabState = currentTabState;
         } else {
             float distFromZero = glm::length(cam.pos);
-            speed = baseSpeed * 10; //* distFromZero;
+            speed = .5f;
+            // go up
             if (glfwGetKey(win(), GLFW_KEY_E) == GLFW_PRESS)
-                cam.pos += glm::normalize(cam.pos) * 100.f;
+                cam.pos += glm::normalize(cam.pos) * .5f;
+            // go down
             if (glfwGetKey(win(), GLFW_KEY_Q) == GLFW_PRESS)
-                cam.pos -= glm::normalize(cam.pos) * 100.f;
+                cam.pos -= glm::normalize(cam.pos) * .5f;
             if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS ||
                 glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS)
                 cam.pos = glm::normalize(cam.pos + cam.forward() * speed) * distFromZero;
@@ -183,14 +185,19 @@ void MyWin::MainLoop() {
             if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS ||
                 glfwGetKey(win(), GLFW_KEY_LEFT) == GLFW_PRESS)
                 cam.pos = glm::normalize(cam.pos - cam.right() * speed) * distFromZero;
+            // roll
+            if (glfwGetKey(win(), GLFW_KEY_Z) == GLFW_PRESS)
+                cam.rotate(-cam.forward(), angSpeed * 50.f, WORLD);
+            if (glfwGetKey(win(), GLFW_KEY_C) == GLFW_PRESS)
+                cam.rotate(-cam.forward(), -angSpeed * 50.f, WORLD);
             if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
                 float mouseSens = 1.f;
                 double xPos, yPos;
                 glfwGetCursorPos(win(), &xPos, &yPos);
-                // look left/right
-                cam.rotate(cam.up(), (float)(xPos - refMouseXPos) * mouseSens * angSpeed);
-                // look up/down
-                cam.rotate(cam.right(), (float)(yPos - refMouseYPos) * mouseSens * angSpeed);
+                // yaw
+                cam.rotate(-cam.up(), (float)(xPos - refMouseXPos) * mouseSens * angSpeed, WORLD);
+                // pitch
+                cam.rotate(-cam.right(), (float)(yPos - refMouseYPos) * mouseSens * angSpeed, WORLD);
             }
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             AGLErrors("main-loopbegin");
@@ -253,7 +260,7 @@ int main(int argc, char *argv[]) {
     }
     dirPath = argv[1];
     MyWin win;
-    win.Init(800,600,"Assignment 6",0,33);
+    win.Init(1024,768,"Assignment 6",0,33);
     win.MainLoop();
     return 0;
 }

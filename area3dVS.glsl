@@ -3,7 +3,7 @@
 #extension GL_ARB_shading_language_420pack : require
 
 const float resolution = 1201.f;
-const float earthRadius = 6371008.f;
+const float earthRadius = 6371.008f;
 
 layout(location = 0) uniform mat4 mvp;
 layout(location = 1) uniform vec2 lowerLeft;
@@ -24,7 +24,7 @@ void main(void) {
         sin(radians(la)) * cos(radians(lo)),
         sin(radians(la)) * sin(radians(lo)),
         cos(radians(la))
-    ) * (earthRadius + inHeight);
+    ) * (earthRadius + inHeight / 1000.f);
     gl_Position = mvp * vertexPosModelspace;
     height = inHeight;
 }
