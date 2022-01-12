@@ -31,8 +31,7 @@ Terrain::Terrain(const std::string& dirPath) {
             try {
                 areaFrags.emplace_back(dirEntry.path());
             } catch (std::invalid_argument &e) {
-                fprintf(stderr, "%s\n", e.what());
-                throw std::invalid_argument("incorrect file name in specified path");
+                fprintf(stderr, "%s\nSkipping %s.\n", e.what(), dirEntry.path().c_str());
             }
         }
     } catch (std::exception &e) {
