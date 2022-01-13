@@ -17,6 +17,9 @@
 #include <cmath>
 #include <glm/glm.hpp>
 
+static std::string dirPath;
+static const float earthRadius = 6371.008f;
+
 // ==========================================================================
 // Window Main Loop Inits ...................................................
 // ==========================================================================
@@ -43,7 +46,7 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
 size_t drawnTrianglesCnt = 0;
 
 // display performance statistics once per `interval` seconds
-double displayPerformance(double interval = 1.f) {
+double displayPerformance(double interval = 1.f, Camera *camera = nullptr) {
     static double lastTimestamp = 0.;
     static double timeElapsed = 0.;
     static size_t numberOfCalls = 0;
@@ -53,10 +56,11 @@ double displayPerformance(double interval = 1.f) {
     timeElapsed += currTimestamp - lastTimestamp;
     if (timeElapsed >= interval) {
         fprintf(stderr,
-                "\rfps: %lf, ms per frame: %lf, triangles per frame: %lu                           ",
+                "\rfps: %lf, ms per frame: %lf, triangles per frame: %lu, height: %s km            ",
                 (double)numberOfCalls / timeElapsed,
                 timeElapsed * 1000. / (double)numberOfCalls,
-                drawnTrianglesCnt);
+                drawnTrianglesCnt,
+                (camera ? std::to_string(glm::length(camera->pos) - earthRadius).c_str() : "n/a"));
         numberOfCalls = 0;
         timeElapsed = 0.;
     }
@@ -86,9 +90,6 @@ void lodAutoControl(Terrain &terrain) {
         return;
     }
 }
-
-static std::string dirPath;
-static const float earthRadius = 6371.008f;
 
 // ==========================================================================
 void MyWin::MainLoop() {
@@ -126,7 +127,7 @@ void MyWin::MainLoop() {
     do {
         if (autoLod)
             lodAutoControl(terrain);
-        (void)displayPerformance(0.03125);
+        (void)displayPerformance(0.03125, (drawMapMode ? nullptr : &cam));
         glfwPollEvents();
 
         if (drawMapMode) {
