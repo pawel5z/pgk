@@ -110,7 +110,7 @@ void MyWin::MainLoop() {
     double refMouseXPos, refMouseYPos;
     int lastTabState = GLFW_RELEASE;
 
-    glLineWidth(10.f);
+    glLineWidth(2.5f);
     glEnable(GL_PRIMITIVE_RESTART);
     glPrimitiveRestartIndex(primitiveRestartIndex);
     glClearColor(.7f, .7f, .7f, .0f);
@@ -131,14 +131,6 @@ void MyWin::MainLoop() {
             if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS ||
                 glfwGetKey(win(), GLFW_KEY_DOWN) == GLFW_PRESS)
                 cam.pos -= speed * cam.forward();
-            // rightward
-            if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS ||
-                glfwGetKey(win(), GLFW_KEY_RIGHT) == GLFW_PRESS)
-                cam.rotate(Transform::UP, angSpeed, Space::WORLD);
-            // leftward
-            if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS ||
-                glfwGetKey(win(), GLFW_KEY_LEFT) == GLFW_PRESS)
-                cam.rotate(Transform::UP, -angSpeed, Space::WORLD);
             // mouse input
             if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
                 float mouseSens = .1;
@@ -157,11 +149,11 @@ void MyWin::MainLoop() {
 
             int currentTabState = glfwGetKey(win(), GLFW_KEY_TAB);
             if (currentTabState == GLFW_PRESS && lastTabState == GLFW_RELEASE) {
-                // prepare for 3d mode
+                // switch to 3d mode
                 drawMapMode = !drawMapMode;
                 cam.pos = pointOnSphere(cam.pos.y, cam.pos.x, earthRadius + 10.f);
                 cam.rot = glm::quatLookAtLH(glm::normalize(Transform::ZERO - cam.pos), Transform::UP);
-                cam.setNf({.1f, 1000.f});
+                cam.setNf({.1f, 20000.f});
             }
             lastTabState = currentTabState;
         } else {
@@ -210,7 +202,7 @@ void MyWin::MainLoop() {
 
             int currentTabState = glfwGetKey(win(), GLFW_KEY_TAB);
             if (currentTabState == GLFW_PRESS && lastTabState == GLFW_RELEASE) {
-                // prepare for map mode
+                // switch to map mode
                 drawMapMode = !drawMapMode;
                 cam.pos = {terrain.getMidLo(), terrain.getMidLa(), 1.f};
                 cam.rot = glm::quatLookAtLH(glm::normalize(glm::vec3(terrain.getMidLo(), terrain.getMidLa(), 0.f) - cam.pos), Transform::UP);
