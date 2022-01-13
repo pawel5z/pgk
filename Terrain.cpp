@@ -72,8 +72,10 @@ void Terrain::draw(Camera camera) {
 
 void Terrain::draw(Camera camera, bool threeDim) {
     bind();
-    if (threeDim) glUseProgram(pId);
-    if (glGetError()) fprintf(stderr, "error here\n");
+    if (threeDim)
+        glUseProgram(pId);
+    else
+        glUniform1f(2, midLa);
     glUniformMatrix4fv(0, 1, false, &(camera.getPVMat() * getModelMat())[0][0]);
     for (auto &area : areaFrags) {
         area.prepareForDrawing();
