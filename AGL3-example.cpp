@@ -14,6 +14,7 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <cmath>
 #include <glm/glm.hpp>
 
 // ==========================================================================
@@ -204,8 +205,10 @@ void MyWin::MainLoop() {
             if (currentTabState == GLFW_PRESS && lastTabState == GLFW_RELEASE) {
                 // switch to map mode
                 drawMapMode = !drawMapMode;
-                cam.pos = {terrain.getMidLo(), terrain.getMidLa(), 1.f};
-                cam.rot = glm::quatLookAtLH(glm::normalize(glm::vec3(terrain.getMidLo(), terrain.getMidLa(), 0.f) - cam.pos), Transform::UP);
+                double la = glm::degrees(glm::asin(cam.pos.y / glm::length(cam.pos)));
+                double lo = glm::degrees(atan2(cam.pos.x, cam.pos.z) + M_PI);
+                cam.pos = {lo, la, 1.f};
+                cam.rot = glm::quatLookAtLH(glm::normalize(glm::vec3(lo, la, 0.f) - cam.pos), Transform::UP);
                 cam.setNf({0.01f, 100.0f});
             }
             lastTabState = currentTabState;
