@@ -71,10 +71,10 @@ void lodAutoControl(Terrain &terrain) {
     try {
         if (fps <= 10.) {
             terrain.setLod(lod + 1);
-            printf("LOD set to %i.\n", terrain.getLod() + 1);
+            printf("\nLOD set to %i.\n", terrain.getLod() + 1);
         } else if (fps > 30.) {
             terrain.setLod(lod - 1);
-            printf("LOD set to %i.\n", terrain.getLod() + 1);
+            printf("\nLOD set to %i.\n", terrain.getLod() + 1);
         }
     } catch (std::exception &e) {
         return;
