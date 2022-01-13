@@ -17,13 +17,13 @@ void main(void) {
     float highLa = lowerLeft.y + 1.f;
     float row = float(gl_VertexID) / resolution;
     float col = mod(float(gl_VertexID), resolution);
-    float lo = leftLo + col / 1200.f;
+    float lo = leftLo + col / 1200.f + 180.f;
     float la = highLa - row / 1200.f;
     vec4 vertexPosModelspace = vec4(0.f, 0.f, 0.f, 1.f);
     vertexPosModelspace.xyz = vec3(
-        sin(radians(la)) * cos(radians(lo)),
-        sin(radians(la)) * sin(radians(lo)),
-        cos(radians(la))
+        sin(radians(lo)) * cos(radians(la)),
+        sin(radians(la)),
+        cos(radians(la)) * cos(radians(lo))
     ) * (earthRadius + inHeight / 1000.f);
     gl_Position = mvp * vertexPosModelspace;
     height = inHeight;

@@ -8,7 +8,7 @@
 // sphere with radius 0.5
 class Sphere : public AGLDrawable {
 public:
-    explicit Sphere(int n=45);
+    Sphere(int stacks, int sectors);
     void draw(Camera camera) override;
 
 protected:
@@ -18,7 +18,9 @@ protected:
 private:
     size_t indicesCnt;
 
-    void initWithPolarCoords(int n, std::vector<glm::vec3> &vertices, std::vector<GLushort> &indices);
+    static float latitudeAng(int i, int stacks);
+    static float longitudeAng(int i, int sectors);
+    static void initWithPolarCoords(int stacks, int sectors, std::vector<glm::vec3> &vertices, std::vector<GLushort> &indices);
 };
 
 #endif //SPHERE_HPP

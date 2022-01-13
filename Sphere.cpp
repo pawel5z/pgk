@@ -1,5 +1,7 @@
 #include "Sphere.hpp"
 
+#include "utils.hpp"
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <unordered_map>
 
@@ -22,21 +24,29 @@ void Sphere::setShaders() {
     compileShadersFromFile("sphereVS.glsl", "sphereFS.glsl");
 }
 
-Sphere::Sphere(int n) : AGLDrawable() {
+Sphere::Sphere(int stacks, int sectors) : AGLDrawable() {
     std::vector<glm::vec3> vertices;
     std::vector<GLushort> indices;
 
-    initWithPolarCoords(n, vertices, indices);
+    initWithPolarCoords(stacks, sectors, vertices, indices);
     indicesCnt = indices.size();
     setBuffers(vertices, indices);
     setShaders();
 }
 
-void Sphere::initWithPolarCoords(int n, std::vector<glm::vec3> &vertices, std::vector<GLushort> &indices) {
-    if (n < 3 || 45 < n) {
-        fprintf(stderr, "incorrect sphere smoothness parameter: %d\nresetting to default: 45\n", n);
-        n = 45;
-    }
+float Sphere::latitudeAng(int i, int stacks) {
+    return -90.f + 180.f * (float)i / (float)stacks;
+}
+
+float Sphere::longitudeAng(int i, int sectors) {
+    return (float)i / (float)sectors * 360.f;
+}
+
+void Sphere::initWithPolarCoords(int stacks, int sectors, std::vector<glm::vec3> &vertices, std::vector<GLushort> &indices) {
+    if (stacks < 3 || 180 < stacks)
+        throw std::invalid_argument("Incorrect stacks number: " + std::to_string(stacks) + "\n");
+    if (sectors < 3 || 360 < sectors)
+        throw std::invalid_argument("Incorrect sectors number: " + std::to_string(sectors) + "\n");
 /*
  * lo         lo+1
  *
@@ -48,21 +58,13 @@ void Sphere::initWithPolarCoords(int n, std::vector<glm::vec3> &vertices, std::v
     auto hash = [](const glm::vec3 &v) { return std::hash<size_t>{}(std::hash<float>{}(v.x) * std::hash<float>{}(v.y) * std::hash<float>{}(v.z)); };
     auto comp = [](const glm::vec3 &v, const glm::vec3 &u) { return v.x == u.x & v.y == u.y && v.z == u.z; };
     std::unordered_map<glm::vec3, GLushort, decltype(hash), decltype(comp)> existing(10, hash, comp);
-    for (int la = 0; la < n; la++) {
-        for (int lo = 0; lo < n; lo++) {
+    for (int la = 0; la < stacks; la++) {
+        for (int lo = 0; lo < sectors; lo++) {
             std::vector<glm::vec3> v {
-                glm::vec3 (glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::cos((float)lo / (float)n * glm::two_pi<GLfloat>()),
-                           glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::sin((float)lo / (float)n * glm::two_pi<GLfloat>()),
-                           glm::cos((float)la / (float)n * glm::pi<GLfloat>())),
-                glm::vec3 (glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::cos((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
-                           glm::sin((float)la / (float)n * glm::pi<GLfloat>()) * glm::sin((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
-                           glm::cos((float)la / (float)n * glm::pi<GLfloat>())),
-                glm::vec3 (glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::cos((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
-                           glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::sin((float)(lo + 1) / (float)n * glm::two_pi<GLfloat>()),
-                           glm::cos((float)(la + 1) / (float)n * glm::pi<GLfloat>())),
-                glm::vec3 (glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::cos((float)lo / (float)n * glm::two_pi<GLfloat>()),
-                           glm::sin((float)(la + 1) / (float)n * glm::pi<GLfloat>()) * glm::sin((float)lo / (float)n * glm::two_pi<GLfloat>()),
-                           glm::cos((float)(la + 1) / (float)n * glm::pi<GLfloat>()))
+                    pointOnSphere(latitudeAng(la, stacks), longitudeAng(lo, sectors), .5f),
+                    pointOnSphere(latitudeAng(la, stacks), longitudeAng(lo + 1, sectors), .5f),
+                    pointOnSphere(latitudeAng(la + 1, stacks), longitudeAng(lo + 1, sectors), .5f),
+                    pointOnSphere(latitudeAng(la + 1, stacks), longitudeAng(lo, sectors), .5f)
             };
             for (auto &candidate : v)
                 if (!existing.count(candidate)) {
@@ -73,7 +75,4 @@ void Sphere::initWithPolarCoords(int n, std::vector<glm::vec3> &vertices, std::v
             indices.insert(indices.end(), {existing[v[1]], existing[v[2]], existing[v[3]]});
         }
     }
-    // make sphere radius 0.5 so that it fits in 1x1x1 cube
-    for (auto &v : vertices)
-        v *= .5;
 }

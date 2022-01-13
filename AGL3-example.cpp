@@ -90,7 +90,7 @@ void MyWin::MainLoop() {
 
     bool drawMapMode = true;
 
-    Sphere earth(45);
+    Sphere earth(36, 72);
     earth.scale = Transform::ONE * 2.f * earthRadius;
 
     Terrain terrain(dirPath);
