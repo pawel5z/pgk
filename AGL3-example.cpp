@@ -177,17 +177,12 @@ void MyWin::MainLoop() {
             if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS ||
                 glfwGetKey(win(), GLFW_KEY_LEFT) == GLFW_PRESS)
                 cam.pos = glm::normalize(cam.pos - cam.right() * speed) * distFromZero;
-            // roll
-            if (glfwGetKey(win(), GLFW_KEY_Z) == GLFW_PRESS)
-                cam.rotate(-cam.forward(), angSpeed * 50.f, WORLD);
-            if (glfwGetKey(win(), GLFW_KEY_C) == GLFW_PRESS)
-                cam.rotate(-cam.forward(), -angSpeed * 50.f, WORLD);
             if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
                 float mouseSens = 1.f;
                 double xPos, yPos;
                 glfwGetCursorPos(win(), &xPos, &yPos);
                 // yaw
-                cam.rotate(-cam.up(), (float)(xPos - refMouseXPos) * mouseSens * angSpeed, WORLD);
+                cam.rotate(-glm::normalize(cam.pos), (float)(xPos - refMouseXPos) * mouseSens * angSpeed, WORLD);
                 // pitch
                 cam.rotate(-cam.right(), (float)(yPos - refMouseYPos) * mouseSens * angSpeed, WORLD);
             }
