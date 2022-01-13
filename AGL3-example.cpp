@@ -165,12 +165,14 @@ void MyWin::MainLoop() {
         } else {
             float distFromZero = glm::length(cam.pos);
             speed = .5f;
+            if (glfwGetKey(win(), GLFW_KEY_LEFT_SHIFT))
+                speed /= 5.f;
             // go up
             if (glfwGetKey(win(), GLFW_KEY_E) == GLFW_PRESS)
-                cam.pos += glm::normalize(cam.pos) * .5f;
+                cam.pos += glm::normalize(cam.pos) * speed;
             // go down
             if (glfwGetKey(win(), GLFW_KEY_Q) == GLFW_PRESS)
-                cam.pos -= glm::normalize(cam.pos) * .5f;
+                cam.pos -= glm::normalize(cam.pos) * speed;
             if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS ||
                 glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS)
                 cam.pos = glm::normalize(cam.pos + cam.forward() * speed) * distFromZero;
