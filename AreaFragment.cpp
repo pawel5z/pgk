@@ -18,7 +18,7 @@ AreaFragment::AreaFragment(std::string filePath) {
 
     std::vector<GLshort> heights;
     std::ifstream fin(filePath, std::ios_base::binary);
-    int readCnt = fastPow(Terrain::elementsCnt, 2);
+    int readCnt = fastPow(Terrain::tileLength, 2);
     for (int i = 0; i < readCnt; i++) {
         short input = 0;
         fin.get(*((char *)&input + 1));

@@ -17,7 +17,7 @@ struct LodGroup {
 
 class Terrain : AGLDrawable {
 public:
-    static const GLushort elementsCnt = 1201;
+    static const GLushort tileLength = 1201;
 
     explicit Terrain(const std::string& dirPath);
     ~Terrain();

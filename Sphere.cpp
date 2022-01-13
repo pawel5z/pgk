@@ -1,6 +1,7 @@
 #include "Sphere.hpp"
 
 #include "utils.hpp"
+#include "sharedState.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <unordered_map>
@@ -9,6 +10,7 @@ void Sphere::draw(Camera camera) {
     bind();
     glUniformMatrix4fv(0, 1, false, &(camera.getPVMat() * getModelMat())[0][0]);
     glDrawElements(GL_TRIANGLES, (int)indicesCnt, GL_UNSIGNED_SHORT, nullptr);
+    drawnTrianglesCnt += indicesCnt / 3;
 }
 
 void Sphere::setBuffers(std::vector<glm::vec3> &vertices, std::vector<GLushort> &indices) {

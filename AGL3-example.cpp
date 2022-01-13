@@ -10,6 +10,7 @@
 #include "Terrain.hpp"
 #include "utils.hpp"
 #include "Sphere.hpp"
+#include "sharedState.hpp"
 
 #include <cstdlib>
 #include <cstdio>
@@ -38,6 +39,8 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
     }
 }
 
+size_t drawnTrianglesCnt = 0;
+
 // display performance statistics once per `interval` seconds
 double displayPerformance(double interval = 1.f) {
     static double lastTimestamp = 0.;
@@ -49,13 +52,15 @@ double displayPerformance(double interval = 1.f) {
     timeElapsed += currTimestamp - lastTimestamp;
     if (timeElapsed >= interval) {
         fprintf(stderr,
-                "\rfps: %lf, ms per frame: %lf                                                     ",
+                "\rfps: %lf, ms per frame: %lf, triangles per frame: %lu                           ",
                 (double)numberOfCalls / timeElapsed,
-                timeElapsed * 1000. / (double)numberOfCalls);
+                timeElapsed * 1000. / (double)numberOfCalls,
+                drawnTrianglesCnt);
         numberOfCalls = 0;
         timeElapsed = 0.;
     }
     lastTimestamp = currTimestamp;
+    drawnTrianglesCnt = 0;
     return (double)numberOfCalls / timeElapsed;
 }
 

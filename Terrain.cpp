@@ -1,5 +1,6 @@
 #include "Terrain.hpp"
 #include "utils.hpp"
+#include "sharedState.hpp"
 
 #include <filesystem>
 #include <stdexcept>
@@ -12,10 +13,10 @@ Terrain::Terrain(const std::string& dirPath) {
     GLint step = 1;
     for (GLuint lod = 0; lod <= maxLOD; lod++) {
         lodGroups.push_back({(GLuint)indices.size(), 0});
-        for (GLuint row = 0; row < Terrain::elementsCnt - step; row += step) {
-            for (GLuint col = 0; col < Terrain::elementsCnt; col += step) {
-                indices.push_back(row * Terrain::elementsCnt + col);
-                indices.push_back((row + step) * Terrain::elementsCnt + col);
+        for (GLuint row = 0; row < Terrain::tileLength - step; row += step) {
+            for (GLuint col = 0; col < Terrain::tileLength; col += step) {
+                indices.push_back(row * Terrain::tileLength + col);
+                indices.push_back((row + step) * Terrain::tileLength + col);
             }
             indices.push_back(primitiveRestartIndex);
         }
@@ -76,7 +77,9 @@ void Terrain::draw(Camera camera, bool threeDim) {
     glUniformMatrix4fv(0, 1, false, &(camera.getPVMat() * getModelMat())[0][0]);
     for (auto &area : areaFrags) {
         area.prepareForDrawing();
-        glDrawElements(GL_TRIANGLE_STRIP, lodGroups[lod].size, GL_UNSIGNED_INT, (void *)(size_t)(lodGroups[lod].idx * sizeof(GLuint)));
+        glDrawElements(GL_TRIANGLE_STRIP, (GLint)lodGroups[lod].size, GL_UNSIGNED_INT, (void *)(size_t)(lodGroups[lod].idx * sizeof(GLuint)));
+        drawnTrianglesCnt += (tileLength - 1) / fastPow(2, lod) * // triangle strips count
+                             (((tileLength - 1) / fastPow(2, lod) + 1) * 2 - 2); // number of triangles in one strip
     }
 }
 
