@@ -14,7 +14,30 @@ Chosen solutions of assignments of the Basics of Computer Graphics course @ Comp
 ![pgk_assignment5](https://user-images.githubusercontent.com/45500957/145475521-7a20ae4c-7810-49b9-9a26-13a0b984c478.png)
 
 ## [Assignment 6](https://github.com/pawel5z/pgk/tree/assignment6)
-![pgk_assignment6]()
+
+Visualizer of `.hgt` files.
+
+### Controls
+- moving mouse while holding RMB - map panning, camera rotating;
+- W / S - map zoom in / out, move forward / backward in 3D view;
+- A / D - move left / right in 3D view;
+- Q / E - decrease / increase distance to Earth's center in 3D view;
+- 0..5 - change LOD; 0 - auto mode, 1 - the most details, 5 - the least details;
+- holding left shift - slower movement.
+
+### How to run it
+
+```
+./lab6 path/to/directory/with/hgt/files
+```
+
+Each `.hgt` file name must be in format `AXXOYYY.hgt` where `A` (latitude) is eiter `N` or `S`, `O` (longitude) is either `E` or `W` and degrees (`XX`, `YYY`) are written with leading zeros. E.g. `N45E007.hgt`.
+
+Program handles files which contain 1201 x 1201 twobyte big endian heights.
+More on this here https://wiki.openstreetmap.org/wiki/SRTM#Format.
+
+![pgk_assignment6_map](https://user-images.githubusercontent.com/45500957/149538060-303722ce-86dd-4822-ac23-0717ba44e294.png)
+![pgk_assignment6_3d](https://user-images.githubusercontent.com/45500957/149538182-f89f4fba-924c-483d-ad43-0b20f6cf12d5.png)
 
 ## Build instructions
 From repo root dir: \
