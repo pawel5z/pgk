@@ -9,26 +9,26 @@
 void Sphere::draw(Camera camera) {
     bind();
     glUniformMatrix4fv(0, 1, false, &(camera.getPVMat() * getModelMat())[0][0]);
-    glDrawElements(GL_TRIANGLE_STRIP, (int)indicesCnt, GL_UNSIGNED_SHORT, nullptr);
-    drawnTrianglesCnt += indicesCnt / 3;
+    glDrawElements(GL_TRIANGLE_STRIP, (int)indicesCnt, GL_UNSIGNED_INT, nullptr);
+    drawnTrianglesCnt += stacks * sectors * 2;
 }
 
-void Sphere::setBuffers(std::vector<glm::vec3> &vertices, std::vector<GLushort> &indices) {
+void Sphere::setBuffers(std::vector<glm::vec3> &vertices, std::vector<GLuint> &indices) {
     bindVertexArray();
     glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(vertices.size() * sizeof(glm::vec3)), vertices.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(glm::vec3), nullptr);
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (int)(indices.size() * sizeof(GLushort)), indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (int)(indices.size() * sizeof(GLuint)), indices.data(), GL_STATIC_DRAW);
 }
 
 void Sphere::setShaders() {
     compileShadersFromFile("sphere.vert", "sphere.frag");
 }
 
-Sphere::Sphere(int stacks, int sectors) : AGLDrawable() {
+Sphere::Sphere(int stacks, int sectors) : AGLDrawable(), stacks(stacks), sectors(sectors) {
     std::vector<glm::vec3> vertices;
-    std::vector<GLushort> indices;
+    std::vector<GLuint> indices;
 
     initWithPolarCoords(stacks, sectors, vertices, indices);
     indicesCnt = indices.size();
@@ -44,7 +44,7 @@ float Sphere::longitudeAng(int i, int sectors) {
     return (float)i / (float)sectors * 360.f;
 }
 
-void Sphere::initWithPolarCoords(int stacks, int sectors, std::vector<glm::vec3> &vertices, std::vector<GLushort> &indices) {
+void Sphere::initWithPolarCoords(int stacks, int sectors, std::vector<glm::vec3> &vertices, std::vector<GLuint> &indices) {
     if (stacks < 3 || 180 < stacks)
         throw std::invalid_argument("Incorrect stacks number: " + std::to_string(stacks) + "\n");
     if (sectors < 3 || 360 < sectors)
@@ -70,16 +70,15 @@ void Sphere::initWithPolarCoords(int stacks, int sectors, std::vector<glm::vec3>
             for (auto &candidate : v)
                 if (!existing.count(candidate)) {
                     vertices.push_back(candidate);
-                    /* Indices are of type GLushort and we don't want to cross its range.
-                     * Also there's a possibility for primitive restart usage, and our primitive restart index is ~0.
-                     * That's the reason for weak inequality.
+                    /* Restrict vertices size.
+                     * There's a possibility for primitive restart usage, and our primitive restart index is -1ul.
                      */
-                    if (vertices.size() >= (1 << sizeof(GLushort) * 8))
+                    if ((GLuint)vertices.size() - 1 == (GLuint)-1)
                         throw std::logic_error("Too many vertices.");
                     existing[candidate] = vertices.size() - 1;
                 }
             indices.insert(indices.end(), {existing[v[0]], existing[v[1]], existing[v[2]], existing[v[3]]});
         }
-        indices.push_back((GLushort)primitiveRestartIndex);
+        indices.push_back(primitiveRestartIndex);
     }
 }

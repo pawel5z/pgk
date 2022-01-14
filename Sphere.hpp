@@ -12,15 +12,16 @@ public:
     void draw(Camera camera) override;
 
 protected:
-    void setBuffers(std::vector<glm::vec3> &vertices, std::vector<GLushort> &indices);
+    void setBuffers(std::vector<glm::vec3> &vertices, std::vector<GLuint> &indices);
     void setShaders();
 
 private:
+    int stacks, sectors;
     size_t indicesCnt;
 
     static float latitudeAng(int i, int stacks);
     static float longitudeAng(int i, int sectors);
-    static void initWithPolarCoords(int stacks, int sectors, std::vector<glm::vec3> &vertices, std::vector<GLushort> &indices);
+    static void initWithPolarCoords(int stacks, int sectors, std::vector<glm::vec3> &vertices, std::vector<GLuint> &indices);
 };
 
 #endif //SPHERE_HPP
