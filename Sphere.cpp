@@ -71,6 +71,12 @@ void Sphere::initWithPolarCoords(int stacks, int sectors, std::vector<glm::vec3>
             for (auto &candidate : v)
                 if (!existing.count(candidate)) {
                     vertices.push_back(candidate);
+                    /* Indices are of type GLushort and we don't want to cross its range.
+                     * Also there's a possibility for primitive restart usage, and our primitive restart index is ~0.
+                     * That's the reason for weak inequality.
+                     */
+                    if (vertices.size() >= (1 << sizeof(GLushort) * 8))
+                        throw std::logic_error("Too many vertices.");
                     existing[candidate] = vertices.size() - 1;
                 }
             indices.insert(indices.end(), {existing[v[0]], existing[v[1]], existing[v[3]]});
