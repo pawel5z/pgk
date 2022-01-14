@@ -7,8 +7,8 @@
 
 Terrain::Terrain(const std::string& dirPath) {
     glEnableVertexAttribArray(0);
-    compileShadersFromFile("areaMapVS.glsl", "areaFS.glsl");
-    compileProgramFromFile(pId, "area3dVS.glsl", "areaFS.glsl");
+    compileShadersFromFile("areaMap.vert", "area.frag");
+    compileProgramFromFile(pId, "area3d.vert", "area.frag");
 
     GLint step = 1;
     for (GLuint lod = 0; lod <= maxLOD; lod++) {

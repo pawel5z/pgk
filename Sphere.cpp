@@ -23,7 +23,7 @@ void Sphere::setBuffers(std::vector<glm::vec3> &vertices, std::vector<GLushort> 
 }
 
 void Sphere::setShaders() {
-    compileShadersFromFile("sphereVS.glsl", "sphereFS.glsl");
+    compileShadersFromFile("sphere.vert", "sphere.frag");
 }
 
 Sphere::Sphere(int stacks, int sectors) : AGLDrawable() {
