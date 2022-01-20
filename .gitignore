@@ -147,8 +147,12 @@ modules.xml
 
 ### Executables ###
 
-lab6
+lab7
 
 ### Blobs ###
 
 data
+
+### VS Code specific ###
+
+.vscode

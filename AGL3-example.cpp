@@ -1,9 +1,5 @@
 // ==========================================================================
-// AGL3:  GL/GLFW init AGLWindow and AGLDrawable class definitions
-//
-// Ver.3  14.I.2020 (c) A. Łukaszewski
-// ==========================================================================
-// AGL3 example usage 
+// AGL3 example usage
 //===========================================================================
 #include "AGL3Window.hpp"
 #include "Camera.hpp"
@@ -262,7 +258,7 @@ int main(int argc, char *argv[]) {
     }
     dirPath = argv[1];
     MyWin win;
-    win.Init(1024,768,"Assignment 6",0,33);
+    win.Init(1024,768,"Assignment 7",0,33);
     win.MainLoop();
     return 0;
 }
