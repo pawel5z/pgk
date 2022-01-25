@@ -33,6 +33,7 @@ public:
     glm::vec3 right() const;
     glm::vec3 up() const;
     void rotate(glm::vec3 axis, float angle, Space space = SELF);
+    void rotateAround(glm::vec3 point, glm::vec3 axis, float angle);
 
 protected:
     glm::mat4 getScaleMat() const;

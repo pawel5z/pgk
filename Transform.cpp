@@ -37,3 +37,9 @@ void Transform::rotate(glm::vec3 axis, float angle, Space space) {
         axis = getRotMat() * glm::vec4(axis, 0);
     rot = glm::angleAxis(angle, glm::normalize(axis)) * rot;
 }
+
+void Transform::rotateAround(glm::vec3 point, glm::vec3 axis, float angle) {
+    pos -= point;
+    pos = glm::toMat4(glm::angleAxis(angle, glm::normalize(axis))) * glm::vec4(pos, 1.f);
+    pos += point;
+}
