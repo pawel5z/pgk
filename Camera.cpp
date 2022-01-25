@@ -14,7 +14,7 @@ Camera::Camera(float left, float right, float bottom, float top, float near, flo
     type = ORTHOGRAPHIC;
 }
 
-glm::mat4 Camera::getProjectionMat() {
+glm::mat4 Camera::getProjectionMat() const {
     switch (type) {
         case PERSPECTIVE:
             return glm::perspective(glm::radians(fovY), aspect, nf[0], nf[1]);
@@ -25,11 +25,11 @@ glm::mat4 Camera::getProjectionMat() {
     }
 }
 
-glm::mat4 Camera::getViewMat() {
+glm::mat4 Camera::getViewMat() const {
     return glm::lookAt(pos, pos + forward(), up());
 }
 
-glm::mat4 Camera::getPVMat() {
+glm::mat4 Camera::getPVMat() const {
     return getProjectionMat() * getViewMat();
 }
 
