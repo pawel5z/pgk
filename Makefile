@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -std=c++17 -O3
-LFLAGS = -lepoxy -lGL -lglfw
+LFLAGS = -lepoxy -lGL -lglfw -lassimp
 NAME = lab7
 
 OBJS = $(shell ls *.cpp | sed 's/\.cpp/\.o/')
@@ -15,7 +15,7 @@ debug : CFLAGS += -Og -g
 debug : $(NAME)
 
 %.o : %.cpp $(DEPS)
-	$(CC) $(CFLAGS) $< -c -o $@ $(LFLAGS)
+	$(CC) $(CFLAGS) $< -c -o $@
 
 clean :
 	@rm -f *.o
