@@ -16,6 +16,7 @@
 class MyWin : public AGLWindow {
 public:
     Camera *cam = nullptr;
+    glm::vec3 *origin = nullptr;
 
     MyWin() = default;
     MyWin(int _wd, int _ht, const char *name, int vers, int fullscr=0)
@@ -38,17 +39,21 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
 
 void MyWin::ScrollCB(double xp, double yp) {
     AGLWindow::ScrollCB(xp, yp);
-    if (yp > 0.)
-        cam->pos *= .75;
-    else if (yp < 0.)
-        cam->pos *= 1.25;
+    glm::vec3 diff = cam->pos - *origin;
+    if (yp > 0.) {
+        if (glm::distance2(*origin, cam->pos) <= .0625 * .0625)
+            return;
+        cam->pos = *origin + diff * .75f;
+    } else if (yp < 0.)
+        cam->pos = *origin + diff * 1.25f;
 }
 
 // ==========================================================================
 void MyWin::MainLoop() {
-    ViewportOne(0,0,wd,ht);
+    ViewportOne(0, 0 , wd, ht);
 
     glm::vec3 origin(0.f, 0.f, 0.f);
+    this->origin = &origin;
     Camera cam;
     this->cam = &cam;
     cam.pos = {0.f, 0.f, 1.f};
@@ -90,10 +95,11 @@ void MyWin::MainLoop() {
         if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
             double xPos, yPos;
             glfwGetCursorPos(win(), &xPos, &yPos);
-            cam.rotateAround(origin, Transform::UP, (float)(xPos - refMouseXPos) * mouseSens * angSpeed);
-            cam.rotateAround(origin, Transform::RIGHT, (float)(yPos - refMouseYPos) * mouseSens * angSpeed);
+            cam.rotateAround(origin, -cam.up(), (float)(xPos - refMouseXPos) * mouseSens * angSpeed);
+            cam.rot = glm::quatLookAtLH(origin - cam.pos, Transform::UP);
+            cam.rotateAround(origin, -cam.right(), (float)(yPos - refMouseYPos) * mouseSens * angSpeed);
+            cam.rot = glm::quatLookAtLH(origin - cam.pos, Transform::UP);
         }
-        cam.rot = glm::quatLookAtLH(origin - cam.pos, Transform::UP);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         AGLErrors("main-loopbegin");
         // =====================================================        Drawing
@@ -104,6 +110,7 @@ void MyWin::MainLoop() {
         glfwSwapBuffers(win()); // =============================   Swap buffers
     } while (!(glfwGetKey(win(), GLFW_KEY_ESCAPE) == GLFW_PRESS ||
                glfwWindowShouldClose(win()) == 1));
+    this->origin = nullptr;
     this->cam = nullptr;
 }
 
