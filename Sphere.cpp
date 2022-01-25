@@ -10,7 +10,6 @@ void Sphere::draw(Camera camera) {
     bind();
     glUniformMatrix4fv(0, 1, false, &(camera.getPVMat() * getModelMat())[0][0]);
     glDrawElements(GL_TRIANGLE_STRIP, (int)indicesCnt, GL_UNSIGNED_INT, nullptr);
-    drawnTrianglesCnt += stacks * sectors * 2;
 }
 
 void Sphere::setBuffers(std::vector<glm::vec3> &vertices, std::vector<GLuint> &indices) {

@@ -6,6 +6,9 @@ layout(location = 0) uniform mat4 mvp;
 
 layout(location = 0) in vec3 vertexPosModelspace;
 
+out vec3 vertexColor;
+
 void main(void) {
     gl_Position = mvp * vec4(vertexPosModelspace, 1);
+    vertexColor = (vertexPosModelspace + vec3(.5f)) * 2.f;
 }
