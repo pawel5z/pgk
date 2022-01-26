@@ -4,11 +4,14 @@
 #include "AGL3Window.hpp"
 #include "Camera.hpp"
 #include "utils.hpp"
+#include "ImportedAsset.hpp"
 
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
 #include <glm/glm.hpp>
+
+static std::string objPath;
 
 // ==========================================================================
 // Window Main Loop Inits ...................................................
@@ -52,16 +55,18 @@ void MyWin::ScrollCB(double xp, double yp) {
 void MyWin::MainLoop() {
     ViewportOne(0, 0 , wd, ht);
 
+    ImportedAsset asset(objPath, "imported.vert", "imported.frag");
+
     glm::vec3 origin(0.f, 0.f, 0.f);
     this->origin = &origin;
     Camera cam;
     this->cam = &cam;
-    cam.pos = {0.f, 0.f, 1.f};
-    cam.rot = glm::quatLookAtLH(origin - cam.pos, Transform::UP);
+    cam.pos = {0.f, 0.f, 3.f};
+    cam.rot = glm::quatLookAtLH(glm::normalize(origin - cam.pos), Transform::UP);
     cam.setFovY(60);
     cam.setNf({0.01f, 10.0f});
 
-    float angSpeed = .001f;
+    float angSpeed = .005f;
     const float baseSpeed = .01f;
     float speed = baseSpeed;
 
@@ -76,11 +81,10 @@ void MyWin::MainLoop() {
         glfwPollEvents();
         if (glfwGetKey(win(), GLFW_KEY_LEFT_SHIFT))
             speed /= 5.f;
-        // TODO reset pos/rot button
         if (glfwGetKey(win(), GLFW_KEY_R) == GLFW_PRESS) {
             origin = {0.f, 0.f, 0.f};
-            cam.pos = {0.f, 0.f, 1.f};
-            cam.rot = glm::quatLookAtLH(origin - cam.pos, Transform::UP);
+            cam.pos = {0.f, 0.f, 3.f};
+            cam.rot = glm::quatLookAtLH(glm::normalize(origin - cam.pos), Transform::UP);
         }
         if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
             double xPos, yPos;
@@ -95,14 +99,14 @@ void MyWin::MainLoop() {
         if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
             double xPos, yPos;
             glfwGetCursorPos(win(), &xPos, &yPos);
-            cam.rotateAround(origin, -cam.up(), (float)(xPos - refMouseXPos) * mouseSens * angSpeed);
-            cam.rot = glm::quatLookAtLH(origin - cam.pos, Transform::UP);
-            cam.rotateAround(origin, -cam.right(), (float)(yPos - refMouseYPos) * mouseSens * angSpeed);
-            cam.rot = glm::quatLookAtLH(origin - cam.pos, Transform::UP);
+            cam.rotateAround(origin, glm::normalize(-cam.up()), (float)(xPos - refMouseXPos) * mouseSens * angSpeed);
+            cam.rotateAround(origin, glm::normalize(-cam.right()), (float)(yPos - refMouseYPos) * mouseSens * angSpeed);
+            cam.rot = glm::quatLookAtLH(glm::normalize(origin - cam.pos), Transform::UP);
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         AGLErrors("main-loopbegin");
         // =====================================================        Drawing
+        asset.draw(cam);
         AGLErrors("main-afterdraw");
         glfwGetCursorPos(win(), &refMouseXPos, &refMouseYPos);
         cam.setAspect(aspect);
@@ -115,6 +119,11 @@ void MyWin::MainLoop() {
 }
 
 int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Required path.\n");
+        exit(EXIT_FAILURE);
+    }
+    objPath.assign(argv[1]);
     MyWin win;
     win.Init(1024, 768, "Assignment 7", 0, 33);
     win.MainLoop();
