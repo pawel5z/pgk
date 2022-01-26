@@ -1,4 +1,5 @@
 #ifndef IMPORTEDASSET_HPP
+#define IMPORTEDASSET_HPP
 
 #include "Camera.hpp"
 
