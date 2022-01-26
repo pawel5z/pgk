@@ -5,6 +5,7 @@
 #include "Camera.hpp"
 #include "utils.hpp"
 #include "ImportedAsset.hpp"
+#include "Axes.hpp"
 
 #include <cstdlib>
 #include <cstdio>
@@ -57,6 +58,10 @@ void MyWin::ScrollCB(double xp, double yp) {
 void MyWin::MainLoop() {
     ViewportOne(0, 0 , wd, ht);
 
+    Axes axes("axes.vert", "axes.frag");
+    int prevAKeyState = GLFW_RELEASE;
+    bool drawAxes = true;
+
     std::unique_ptr<ImportedAsset> asset;
     if (texPath != "")
         asset = std::make_unique<ImportedAsset>(objPath, "importedTextured.vert", "importedTextured.frag", texPath);
@@ -91,6 +96,14 @@ void MyWin::MainLoop() {
             speed = baseSpeed * .1f;
         else
             speed = baseSpeed;
+        if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS) {
+            prevAKeyState = GLFW_PRESS;
+        } else { // GLFW_RELEASE
+            if (prevAKeyState == GLFW_PRESS)
+                drawAxes = !drawAxes;
+            prevAKeyState = GLFW_RELEASE;
+        }
+
         if (glfwGetKey(win(), GLFW_KEY_R) == GLFW_PRESS) {
             origin = glm::vec3(0.f);
             cam.pos = {origin.x, origin.y, asset->getGreatestZ() + 1.f};
@@ -116,6 +129,8 @@ void MyWin::MainLoop() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         AGLErrors("main-loopbegin");
         // =====================================================        Drawing
+        if (drawAxes)
+            axes.draw(cam);
         asset->draw(cam);
         AGLErrors("main-afterdraw");
         glfwGetCursorPos(win(), &refMouseXPos, &refMouseYPos);
