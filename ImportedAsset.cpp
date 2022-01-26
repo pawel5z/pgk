@@ -16,12 +16,14 @@ ImportedAsset::ImportedAsset(std::string path, std::string vertPath, std::string
     glGenVertexArrays(1, &vArray);
     glBindVertexArray(vArray);
     std::vector<glm::vec3> vPositions;
-    for (GLuint i = 0; i < scene->mMeshes[0]->mNumVertices; i++) {
-        vPositions.push_back({
-            scene->mMeshes[0]->mVertices[i].x,
-            scene->mMeshes[0]->mVertices[i].y,
-            scene->mMeshes[0]->mVertices[i].z
-        });
+    for (GLuint i = 0; i < scene->mNumMeshes; i++) {
+        for (GLuint j = 0; j < scene->mMeshes[i]->mNumVertices; j++) {
+            vPositions.push_back({
+                scene->mMeshes[i]->mVertices[j].x,
+                scene->mMeshes[i]->mVertices[j].y,
+                scene->mMeshes[i]->mVertices[j].z
+            });
+        }
     }
     verticesCnt = vPositions.size();
     glGenBuffers(1, &vPosBuf);
