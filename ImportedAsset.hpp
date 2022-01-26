@@ -13,13 +13,15 @@
 class ImportedAsset : Transform {
 public:
     ImportedAsset(std::string path, std::string vertPath, std::string fragPath);
+    ImportedAsset(std::string path, std::string vertPath, std::string fragPath, std::string texPath);
     ~ImportedAsset();
     void draw(const Camera &camera);
 
 private:
-    GLuint vArray;
-    GLuint vPosBuf;
-    GLuint program;
+    GLuint vArray = 0;
+    GLuint vPosBuf = 0;
+    GLuint texture = 0;
+    GLuint program = 0;
     GLuint verticesCnt;
 };
 
