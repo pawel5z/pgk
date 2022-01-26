@@ -88,7 +88,9 @@ void MyWin::MainLoop() {
     do {
         glfwPollEvents();
         if (glfwGetKey(win(), GLFW_KEY_LEFT_SHIFT))
-            speed /= 5.f;
+            speed = baseSpeed * .1f;
+        else
+            speed = baseSpeed;
         if (glfwGetKey(win(), GLFW_KEY_R) == GLFW_PRESS) {
             origin = {0.f, 0.f, 0.f};
             cam.pos = {0.f, 0.f, 3.f};
