@@ -10,8 +10,10 @@
 #include <cstdio>
 #include <cmath>
 #include <glm/glm.hpp>
+#include <memory>
 
 static std::string objPath;
+static std::string texPath;
 
 // ==========================================================================
 // Window Main Loop Inits ...................................................
@@ -55,7 +57,11 @@ void MyWin::ScrollCB(double xp, double yp) {
 void MyWin::MainLoop() {
     ViewportOne(0, 0 , wd, ht);
 
-    ImportedAsset asset(objPath, "imported.vert", "imported.frag");
+    std::unique_ptr<ImportedAsset> asset;
+    if (texPath != "")
+        asset = std::make_unique<ImportedAsset>(objPath, "importedTextured.vert", "importedTextured.frag", texPath);
+    else
+        asset = std::make_unique<ImportedAsset>(objPath, "imported.vert", "imported.frag");
 
     glm::vec3 origin(0.f, 0.f, 0.f);
     this->origin = &origin;
@@ -108,7 +114,7 @@ void MyWin::MainLoop() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         AGLErrors("main-loopbegin");
         // =====================================================        Drawing
-        asset.draw(cam);
+        asset->draw(cam);
         AGLErrors("main-afterdraw");
         glfwGetCursorPos(win(), &refMouseXPos, &refMouseYPos);
         cam.setAspect(aspect);
@@ -125,7 +131,9 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Required path.\n");
         exit(EXIT_FAILURE);
     }
-    objPath.assign(argv[1]);
+    if (argc >= 3)
+        texPath = argv[2];
+    objPath = argv[1];
     MyWin win;
     win.Init(1024, 768, "Assignment 7", 0, 33);
     win.MainLoop();
