@@ -73,6 +73,8 @@ void MyWin::MainLoop() {
     float mouseSens = 1.f;
     double refMouseXPos, refMouseYPos;
 
+    glEnable(GL_PRIMITIVE_RESTART);
+    glPrimitiveRestartIndex(primitiveRestartIndex);
     glClearColor(.7f, .7f, .7f, .0f);
     // enable depth buffer comparisons
     glEnable(GL_DEPTH_TEST);
