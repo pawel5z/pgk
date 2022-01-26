@@ -25,9 +25,14 @@ ImportedAsset::ImportedAsset(std::string path, std::string vertPath, std::string
                 scene->mMeshes[i]->mVertices[j].y,
                 scene->mMeshes[i]->mVertices[j].z
             });
+            center += scene->mMeshes[i]->mVertices[j].x +
+                      scene->mMeshes[i]->mVertices[j].y +
+                      scene->mMeshes[i]->mVertices[j].z;
+            greatestZ = scene->mMeshes[i]->mVertices[j].z > greatestZ ? scene->mMeshes[i]->mVertices[j].z : greatestZ;
         }
     }
     verticesCnt = vPositions.size();
+    center /= (float)verticesCnt;
     std::cout << verticesCnt << " vertices.\n";
     glGenBuffers(1, &vPosBuf);
     glBindBuffer(GL_ARRAY_BUFFER, vPosBuf);
@@ -65,9 +70,14 @@ ImportedAsset::ImportedAsset(std::string path, std::string vertPath, std::string
                 scene->mMeshes[i]->mTextureCoords[0][j].x,
                 scene->mMeshes[i]->mTextureCoords[0][j].y,
             });
+            center += scene->mMeshes[i]->mVertices[j].x +
+                      scene->mMeshes[i]->mVertices[j].y +
+                      scene->mMeshes[i]->mVertices[j].z;
+            greatestZ = scene->mMeshes[i]->mVertices[j].z > greatestZ ? scene->mMeshes[i]->mVertices[j].z : greatestZ;
         }
     }
     verticesCnt = vPositions.size();
+    center /= (float)verticesCnt;
     std::cout << verticesCnt << " vertices.\n";
     glGenBuffers(1, &vPosBuf);
     glBindBuffer(GL_ARRAY_BUFFER, vPosBuf);
@@ -111,4 +121,14 @@ void ImportedAsset::draw(const Camera &camera)
     if (texture)
         glBindTexture(GL_TEXTURE_2D, texture);
     glDrawArrays(GL_TRIANGLES, 0, verticesCnt);
+}
+
+glm::vec3 ImportedAsset::getCenter() const
+{
+    return getModelMat() * glm::vec4(center, 1.f);
+}
+
+float ImportedAsset::getGreatestZ() const
+{
+    return (getModelMat() * glm::vec4(0.f, 0.f, greatestZ, 1.f)).z;
 }
