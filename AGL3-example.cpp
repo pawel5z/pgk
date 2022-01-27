@@ -68,14 +68,14 @@ void MyWin::MainLoop() {
     else
         asset = std::make_unique<ImportedAsset>(objPath, "imported.vert", "imported.frag");
 
-    glm::vec3 origin(0.f);
+    glm::vec3 origin = asset->getCenter();
     this->origin = &origin;
     Camera cam;
     this->cam = &cam;
-    cam.pos = {origin.x, origin.y, asset->getGreatestZ() + 1.f};
+    cam.pos = {origin.x, origin.y, asset->getGreatestZ() + .5f};
     cam.rot = glm::quatLookAtLH(glm::normalize(origin - cam.pos), Transform::UP);
     cam.setFovY(60);
-    cam.setNf({0.01f, 10.0f});
+    cam.setNf({0.01f, 100.0f});
 
     float angSpeed = .005f;
     const float baseSpeed = .01f;
@@ -105,8 +105,8 @@ void MyWin::MainLoop() {
         }
 
         if (glfwGetKey(win(), GLFW_KEY_R) == GLFW_PRESS) {
-            origin = glm::vec3(0.f);
-            cam.pos = {origin.x, origin.y, asset->getGreatestZ() + 1.f};
+            origin = asset->getCenter();
+            cam.pos = {origin.x, origin.y, asset->getGreatestZ() + .5f};
             cam.rot = glm::quatLookAtLH(glm::normalize(origin - cam.pos), Transform::UP);
         }
         if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {

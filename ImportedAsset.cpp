@@ -25,9 +25,9 @@ ImportedAsset::ImportedAsset(std::string path, std::string vertPath, std::string
                 scene->mMeshes[i]->mVertices[j].y,
                 scene->mMeshes[i]->mVertices[j].z
             });
-            center += scene->mMeshes[i]->mVertices[j].x +
-                      scene->mMeshes[i]->mVertices[j].y +
-                      scene->mMeshes[i]->mVertices[j].z;
+            center += glm::vec3(scene->mMeshes[i]->mVertices[j].x,
+                                scene->mMeshes[i]->mVertices[j].y,
+                                scene->mMeshes[i]->mVertices[j].z);
             greatestZ = scene->mMeshes[i]->mVertices[j].z > greatestZ ? scene->mMeshes[i]->mVertices[j].z : greatestZ;
         }
     }
@@ -70,9 +70,9 @@ ImportedAsset::ImportedAsset(std::string path, std::string vertPath, std::string
                 scene->mMeshes[i]->mTextureCoords[0][j].x,
                 scene->mMeshes[i]->mTextureCoords[0][j].y,
             });
-            center += scene->mMeshes[i]->mVertices[j].x +
-                      scene->mMeshes[i]->mVertices[j].y +
-                      scene->mMeshes[i]->mVertices[j].z;
+            center += glm::vec3(scene->mMeshes[i]->mVertices[j].x,
+                                scene->mMeshes[i]->mVertices[j].y,
+                                scene->mMeshes[i]->mVertices[j].z);
             greatestZ = scene->mMeshes[i]->mVertices[j].z > greatestZ ? scene->mMeshes[i]->mVertices[j].z : greatestZ;
         }
     }
