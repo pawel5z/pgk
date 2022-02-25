@@ -3,7 +3,7 @@
 //
 // Ver.3  14.I.2020 (c) A. Łukaszewski
 // ==========================================================================
-// AGL3 example usage 
+// AGL3 example usage
 //===========================================================================
 #include "AGL3Window.hpp"
 #include "Camera.hpp"
@@ -211,7 +211,7 @@ void MyWin::MainLoop() {
                 // switch to map mode
                 drawMapMode = !drawMapMode;
                 double la = glm::degrees(glm::asin(cam.pos.y / glm::length(cam.pos)));
-                double lo = glm::degrees(atan2(cam.pos.x, cam.pos.z) + M_PI);
+                double lo = glm::degrees(atan2(cam.pos.x, cam.pos.z));
                 cam.pos = {lo * glm::cos(glm::radians(terrain.getMidLa())), la, 1.f};
                 cam.rot = glm::quatLookAtLH(
                     glm::normalize(glm::vec3(lo * glm::cos(glm::radians(terrain.getMidLa())), la, 0.f) - cam.pos),

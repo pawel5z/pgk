@@ -40,12 +40,11 @@ void dumpVertexArrayInfo() {
 
 /**
  * @param la from -90 to 90 degrees
- * @param lo from 0 to 360 degrees
+ * @param lo from -180 to 180 degrees
  * @param r sphere radius (default 1)
  * @return
  */
 glm::vec3 pointOnSphere(float la, float lo, float r) {
-    lo += 180.f;
     return glm::vec3(glm::sin(glm::radians(lo)) * glm::cos(glm::radians(la)),
                      glm::sin(glm::radians(la)),
                      glm::cos(glm::radians(la)) * glm::cos(glm::radians(lo))) *

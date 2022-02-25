@@ -16,7 +16,7 @@ void main(void) {
     float leftLo = lowerLeft.x;
     float highLa = lowerLeft.y + 1.f;
     float la = highLa - (gl_VertexID / resolution) / (resolution - 1.f);
-    float lo = leftLo + (gl_VertexID % resolution) / (resolution - 1.f) + 180.f;
+    float lo = leftLo + (gl_VertexID % resolution) / (resolution - 1.f);
     vec4 vertexPosModelspace = vec4(0.f, 0.f, 0.f, 1.f);
     vertexPosModelspace.xyz = vec3(
         sin(radians(lo)) * cos(radians(la)),
