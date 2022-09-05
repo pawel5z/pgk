@@ -18,12 +18,13 @@ Chosen solutions of assignments of the Basics of Computer Graphics course @ Comp
 Visualizer of `.hgt` files.
 
 ### Controls
+- tab - toggle between map view and 3d view;
 - moving mouse while holding RMB - map panning, camera rotating;
 - W / S - map zoom in / out, move forward / backward in 3D view;
 - A / D - move left / right in 3D view;
 - Q / E - decrease / increase distance to Earth's center in 3D view;
 - 0..5 - change LOD; 0 - auto mode, 1 - the most details, 5 - the least details;
-- holding left shift - slower movement.
+- left shift (hold) - slower movement.
 
 ### How to run it
 
