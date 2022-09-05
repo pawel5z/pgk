@@ -40,6 +40,25 @@ More on this here https://wiki.openstreetmap.org/wiki/SRTM#Format.
 ![pgk_assignment6_map](https://user-images.githubusercontent.com/45500957/149538060-303722ce-86dd-4822-ac23-0717ba44e294.png)
 ![pgk_assignment6_3d](https://user-images.githubusercontent.com/45500957/149538182-f89f4fba-924c-483d-ad43-0b20f6cf12d5.png)
 
+## [Assignment 7](https://github.com/pawel5z/pgk/tree/assignment7)
+
+`.obj` file viewer.
+
+![image](https://user-images.githubusercontent.com/45500957/188507082-6e55b5d9-89c9-40b6-a80e-24f21b36c209.png)
+
+### Usage
+
+```
+./lab7 path/to/obj [path/to/texture]
+```
+
+### Controls
+
+- hold left mouse button and move - rotate camera
+- hold right mouse button and move - pan camera
+- scroll - zoom in/out
+- left shift (hold) - slower panning
+
 ## Build instructions
 From repo root dir: \
 `$ make` \
